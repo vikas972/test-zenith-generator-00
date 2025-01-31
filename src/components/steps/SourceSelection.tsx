@@ -33,19 +33,22 @@ export const SourceSelection = () => {
   ];
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h2 className="text-2xl font-semibold mb-6">Select Source</h2>
-      <div className="grid md:grid-cols-2 gap-6">
-        {sources.map((source) => (
-          <SourceCard
-            key={source.id}
-            title={source.title}
-            description={source.description}
-            icon={source.icon}
-            selected={selectedSource === source.id}
-            onClick={() => setSelectedSource(source.id)}
-          />
-        ))}
+    <div className="container mx-auto px-4 py-12">
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-3xl font-bold text-gray-800 mb-3 animate-fade-in">Select Source</h2>
+        <p className="text-gray-600 mb-8 animate-fade-in">Choose your preferred source to import test cases and begin the generation process.</p>
+        <div className="grid md:grid-cols-2 gap-6 animate-fade-in">
+          {sources.map((source) => (
+            <SourceCard
+              key={source.id}
+              title={source.title}
+              description={source.description}
+              icon={source.icon}
+              selected={selectedSource === source.id}
+              onClick={() => setSelectedSource(source.id)}
+            />
+          ))}
+        </div>
       </div>
     </div>
   );
