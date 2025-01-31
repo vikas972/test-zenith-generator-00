@@ -3,6 +3,10 @@ import { Header } from "@/components/Header";
 import { WizardSteps } from "@/components/WizardSteps";
 import { SourceSelection } from "@/components/steps/SourceSelection";
 import { ScenarioGeneration } from "@/components/steps/ScenarioGeneration";
+import { TestCases } from "@/components/steps/TestCases";
+import { TestData } from "@/components/steps/TestData";
+import { Metrics } from "@/components/steps/Metrics";
+import { Button } from "@/components/ui/button";
 
 const STEPS = [
   "Source Selection",
@@ -21,6 +25,12 @@ const Index = () => {
         return <SourceSelection />;
       case 1:
         return <ScenarioGeneration />;
+      case 2:
+        return <TestCases />;
+      case 3:
+        return <TestData />;
+      case 4:
+        return <Metrics />;
       default:
         return <div>Step {currentStep + 1}</div>;
     }
@@ -33,20 +43,19 @@ const Index = () => {
       <main className="pb-12">
         {renderStep()}
         <div className="container mx-auto px-4 mt-8 flex justify-between">
-          <button
+          <Button
+            variant="outline"
             onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-            className="px-4 py-2 text-secondary hover:text-secondary-hover disabled:opacity-50"
             disabled={currentStep === 0}
           >
             Previous
-          </button>
-          <button
+          </Button>
+          <Button
             onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
-            className="px-4 py-2 bg-primary text-white rounded hover:bg-primary-hover disabled:opacity-50"
             disabled={currentStep === STEPS.length - 1}
           >
             Next
-          </button>
+          </Button>
         </div>
       </main>
     </div>
