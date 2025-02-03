@@ -116,7 +116,7 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
     if (file && file.status === "completed" && selectedSource) {
       setSelectedFile(fileId);
       onFileSelect({
-        id: file.id,
+        id: fileId,
         name: file.name,
         source: selectedSource
       });
@@ -173,8 +173,13 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                 {uploadedFiles.map((file) => (
                   <TableRow 
                     key={file.id}
-                    className={file.status === "completed" ? "cursor-pointer hover:bg-gray-50" : ""}
-                    onClick={() => file.status === "completed" && selectedSource && handleFileSelect(file.id)}
+                    className={file.status === "completed" && selectedSource ? "cursor-pointer hover:bg-gray-50" : ""}
+                    onClick={(e) => {
+                      if (file.status === "completed" && selectedSource) {
+                        e.preventDefault();
+                        handleFileSelect(file.id);
+                      }
+                    }}
                   >
                     <TableCell>
                       <input
