@@ -42,14 +42,16 @@ const Index = () => {
       <WizardSteps currentStep={currentStep} steps={STEPS} />
       <main className="pb-12">
         {renderStep()}
-        <div className="container mx-auto px-4 mt-8 flex justify-between">
-          <Button
-            variant="outline"
-            onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-            disabled={currentStep === 0}
-          >
-            Previous
-          </Button>
+        <div className="container mx-auto px-4 mt-8 flex justify-end">
+          {currentStep > 0 && (
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+              className="mr-4"
+            >
+              Previous
+            </Button>
+          )}
           <Button
             onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
             disabled={currentStep === STEPS.length - 1}
