@@ -111,7 +111,12 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
     }
   };
 
-  const handleFileSelect = (fileId: string) => {
+  const handleFileSelect = (fileId: string, event?: React.MouseEvent) => {
+    if (event) {
+      event.preventDefault();
+      event.stopPropagation();
+    }
+    
     const file = uploadedFiles.find(f => f.id === fileId);
     if (file && file.status === "completed" && selectedSource) {
       setSelectedFile(fileId);
@@ -174,28 +179,31 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                   <TableRow 
                     key={file.id}
                     className={file.status === "completed" && selectedSource ? "cursor-pointer hover:bg-gray-50" : ""}
-                    onClick={(e) => {
-                      if (file.status === "completed" && selectedSource) {
-                        e.preventDefault();
-                        handleFileSelect(file.id);
-                      }
-                    }}
                   >
                     <TableCell>
                       <input
                         type="radio"
                         name="selectedFile"
                         checked={selectedFile === file.id}
-                        onChange={() => handleFileSelect(file.id)}
+                        onChange={(e) => {
+                          e.stopPropagation();
+                          handleFileSelect(file.id);
+                        }}
                         disabled={file.status !== "completed" || !selectedSource}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
-                        onClick={(e) => e.stopPropagation()}
                       />
                     </TableCell>
-                    <TableCell className="font-medium">{file.name}</TableCell>
-                    <TableCell>
-                      {file.uploadTime.toLocaleString()}
+                    <TableCell 
+                      className="font-medium"
+                      onClick={(e) => {
+                        if (file.status === "completed" && selectedSource) {
+                          handleFileSelect(file.id, e);
+                        }
+                      }}
+                    >
+                      {file.name}
                     </TableCell>
+                    <TableCell>{file.uploadTime.toLocaleString()}</TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         {getStatusIcon(file.status)}
