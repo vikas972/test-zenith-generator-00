@@ -136,7 +136,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden animate-fade-in">
           <div className="p-6 border-b border-gray-200">
-            <h3 className="text-lg font-semibold text-gray-800">Uploaded Files</h3>
+            <h3 className="text-lg font-semibold text-gray-800">Imported Files</h3>
             <p className="text-sm text-gray-600 mt-1">
               Select a successfully parsed file to proceed
             </p>
