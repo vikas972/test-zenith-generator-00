@@ -111,12 +111,7 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
     }
   };
 
-  const handleFileSelect = (fileId: string, event?: React.MouseEvent) => {
-    if (event) {
-      event.preventDefault();
-      event.stopPropagation();
-    }
-    
+  const handleFileSelect = (fileId: string) => {
     const file = uploadedFiles.find(f => f.id === fileId);
     if (file && file.status === "completed" && selectedSource) {
       setSelectedFile(fileId);
@@ -180,26 +175,19 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                     key={file.id}
                     className={file.status === "completed" && selectedSource ? "cursor-pointer hover:bg-gray-50" : ""}
                   >
-                    <TableCell>
+                    <TableCell onClick={(e) => e.stopPropagation()}>
                       <input
                         type="radio"
                         name="selectedFile"
                         checked={selectedFile === file.id}
-                        onChange={(e) => {
-                          e.stopPropagation();
-                          handleFileSelect(file.id);
-                        }}
+                        onChange={() => handleFileSelect(file.id)}
                         disabled={file.status !== "completed" || !selectedSource}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
                       />
                     </TableCell>
                     <TableCell 
                       className="font-medium"
-                      onClick={(e) => {
-                        if (file.status === "completed" && selectedSource) {
-                          handleFileSelect(file.id, e);
-                        }
-                      }}
+                      onClick={() => handleFileSelect(file.id)}
                     >
                       {file.name}
                     </TableCell>
