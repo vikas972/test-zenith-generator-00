@@ -89,19 +89,23 @@ const Index = () => {
       <main className="pb-12">
         {renderStep()}
         <div className="container mx-auto px-4 mt-8 flex justify-between">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 0}
-          >
-            Previous
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={currentStep === STEPS.length - 1 || (currentStep === 0 && !selectedFileInfo)}
-          >
-            Next
-          </Button>
+          {currentStep > 0 && (
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              disabled={currentStep === 0}
+            >
+              Previous
+            </Button>
+          )}
+          <div className={currentStep === 0 ? 'ml-auto' : ''}>
+            <Button
+              onClick={handleNext}
+              disabled={currentStep === STEPS.length - 1 || (currentStep === 0 && !selectedFileInfo)}
+            >
+              Next
+            </Button>
+          </div>
         </div>
       </main>
     </div>
