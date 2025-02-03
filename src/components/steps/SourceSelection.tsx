@@ -19,7 +19,11 @@ interface UploadedFile {
   status: "parsing" | "completed" | "failed";
 }
 
-export const SourceSelection = () => {
+interface SourceSelectionProps {
+  onFileSelect: (file: { id: string; name: string; uploadTime: Date } | null) => void;
+}
+
+export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
@@ -42,6 +46,16 @@ export const SourceSelection = () => {
       status: "failed",
     },
   ]);
+
+  const handleFileSelect = (fileId: string) => {
+    setSelectedFile(fileId);
+    const file = uploadedFiles.find(f => f.id === fileId);
+    if (file && file.status === "completed") {
+      onFileSelect(file);
+    } else {
+      onFileSelect(null);
+    }
+  };
 
   const sources = [
     {
@@ -147,7 +161,7 @@ export const SourceSelection = () => {
                         name="selectedFile"
                         checked={selectedFile === file.id}
                         disabled={file.status !== "completed"}
-                        onChange={() => setSelectedFile(file.id)}
+                        onChange={() => handleFileSelect(file.id)}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
                       />
                     </TableCell>

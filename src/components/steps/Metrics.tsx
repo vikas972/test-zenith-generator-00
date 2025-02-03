@@ -17,7 +17,11 @@ const data = [
   { name: "Risk Items", total: 10, covered: 7 },
 ];
 
-export const Metrics = () => {
+interface MetricsProps {
+  selectedFile: { id: string; name: string; uploadTime: Date } | null;
+}
+
+export const Metrics = ({ selectedFile }: MetricsProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
@@ -27,6 +31,20 @@ export const Metrics = () => {
           Export Report
         </Button>
       </div>
+
+      {selectedFile && (
+        <div className="bg-gray-50 border-b mb-6">
+          <div className="container mx-auto px-4 py-3">
+            <div className="flex items-center gap-3 text-gray-600">
+              <span className="font-medium text-gray-900">{selectedFile.name}</span>
+              <span className="mx-2">•</span>
+              <span className="text-sm">
+                Uploaded on {selectedFile.uploadTime.toLocaleDateString()}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="grid md:grid-cols-2 gap-6">
         <div className="bg-white rounded-lg border border-gray-200 p-6">

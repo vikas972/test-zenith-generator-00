@@ -3,7 +3,11 @@ import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Code, AlertCircle } from "lucide-react";
 
-export const TestCases = () => {
+interface TestCasesProps {
+  selectedFile: { id: string; name: string; uploadTime: Date } | null;
+}
+
+export const TestCases = ({ selectedFile }: TestCasesProps) => {
   const [selectedTool] = useState("selenium");
 
   return (

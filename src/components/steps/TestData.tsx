@@ -2,7 +2,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Database, Table as TableIcon } from "lucide-react";
 
-export const TestData = () => {
+interface TestDataProps {
+  selectedFile: { id: string; name: string; uploadTime: Date } | null;
+}
+
+export const TestData = ({ selectedFile }: TestDataProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="flex justify-between items-center mb-6">
