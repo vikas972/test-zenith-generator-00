@@ -40,10 +40,19 @@ const Index = () => {
     }
   };
 
+  const handleNext = () => {
+    if (currentStep === 0 && !selectedFileInfo) return;
+    setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1));
+  };
+
+  const handlePrevious = () => {
+    setCurrentStep((prev) => Math.max(0, prev - 1));
+  };
+
   const renderStep = () => {
     switch (currentStep) {
       case 0:
-        return <SourceSelection onFileSelect={setSelectedFileInfo} />;
+        return <SourceSelection onFileSelect={setSelectedFileInfo} selectedFileInfo={selectedFileInfo} />;
       case 1:
         return <ScenarioGeneration selectedFile={selectedFileInfo} />;
       case 2:
@@ -82,13 +91,13 @@ const Index = () => {
         <div className="container mx-auto px-4 mt-8 flex justify-between">
           <Button
             variant="outline"
-            onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+            onClick={handlePrevious}
             disabled={currentStep === 0}
           >
             Previous
           </Button>
           <Button
-            onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
+            onClick={handleNext}
             disabled={currentStep === STEPS.length - 1 || (currentStep === 0 && !selectedFileInfo)}
           >
             Next

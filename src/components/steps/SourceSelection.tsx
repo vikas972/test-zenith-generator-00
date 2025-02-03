@@ -1,6 +1,6 @@
 import { FileText, Cloud, Database, Globe, Loader2, XCircle, CheckCircle, RefreshCw, Trash2 } from "lucide-react";
 import { SourceCard } from "../SourceCard";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Table,
   TableBody,
@@ -21,11 +21,12 @@ interface UploadedFile {
 
 interface SourceSelectionProps {
   onFileSelect: (fileInfo: { id: string; name: string; source: string } | null) => void;
+  selectedFileInfo: { id: string; name: string; source: string } | null;
 }
 
-export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
+export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<string | null>(selectedFileInfo?.id || null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
     {
       id: "1",
@@ -46,6 +47,14 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
       status: "failed",
     },
   ]);
+
+  useEffect(() => {
+    // Update selected file when selectedFileInfo changes
+    if (selectedFileInfo) {
+      setSelectedFile(selectedFileInfo.id);
+      setSelectedSource(selectedFileInfo.source);
+    }
+  }, [selectedFileInfo]);
 
   const sources = [
     {
@@ -104,14 +113,29 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   };
 
   const handleFileSelect = (fileId: string) => {
-    setSelectedFile(fileId);
     const file = uploadedFiles.find(f => f.id === fileId);
-    if (file && selectedSource) {
+    if (file && file.status === "completed" && selectedSource) {
+      setSelectedFile(fileId);
       onFileSelect({
         id: file.id,
         name: file.name,
         source: selectedSource
       });
+    }
+  };
+
+  const handleSourceSelect = (sourceId: string) => {
+    setSelectedSource(sourceId);
+    // If there's already a selected file, update the selection with the new source
+    if (selectedFile) {
+      const file = uploadedFiles.find(f => f.id === selectedFile);
+      if (file && file.status === "completed") {
+        onFileSelect({
+          id: file.id,
+          name: file.name,
+          source: sourceId
+        });
+      }
     }
   };
 
@@ -132,7 +156,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
               description={source.description}
               icon={source.icon}
               selected={selectedSource === source.id}
-              onClick={() => setSelectedSource(source.id)}
+              onClick={() => handleSourceSelect(source.id)}
             />
           ))}
         </div>
