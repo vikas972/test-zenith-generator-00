@@ -47,7 +47,15 @@ interface Scenario {
   confidenceScore: number;
 }
 
-export const ScenarioGeneration = () => {
+interface ScenarioGenerationProps {
+  selectedFile: {
+    id: string;
+    name: string;
+    source: string;
+  } | null;
+}
+
+export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
   const [requirements, setRequirements] = useState<Requirement[]>([
     {
       id: "1",
@@ -109,6 +117,17 @@ export const ScenarioGeneration = () => {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      {selectedFile && (
+        <div className="bg-white border-b border-gray-200 py-2 mb-4">
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span className="font-medium">Selected Source:</span>
+            <span className="text-primary">{selectedFile.source}</span>
+            <span className="text-gray-400">|</span>
+            <span className="font-medium">File:</span>
+            <span className="text-primary">{selectedFile.name}</span>
+          </div>
+        </div>
+      )}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Test Scenario Generation</h2>
         <Button>

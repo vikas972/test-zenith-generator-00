@@ -19,7 +19,11 @@ interface UploadedFile {
   status: "parsing" | "completed" | "failed";
 }
 
-export const SourceSelection = () => {
+interface SourceSelectionProps {
+  onFileSelect: (fileInfo: { id: string; name: string; source: string } | null) => void;
+}
+
+export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
@@ -83,6 +87,7 @@ export const SourceSelection = () => {
     setUploadedFiles(files => files.filter(file => file.id !== fileId));
     if (selectedFile === fileId) {
       setSelectedFile(null);
+      onFileSelect(null);
     }
     toast.success("File deleted successfully");
   };
@@ -95,6 +100,18 @@ export const SourceSelection = () => {
         return <CheckCircle className="h-4 w-4 text-green-500" />;
       case "failed":
         return <XCircle className="h-4 w-4 text-red-500" />;
+    }
+  };
+
+  const handleFileSelect = (fileId: string) => {
+    setSelectedFile(fileId);
+    const file = uploadedFiles.find(f => f.id === fileId);
+    if (file && selectedSource) {
+      onFileSelect({
+        id: file.id,
+        name: file.name,
+        source: selectedSource
+      });
     }
   };
 
@@ -147,7 +164,7 @@ export const SourceSelection = () => {
                         name="selectedFile"
                         checked={selectedFile === file.id}
                         disabled={file.status !== "completed"}
-                        onChange={() => setSelectedFile(file.id)}
+                        onChange={() => handleFileSelect(file.id)}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
                       />
                     </TableCell>
