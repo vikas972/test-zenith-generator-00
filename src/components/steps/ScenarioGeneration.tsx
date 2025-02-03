@@ -24,6 +24,8 @@ import {
   Plus,
   CheckCircle,
   XCircle,
+  Database,
+  Calendar,
 } from "lucide-react";
 
 interface Requirement {
@@ -114,21 +116,31 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   return (
     <div className="container mx-auto px-4 py-8">
       {selectedFile && (
-        <div className="bg-gray-50 border-b mb-6">
-          <div className="container mx-auto px-4 py-3">
-            <div className="flex items-center gap-3 text-gray-600">
-              <FileText className="h-5 w-5 text-primary" />
-              <div>
+        <div className="bg-white border-b shadow-sm mb-6">
+          <div className="container mx-auto px-6 py-4">
+            <div className="flex items-center gap-4">
+              <div className="flex items-center gap-2 text-primary">
+                <FileText className="h-5 w-5" />
+                <span className="font-medium">Source File:</span>
+              </div>
+              <div className="flex items-center gap-4 text-gray-600">
                 <span className="font-medium text-gray-900">{selectedFile.name}</span>
-                <span className="mx-2">•</span>
-                <span className="text-sm">
-                  Uploaded on {selectedFile.uploadTime.toLocaleDateString()}
-                </span>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Calendar className="h-4 w-4" />
+                  <span className="text-sm">
+                    Uploaded on {selectedFile.uploadTime.toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 text-gray-500">
+                  <Database className="h-4 w-4" />
+                  <span className="text-sm">ID: {selectedFile.id}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       )}
+      
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-semibold">Test Scenario Generation</h2>
         <Button>
