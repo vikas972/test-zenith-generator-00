@@ -5,6 +5,7 @@ import {
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogFooter,
 } from "@/components/ui/dialog";
 import {
   Table,
@@ -15,6 +16,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Input } from "@/components/ui/input";
+import { useToast } from "@/components/ui/use-toast";
 import {
   FileText,
   AlertCircle,
@@ -26,6 +30,8 @@ import {
   XCircle,
   Database,
   Calendar,
+  RefreshCw,
+  Save,
 } from "lucide-react";
 
 interface Requirement {
@@ -54,6 +60,7 @@ interface ScenarioGenerationProps {
 }
 
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
+  const { toast } = useToast();
   const [requirements, setRequirements] = useState<Requirement[]>([
     {
       id: "1",
@@ -100,6 +107,58 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
   const [selectedScenario, setSelectedScenario] = useState<Scenario | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [currentTab, setCurrentTab] = useState("requirements");
+  const [editingRequirement, setEditingRequirement] = useState<Requirement | null>(null);
+  const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
+
+  const handleEditRequirement = (requirement: Requirement) => {
+    setEditingRequirement(requirement);
+  };
+
+  const handleSaveRequirement = () => {
+    if (editingRequirement) {
+      setRequirements(requirements.map(req => 
+        req.id === editingRequirement.id ? editingRequirement : req
+      ));
+      setEditingRequirement(null);
+      toast({
+        title: "Requirement Updated",
+        description: "The requirement has been successfully updated.",
+      });
+    }
+  };
+
+  const handleRerunForRequirement = (requirementId: string) => {
+    toast({
+      title: "Regenerating Scenarios",
+      description: `Regenerating scenarios for requirement ${requirementId}...`,
+    });
+    // Add actual regeneration logic here
+  };
+
+  const handleRerunSelected = () => {
+    if (selectedRequirements.length === 0) {
+      toast({
+        title: "No Requirements Selected",
+        description: "Please select at least one requirement to regenerate scenarios.",
+        variant: "destructive",
+      });
+      return;
+    }
+    toast({
+      title: "Regenerating Scenarios",
+      description: `Regenerating scenarios for ${selectedRequirements.length} requirements...`,
+    });
+    // Add actual regeneration logic here
+  };
+
+  const handleRerunAll = () => {
+    toast({
+      title: "Regenerating All Scenarios",
+      description: "Regenerating scenarios for all requirements...",
+    });
+    // Add actual regeneration logic here
+  };
 
   const getCoverageColor = (coverage: number) => {
     if (coverage >= 90) return "text-green-600";
@@ -141,33 +200,57 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         </div>
       )}
       
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-semibold">Test Scenario Generation</h2>
-        <Button>
-          Generate More
-          <ChevronRight className="ml-2 h-4 w-4" />
-        </Button>
-      </div>
+      {currentTab === "scenarios" && (
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-semibold">Test Scenario Generation</h2>
+          <Button onClick={handleRerunAll}>
+            Generate More
+            <ChevronRight className="ml-2 h-4 w-4" />
+          </Button>
+        </div>
+      )}
 
-      <Tabs defaultValue="requirements" className="w-full">
+      <Tabs defaultValue="requirements" className="w-full" onValueChange={setCurrentTab}>
         <TabsList className="mb-6">
-          <TabsTrigger value="requirements">View Captured Requirements</TabsTrigger>
-          <TabsTrigger value="scenarios">Generate Test Scenarios</TabsTrigger>
+          <TabsTrigger value="requirements">Captured Requirements</TabsTrigger>
+          <TabsTrigger value="scenarios">Test Scenarios Generated</TabsTrigger>
         </TabsList>
 
         <TabsContent value="requirements" className="space-y-4">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-medium">Parsed Requirements</h3>
-            <Button size="sm">
-              <Plus className="h-4 w-4 mr-2" />
-              Add Requirement
-            </Button>
+            <div className="flex gap-2">
+              {selectedRequirements.length > 0 && (
+                <Button 
+                  variant="outline"
+                  onClick={handleRerunSelected}
+                  className="flex items-center gap-2"
+                >
+                  <RefreshCw className="h-4 w-4" />
+                  Regenerate Selected ({selectedRequirements.length})
+                </Button>
+              )}
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Requirement
+              </Button>
+            </div>
           </div>
 
           <div className="bg-white rounded-lg border shadow-sm overflow-hidden">
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead className="w-[50px]">
+                    <Checkbox
+                      checked={selectedRequirements.length === requirements.length}
+                      onCheckedChange={(checked) => {
+                        setSelectedRequirements(
+                          checked ? requirements.map(req => req.id) : []
+                        );
+                      }}
+                    />
+                  </TableHead>
                   <TableHead>Requirement ID</TableHead>
                   <TableHead>Functional Area</TableHead>
                   <TableHead>Actors</TableHead>
@@ -179,20 +262,124 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               <TableBody>
                 {requirements.map((req) => (
                   <TableRow key={req.id}>
-                    <TableCell className="font-medium">{req.requirementId}</TableCell>
-                    <TableCell>{req.functionalArea}</TableCell>
-                    <TableCell>{req.actors}</TableCell>
-                    <TableCell>{req.flows}</TableCell>
-                    <TableCell>{req.businessRules}</TableCell>
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedRequirements.includes(req.id)}
+                        onCheckedChange={(checked) => {
+                          setSelectedRequirements(
+                            checked
+                              ? [...selectedRequirements, req.id]
+                              : selectedRequirements.filter(id => id !== req.id)
+                          );
+                        }}
+                      />
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {editingRequirement?.id === req.id ? (
+                        <Input
+                          value={editingRequirement.requirementId}
+                          onChange={(e) =>
+                            setEditingRequirement({
+                              ...editingRequirement,
+                              requirementId: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        req.requirementId
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingRequirement?.id === req.id ? (
+                        <Input
+                          value={editingRequirement.functionalArea}
+                          onChange={(e) =>
+                            setEditingRequirement({
+                              ...editingRequirement,
+                              functionalArea: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        req.functionalArea
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingRequirement?.id === req.id ? (
+                        <Input
+                          value={editingRequirement.actors}
+                          onChange={(e) =>
+                            setEditingRequirement({
+                              ...editingRequirement,
+                              actors: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        req.actors
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingRequirement?.id === req.id ? (
+                        <Input
+                          value={editingRequirement.flows}
+                          onChange={(e) =>
+                            setEditingRequirement({
+                              ...editingRequirement,
+                              flows: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        req.flows
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {editingRequirement?.id === req.id ? (
+                        <Input
+                          value={editingRequirement.businessRules}
+                          onChange={(e) =>
+                            setEditingRequirement({
+                              ...editingRequirement,
+                              businessRules: e.target.value,
+                            })
+                          }
+                        />
+                      ) : (
+                        req.businessRules
+                      )}
+                    </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
+                        {editingRequirement?.id === req.id ? (
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={handleSaveRequirement}
+                            className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                          >
+                            <Save className="h-4 w-4" />
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleEditRequirement(req)}
+                              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleRerunForRequirement(req.id)}
+                              className="text-primary hover:text-primary-hover hover:bg-primary/10"
+                            >
+                              <RefreshCw className="h-4 w-4" />
+                            </Button>
+                          </>
+                        )}
                         <Button
                           variant="ghost"
                           size="sm"
