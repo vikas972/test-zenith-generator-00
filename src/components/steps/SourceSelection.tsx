@@ -181,14 +181,18 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
               </TableHeader>
               <TableBody>
                 {uploadedFiles.map((file) => (
-                  <TableRow key={file.id}>
+                  <TableRow 
+                    key={file.id}
+                    className={file.status === "completed" ? "cursor-pointer hover:bg-gray-50" : ""}
+                    onClick={() => file.status === "completed" && handleFileSelect(file.id)}
+                  >
                     <TableCell>
                       <input
                         type="radio"
                         name="selectedFile"
                         checked={selectedFile === file.id}
-                        disabled={file.status !== "completed"}
                         onChange={() => handleFileSelect(file.id)}
+                        disabled={file.status !== "completed" || !selectedSource}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
                       />
                     </TableCell>
@@ -210,7 +214,10 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => handleRetry(file.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRetry(file.id);
+                            }}
                             className="text-yellow-600 hover:text-yellow-700 hover:bg-yellow-50"
                           >
                             <RefreshCw className="h-4 w-4" />
@@ -219,7 +226,10 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={() => handleDelete(file.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(file.id);
+                          }}
                           className="text-red-600 hover:text-red-700 hover:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
