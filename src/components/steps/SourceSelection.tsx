@@ -25,7 +25,7 @@ interface SourceSelectionProps {
 }
 
 export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelectionProps) => {
-  const [selectedSource, setSelectedSource] = useState<string | null>(null);
+  const [selectedSource, setSelectedSource] = useState<string | null>(selectedFileInfo?.source || null);
   const [selectedFile, setSelectedFile] = useState<string | null>(selectedFileInfo?.id || null);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
     {
@@ -49,7 +49,6 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
   ]);
 
   useEffect(() => {
-    // Update selected file when selectedFileInfo changes
     if (selectedFileInfo) {
       setSelectedFile(selectedFileInfo.id);
       setSelectedSource(selectedFileInfo.source);
@@ -126,17 +125,8 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
 
   const handleSourceSelect = (sourceId: string) => {
     setSelectedSource(sourceId);
-    // If there's already a selected file, update the selection with the new source
-    if (selectedFile) {
-      const file = uploadedFiles.find(f => f.id === selectedFile);
-      if (file && file.status === "completed") {
-        onFileSelect({
-          id: file.id,
-          name: file.name,
-          source: sourceId
-        });
-      }
-    }
+    setSelectedFile(null);
+    onFileSelect(null);
   };
 
   return (
@@ -184,7 +174,7 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                   <TableRow 
                     key={file.id}
                     className={file.status === "completed" ? "cursor-pointer hover:bg-gray-50" : ""}
-                    onClick={() => file.status === "completed" && handleFileSelect(file.id)}
+                    onClick={() => file.status === "completed" && selectedSource && handleFileSelect(file.id)}
                   >
                     <TableCell>
                       <input
