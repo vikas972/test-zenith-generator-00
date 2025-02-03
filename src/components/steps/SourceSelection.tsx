@@ -189,6 +189,7 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                         onChange={() => handleFileSelect(file.id)}
                         disabled={file.status !== "completed" || !selectedSource}
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
+                        onClick={(e) => e.stopPropagation()}
                       />
                     </TableCell>
                     <TableCell className="font-medium">{file.name}</TableCell>
