@@ -174,8 +174,13 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                   <TableRow 
                     key={file.id}
                     className={file.status === "completed" && selectedSource ? "cursor-pointer hover:bg-gray-50" : ""}
+                    onClick={() => {
+                      if (file.status === "completed" && selectedSource) {
+                        handleFileSelect(file.id);
+                      }
+                    }}
                   >
-                    <TableCell onClick={(e) => e.stopPropagation()}>
+                    <TableCell>
                       <input
                         type="radio"
                         name="selectedFile"
@@ -185,10 +190,7 @@ export const SourceSelection = ({ onFileSelect, selectedFileInfo }: SourceSelect
                         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
                       />
                     </TableCell>
-                    <TableCell 
-                      className="font-medium"
-                      onClick={() => handleFileSelect(file.id)}
-                    >
+                    <TableCell className="font-medium">
                       {file.name}
                     </TableCell>
                     <TableCell>{file.uploadTime.toLocaleString()}</TableCell>
