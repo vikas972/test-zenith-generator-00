@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -96,7 +95,19 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
   const [selectedDetailedRequirement, setSelectedDetailedRequirement] = useState<Requirement | null>(null);
+  const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+  const [newRequirement, setNewRequirement] = useState<Partial<Requirement>>({
+    functionalArea: "",
+    actors: "",
+    flows: [""],
+    businessRules: [""],
+    validations: [""],
+    dataElements: [],
+    status: "in_progress"
+  });
+
   const [requirements, setRequirements] = useState<Requirement[]>([
     {
       id: "1",
@@ -205,7 +216,14 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     Generate comprehensive reports for system activities and user transactions.
   `);
 
-  const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
+  const handleCreateRequirement = () => {
+    toast({
+      title: "Requirement Created",
+      description: "New requirement has been successfully created.",
+    });
+    setIsCreateDialogOpen(false);
+    // Here you would typically add the new requirement to your requirements array
+  };
 
   const handleEditRequirement = (requirement: Requirement) => {
     setEditingRequirement(requirement);
@@ -290,9 +308,11 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           "mb-2 hover:border-primary cursor-pointer transition-colors",
           expandedRequirement === req.id && "border-primary"
         )}
-        onClick={() => handleRequirementClick(req)}
       >
-        <CardHeader className="py-3">
+        <CardHeader 
+          className="py-3"
+          onClick={() => handleRequirementClick(req)}
+        >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
@@ -328,8 +348,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
         {expandedRequirement === req.id && (
           <CardContent>
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="flows">
+            <Accordion type="single" collapsible>
+              <AccordionItem value="flows" onClick={(e) => e.stopPropagation()}>
                 <AccordionTrigger className="text-sm font-medium">
                   <Activity className="h-4 w-4 mr-2" />
                   Functional Flows
@@ -348,7 +368,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="rules">
+              <AccordionItem value="rules" onClick={(e) => e.stopPropagation()}>
                 <AccordionTrigger className="text-sm font-medium">
                   <Shield className="h-4 w-4 mr-2" />
                   Business Rules
@@ -362,7 +382,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 </AccordionContent>
               </AccordionItem>
 
-              <AccordionItem value="validations">
+              <AccordionItem value="validations" onClick={(e) => e.stopPropagation()}>
                 <AccordionTrigger className="text-sm font-medium">
                   <List className="h-4 w-4 mr-2" />
                   Validations & Data Elements
@@ -427,7 +447,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleEditRequirement(req)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleEditRequirement(req);
+                }}
                 className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
               >
                 <Edit className="h-4 w-4 mr-1" />
@@ -436,7 +459,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => handleRerunForRequirement(req.id)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleRerunForRequirement(req.id);
+                }}
                 className="text-primary hover:text-primary-hover hover:bg-primary/10"
               >
                 <RefreshCw className="h-4 w-4 mr-1" />
@@ -445,7 +471,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => setIsHistoryOpen(true)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setIsHistoryOpen(true);
+                }}
                 className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
               >
                 <History className="h-4 w-4 mr-1" />
@@ -661,6 +690,14 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   </p>
                 </div>
                 <div className="flex gap-2">
+                  <Button
+                    variant="outline"
+                    onClick={() => setIsCreateDialogOpen(true)}
+                    className="flex items-center gap-2"
+                  >
+                    <Plus className="h-4 w-4" />
+                    Add Requirement
+                  </Button>
                   {selectedRequirements.length > 0 && (
                     <Button
                       variant="outline"
@@ -802,6 +839,37 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           )}
         </TabsContent>
       </Tabs>
+
+      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create New Requirement</DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="functionalArea" className="text-sm font-medium">Functional Area</label>
+              <Input
+                id="functionalArea"
+                value={newRequirement.functionalArea}
+                onChange={(e) => setNewRequirement({ ...newRequirement, functionalArea: e.target.value })}
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="actors" className="text-sm font-medium">Actors</label>
+              <Input
+                id="actors"
+                value={newRequirement.actors}
+                onChange={(e) => setNewRequirement({ ...newRequirement, actors: e.target.value })}
+              />
+            </div>
+            {/* Add more form fields for flows, business rules, validations, etc. */}
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsCreateDialogOpen(false)}>Cancel</Button>
+            <Button onClick={handleCreateRequirement}>Create Requirement</Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {renderDetailedRequirementDialog()}
     </div>
