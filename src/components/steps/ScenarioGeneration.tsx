@@ -237,7 +237,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       setEditingRequirement(null);
       toast({
         title: "Requirement Updated",
-        description: "The requirement has been successfully updated and will be used to improve our parsing model.",
+        description: "The requirement has been successfully updated.",
       });
     }
   };
