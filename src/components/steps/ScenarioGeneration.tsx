@@ -61,6 +61,13 @@ interface Requirement {
   status: "complete" | "needs_review" | "in_progress" | "rejected";
   missingInfo?: string[];
   dependencies?: string[];
+  source: {
+    paragraph: number;
+    page: number;
+    text: string;
+    startIndex: number;
+    endIndex: number;
+  };
 }
 
 interface Scenario {
@@ -113,7 +120,14 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       ],
       status: "complete",
       missingInfo: ["Password reset process details"],
-      dependencies: ["REQ-005"]
+      dependencies: ["REQ-005"],
+      source: {
+        paragraph: 2,
+        page: 1,
+        text: "The system shall provide secure user authentication mechanisms including password validation and account lockout policies.",
+        startIndex: 50,
+        endIndex: 150
+      }
     },
     {
       id: "2",
@@ -137,7 +151,14 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         { name: "Username", type: "string", required: true },
         { name: "Role", type: "enum", required: true }
       ],
-      status: "needs_review"
+      status: "needs_review",
+      source: {
+        paragraph: 3,
+        page: 1,
+        text: "Administrators shall be able to create, modify, and delete user accounts with appropriate access controls.",
+        startIndex: 151,
+        endIndex: 250
+      }
     }
   ]);
 
@@ -181,6 +202,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     REQ-004: Reporting
     Generate comprehensive reports for system activities and user transactions.
   `);
+
+  const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
 
   const handleEditRequirement = (requirement: Requirement) => {
     setEditingRequirement(requirement);
@@ -243,33 +266,208 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     }
   };
 
+  const getStatusDescription = (status: string) => {
+    switch (status) {
+      case "complete":
+        return "All required information is present and validated";
+      case "needs_review":
+        return "Some information needs verification or clarification";
+      case "in_progress":
+        return "Currently being analyzed and parsed";
+      case "rejected":
+        return "Information is incorrect or conflicts with other requirements";
+      default:
+        return "";
+    }
+  };
+
   const renderRequirementList = (req: Requirement) => (
-    <Card 
-      key={req.id} 
-      className="mb-2 hover:border-primary cursor-pointer transition-colors"
-      onClick={() => setSelectedDetailedRequirement(req)}
-    >
-      <CardHeader className="py-3">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4 text-primary" />
-            <div className="flex flex-col">
-              <CardTitle className="text-sm">
-                {req.requirementId}: {req.functionalArea}
-              </CardTitle>
-              <CardDescription className="text-xs">
-                Actor: {req.actors}
-              </CardDescription>
+    <div key={req.id}>
+      <Card 
+        className={cn(
+          "mb-2 hover:border-primary cursor-pointer transition-colors",
+          expandedRequirement === req.id && "border-primary"
+        )}
+        onClick={() => handleRequirementClick(req)}
+      >
+        <CardHeader className="py-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <BookOpen className="h-4 w-4 text-primary" />
+              <div className="flex flex-col">
+                <CardTitle className="text-sm">
+                  {req.requirementId}: {req.functionalArea}
+                </CardTitle>
+                <CardDescription className="text-xs">
+                  Actor: {req.actors}
+                </CardDescription>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1">
+                <MapPin className="h-4 w-4 text-gray-500" />
+                <span className="text-xs text-gray-500">
+                  Page {req.source.page}, ¶{req.source.paragraph}
+                </span>
+              </div>
+              {getStatusIcon(req.status)}
+              <Badge
+                variant="outline"
+                className="text-xs group relative"
+              >
+                {req.status.replace('_', ' ')}
+                <span className="invisible group-hover:visible absolute -top-8 left-0 bg-black text-white text-xs p-1 rounded whitespace-nowrap">
+                  {getStatusDescription(req.status)}
+                </span>
+              </Badge>
             </div>
           </div>
-          <div className="flex items-center gap-2">
-            {getStatusIcon(req.status)}
-            <Badge variant="outline" className="text-xs">{req.status.replace('_', ' ')}</Badge>
-          </div>
-        </div>
-      </CardHeader>
-    </Card>
+        </CardHeader>
+
+        {expandedRequirement === req.id && (
+          <CardContent>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="flows">
+                <AccordionTrigger className="text-sm font-medium">
+                  <Activity className="h-4 w-4 mr-2" />
+                  Functional Flows
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="ml-6 space-y-2">
+                    {req.flows.map((flow, index) => (
+                      <li key={index} className="text-sm flex items-center gap-2">
+                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
+                          {index + 1}
+                        </div>
+                        {flow}
+                      </li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="rules">
+                <AccordionTrigger className="text-sm font-medium">
+                  <Shield className="h-4 w-4 mr-2" />
+                  Business Rules
+                </AccordionTrigger>
+                <AccordionContent>
+                  <ul className="ml-6 list-disc space-y-1">
+                    {req.businessRules.map((rule, index) => (
+                      <li key={index} className="text-sm">{rule}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="validations">
+                <AccordionTrigger className="text-sm font-medium">
+                  <List className="h-4 w-4 mr-2" />
+                  Validations & Data Elements
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="font-medium mb-2 text-sm">Validations</h4>
+                      <ul className="ml-6 list-disc space-y-1">
+                        {req.validations.map((validation, index) => (
+                          <li key={index} className="text-sm">{validation}</li>
+                        ))}
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 className="font-medium mb-2 text-sm">Data Elements</h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        {req.dataElements.map((element, index) => (
+                          <div key={index} className="text-sm bg-gray-50 p-2 rounded">
+                            <span className="font-medium">{element.name}</span>
+                            <div className="text-xs text-gray-500">
+                              Type: {element.type}
+                              {element.required && " • Required"}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
+
+            {req.missingInfo && req.missingInfo.length > 0 && (
+              <div className="mt-4 p-3 bg-yellow-50 rounded-md">
+                <div className="flex items-center gap-2 text-yellow-800 font-medium text-sm mb-2">
+                  <AlertCircle className="h-4 w-4" />
+                  Missing Information
+                </div>
+                <ul className="space-y-2">
+                  {req.missingInfo.map((info, index) => (
+                    <li key={index} className="text-sm text-yellow-800">
+                      {info}
+                      <div className="mt-1">
+                        <Button variant="outline" size="sm" className="mr-2">
+                          Accept Suggestion
+                        </Button>
+                        <Button variant="outline" size="sm" className="mr-2">
+                          Modify
+                        </Button>
+                        <Button variant="outline" size="sm">
+                          Reject
+                        </Button>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            <div className="mt-4 flex justify-end gap-2">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleEditRequirement(req)}
+                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+              >
+                <Edit className="h-4 w-4 mr-1" />
+                Edit
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleRerunForRequirement(req.id)}
+                className="text-primary hover:text-primary-hover hover:bg-primary/10"
+              >
+                <RefreshCw className="h-4 w-4 mr-1" />
+                Regenerate
+              </Button>
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => setIsHistoryOpen(true)}
+                className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+              >
+                <History className="h-4 w-4 mr-1" />
+                History
+              </Button>
+            </div>
+          </CardContent>
+        )}
+      </Card>
+    </div>
   );
+
+  const handleRequirementClick = (req: Requirement) => {
+    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
+    // Highlight source text
+    const sourceElement = document.getElementById('source-content');
+    if (sourceElement) {
+      const text = sourceElement.innerHTML;
+      const highlightedText = text.slice(0, req.source.startIndex) +
+        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
+        text.slice(req.source.endIndex);
+      sourceElement.innerHTML = highlightedText;
+    }
+  };
 
   const renderDetailedRequirementDialog = () => (
     <Dialog open={!!selectedDetailedRequirement} onOpenChange={() => setSelectedDetailedRequirement(null)}>
@@ -514,7 +712,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                     </CardDescription>
                   </CardHeader>
                   <CardContent>
-                    <div className="bg-gray-50 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap">
+                    <div id="source-content" className="bg-gray-50 rounded-lg p-4 font-mono text-sm whitespace-pre-wrap">
                       {sourceContent}
                     </div>
                   </CardContent>
