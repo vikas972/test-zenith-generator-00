@@ -88,6 +88,84 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const [selectedDetailedRequirement, setSelectedDetailedRequirement] = useState<Requirement | null>(null);
+  const [requirements, setRequirements] = useState<Requirement[]>([
+    {
+      id: "1",
+      requirementId: "REQ-001",
+      functionalArea: "User Authentication",
+      actors: "End User",
+      flows: [
+        "User provides credentials",
+        "System validates credentials",
+        "System grants access"
+      ],
+      businessRules: [
+        "Password must be at least 8 characters",
+        "Account locks after 3 failed attempts"
+      ],
+      validations: [
+        "Email format validation",
+        "Password complexity check"
+      ],
+      dataElements: [
+        { name: "Email", type: "string", required: true },
+        { name: "Password", type: "string", required: true }
+      ],
+      status: "complete",
+      missingInfo: ["Password reset process details"],
+      dependencies: ["REQ-005"]
+    },
+    {
+      id: "2",
+      requirementId: "REQ-002",
+      functionalArea: "User Management",
+      actors: "Administrator",
+      flows: [
+        "Admin accesses user management",
+        "System displays user list",
+        "Admin performs user operations"
+      ],
+      businessRules: [
+        "Only admins can manage users",
+        "User deletion requires confirmation"
+      ],
+      validations: [
+        "Admin role verification",
+        "User data validation"
+      ],
+      dataElements: [
+        { name: "Username", type: "string", required: true },
+        { name: "Role", type: "enum", required: true }
+      ],
+      status: "needs_review"
+    }
+  ]);
+
+  const [scenarios, setScenarios] = useState<Scenario[]>([
+    {
+      id: "1",
+      name: "Basic User Authentication Flow",
+      description: "Verify user login with valid credentials",
+      coverage: 85,
+      requirements: ["REQ-001"],
+      details: "Test basic user authentication flow",
+      status: "Ready",
+      conditions: ["Valid credentials", "Active user account"],
+      confidenceScore: 0.9
+    },
+    {
+      id: "2",
+      name: "Failed Login Attempts",
+      description: "Verify account lockout after multiple failed attempts",
+      coverage: 90,
+      requirements: ["REQ-001"],
+      details: "Test account lockout functionality",
+      status: "Ready",
+      conditions: ["Invalid credentials", "Multiple attempts"],
+      confidenceScore: 0.85
+    }
+  ]);
+
   const [sourceContent, setSourceContent] = useState<string>(`
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     
