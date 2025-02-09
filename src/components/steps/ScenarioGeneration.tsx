@@ -317,12 +317,41 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             <div className="flex items-center gap-2">
               <BookOpen className="h-4 w-4 text-primary" />
               <div className="flex flex-col">
-                <CardTitle className="text-sm">
-                  {req.requirementId}: {req.functionalArea}
-                </CardTitle>
-                <CardDescription className="text-xs">
-                  Actor: {req.actors}
-                </CardDescription>
+                {editingRequirement?.id === req.id ? (
+                  <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                    <Input
+                      value={editingRequirement.functionalArea}
+                      onChange={(e) =>
+                        setEditingRequirement({
+                          ...editingRequirement,
+                          functionalArea: e.target.value,
+                        })
+                      }
+                      placeholder="Functional Area"
+                      className="text-sm"
+                    />
+                    <Input
+                      value={editingRequirement.actors}
+                      onChange={(e) =>
+                        setEditingRequirement({
+                          ...editingRequirement,
+                          actors: e.target.value,
+                        })
+                      }
+                      placeholder="Actors"
+                      className="text-xs"
+                    />
+                  </div>
+                ) : (
+                  <>
+                    <CardTitle className="text-sm">
+                      {req.requirementId}: {req.functionalArea}
+                    </CardTitle>
+                    <CardDescription className="text-xs">
+                      Actor: {req.actors}
+                    </CardDescription>
+                  </>
+                )}
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -355,16 +384,66 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   Functional Flows
                 </AccordionTrigger>
                 <AccordionContent>
-                  <ul className="ml-6 space-y-2">
-                    {req.flows.map((flow, index) => (
-                      <li key={index} className="text-sm flex items-center gap-2">
-                        <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
-                          {index + 1}
+                  {editingRequirement?.id === req.id ? (
+                    <div className="space-y-2">
+                      {editingRequirement.flows.map((flow, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
+                            {index + 1}
+                          </div>
+                          <Input
+                            value={flow}
+                            onChange={(e) => {
+                              const newFlows = [...editingRequirement.flows];
+                              newFlows[index] = e.target.value;
+                              setEditingRequirement({
+                                ...editingRequirement,
+                                flows: newFlows,
+                              });
+                            }}
+                            className="flex-1"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const newFlows = editingRequirement.flows.filter((_, i) => i !== index);
+                              setEditingRequirement({
+                                ...editingRequirement,
+                                flows: newFlows,
+                              });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
                         </div>
-                        {flow}
-                      </li>
-                    ))}
-                  </ul>
+                      ))}
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setEditingRequirement({
+                            ...editingRequirement,
+                            flows: [...editingRequirement.flows, ""],
+                          });
+                        }}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Flow
+                      </Button>
+                    </div>
+                  ) : (
+                    <ul className="ml-6 space-y-2">
+                      {req.flows.map((flow, index) => (
+                        <li key={index} className="text-sm flex items-center gap-2">
+                          <div className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xs">
+                            {index + 1}
+                          </div>
+                          {flow}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </AccordionContent>
               </AccordionItem>
 
@@ -374,11 +453,58 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   Business Rules
                 </AccordionTrigger>
                 <AccordionContent>
-                  <ul className="ml-6 list-disc space-y-1">
-                    {req.businessRules.map((rule, index) => (
-                      <li key={index} className="text-sm">{rule}</li>
-                    ))}
-                  </ul>
+                  {editingRequirement?.id === req.id ? (
+                    <div className="space-y-2">
+                      {editingRequirement.businessRules.map((rule, index) => (
+                        <div key={index} className="flex items-center gap-2">
+                          <Input
+                            value={rule}
+                            onChange={(e) => {
+                              const newRules = [...editingRequirement.businessRules];
+                              newRules[index] = e.target.value;
+                              setEditingRequirement({
+                                ...editingRequirement,
+                                businessRules: newRules,
+                              });
+                            }}
+                            className="flex-1"
+                          />
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              const newRules = editingRequirement.businessRules.filter((_, i) => i !== index);
+                              setEditingRequirement({
+                                ...editingRequirement,
+                                businessRules: newRules,
+                              });
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ))}
+                      <Button
+                        variant="outline"
+                        onClick={() => {
+                          setEditingRequirement({
+                            ...editingRequirement,
+                            businessRules: [...editingRequirement.businessRules, ""],
+                          });
+                        }}
+                        className="w-full"
+                      >
+                        <Plus className="h-4 w-4 mr-2" />
+                        Add Business Rule
+                      </Button>
+                    </div>
+                  ) : (
+                    <ul className="ml-6 list-disc space-y-1">
+                      {req.businessRules.map((rule, index) => (
+                        <li key={index} className="text-sm">{rule}</li>
+                      ))}
+                    </ul>
+                  )}
                 </AccordionContent>
               </AccordionItem>
 
@@ -389,28 +515,146 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4">
-                    <div>
-                      <h4 className="font-medium mb-2 text-sm">Validations</h4>
-                      <ul className="ml-6 list-disc space-y-1">
-                        {req.validations.map((validation, index) => (
-                          <li key={index} className="text-sm">{validation}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <h4 className="font-medium mb-2 text-sm">Data Elements</h4>
-                      <div className="grid grid-cols-2 gap-2">
-                        {req.dataElements.map((element, index) => (
-                          <div key={index} className="text-sm bg-gray-50 p-2 rounded">
-                            <span className="font-medium">{element.name}</span>
-                            <div className="text-xs text-gray-500">
-                              Type: {element.type}
-                              {element.required && " • Required"}
-                            </div>
+                    {editingRequirement?.id === req.id ? (
+                      <>
+                        <div>
+                          <h4 className="font-medium mb-2 text-sm">Validations</h4>
+                          <div className="space-y-2">
+                            {editingRequirement.validations.map((validation, index) => (
+                              <div key={index} className="flex items-center gap-2">
+                                <Input
+                                  value={validation}
+                                  onChange={(e) => {
+                                    const newValidations = [...editingRequirement.validations];
+                                    newValidations[index] = e.target.value;
+                                    setEditingRequirement({
+                                      ...editingRequirement,
+                                      validations: newValidations,
+                                    });
+                                  }}
+                                  className="flex-1"
+                                />
+                                <Button
+                                  variant="ghost"
+                                  size="icon"
+                                  onClick={() => {
+                                    const newValidations = editingRequirement.validations.filter((_, i) => i !== index);
+                                    setEditingRequirement({
+                                      ...editingRequirement,
+                                      validations: newValidations,
+                                    });
+                                  }}
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            ))}
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setEditingRequirement({
+                                  ...editingRequirement,
+                                  validations: [...editingRequirement.validations, ""],
+                                });
+                              }}
+                              className="w-full"
+                            >
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Validation
+                            </Button>
                           </div>
-                        ))}
-                      </div>
-                    </div>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2 text-sm">Data Elements</h4>
+                          <div className="space-y-2">
+                            {editingRequirement.dataElements.map((element, index) => (
+                              <div key={index} className="grid grid-cols-3 gap-2">
+                                <Input
+                                  placeholder="Name"
+                                  value={element.name}
+                                  onChange={(e) => {
+                                    const newElements = [...editingRequirement.dataElements];
+                                    newElements[index] = { ...element, name: e.target.value };
+                                    setEditingRequirement({
+                                      ...editingRequirement,
+                                      dataElements: newElements,
+                                    });
+                                  }}
+                                />
+                                <Input
+                                  placeholder="Type"
+                                  value={element.type}
+                                  onChange={(e) => {
+                                    const newElements = [...editingRequirement.dataElements];
+                                    newElements[index] = { ...element, type: e.target.value };
+                                    setEditingRequirement({
+                                      ...editingRequirement,
+                                      dataElements: newElements,
+                                    });
+                                  }}
+                                />
+                                <div className="flex items-center gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => {
+                                      const newElements = editingRequirement.dataElements.filter((_, i) => i !== index);
+                                      setEditingRequirement({
+                                        ...editingRequirement,
+                                        dataElements: newElements,
+                                      });
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </div>
+                            ))}
+                            <Button
+                              variant="outline"
+                              onClick={() => {
+                                setEditingRequirement({
+                                  ...editingRequirement,
+                                  dataElements: [
+                                    ...editingRequirement.dataElements,
+                                    { name: "", type: "", required: false },
+                                  ],
+                                });
+                              }}
+                              className="w-full"
+                            >
+                              <Plus className="h-4 w-4 mr-2" />
+                              Add Data Element
+                            </Button>
+                          </div>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div>
+                          <h4 className="font-medium mb-2 text-sm">Validations</h4>
+                          <ul className="ml-6 list-disc space-y-1">
+                            {req.validations.map((validation, index) => (
+                              <li key={index} className="text-sm">{validation}</li>
+                            ))}
+                          </ul>
+                        </div>
+                        <div>
+                          <h4 className="font-medium mb-2 text-sm">Data Elements</h4>
+                          <div className="grid grid-cols-2 gap-2">
+                            {req.dataElements.map((element, index) => (
+                              <div key={index} className="text-sm bg-gray-50 p-2 rounded">
+                                <span className="font-medium">{element.name}</span>
+                                <div className="text-xs text-gray-500">
+                                  Type: {element.type}
+                                  {element.required && " • Required"}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      </>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
@@ -444,42 +688,69 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             )}
 
             <div className="mt-4 flex justify-end gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleEditRequirement(req);
-                }}
-                className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-              >
-                <Edit className="h-4 w-4 mr-1" />
-                Edit
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  handleRerunForRequirement(req.id);
-                }}
-                className="text-primary hover:text-primary-hover hover:bg-primary/10"
-              >
-                <RefreshCw className="h-4 w-4 mr-1" />
-                Regenerate
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  setIsHistoryOpen(true);
-                }}
-                className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-              >
-                <History className="h-4 w-4 mr-1" />
-                History
-              </Button>
+              {editingRequirement?.id === req.id ? (
+                <>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setEditingRequirement(null);
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    variant="default"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleSaveRequirement();
+                    }}
+                  >
+                    Save Changes
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditRequirement(req);
+                    }}
+                    className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
+                  >
+                    <Edit className="h-4 w-4 mr-1" />
+                    Edit
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleRerunForRequirement(req.id);
+                    }}
+                    className="text-primary hover:text-primary-hover hover:bg-primary/10"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-1" />
+                    Regenerate
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setIsHistoryOpen(true);
+                    }}
+                    className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
+                  >
+                    <History className="h-4 w-4 mr-1" />
+                    History
+                  </Button>
+                </>
+              )}
             </div>
           </CardContent>
         )}
@@ -900,7 +1171,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   <span className="font-medium">Source File:</span>
                   <span className="font-medium text-gray-900">{selectedFile.name}</span>
                 </div>
-                <div className="flex items-center gap-4 text-gray-500 text-sm">
+                <div className="flex gap-2 text-gray-500 text-sm">
                   <div className="flex items-center gap-2">
                     <Calendar className="h-4 w-4" />
                     Uploaded on {selectedFile.uploadTime.toLocaleDateString()}
