@@ -23,7 +23,27 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     },
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  // Initialize with default files
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
+    {
+      id: "1",
+      name: "requirements.pdf",
+      uploadTime: new Date("2024-01-15T10:00:00"),
+      status: "completed",
+    },
+    {
+      id: "2",
+      name: "specifications.docx",
+      uploadTime: new Date("2024-01-16T14:30:00"),
+      status: "completed",
+    },
+    {
+      id: "3",
+      name: "test-cases.xlsx",
+      uploadTime: new Date("2024-01-17T09:15:00"),
+      status: "failed",
+    }
+  ]);
 
   const handleSourceFileSelect = (file: File) => {
     setPendingFile(file);
@@ -178,4 +198,3 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     </div>
   );
 };
-
