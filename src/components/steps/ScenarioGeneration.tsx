@@ -1001,6 +1001,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 Add Flow
               </Button>
             </div>
-
-            <div className="grid gap-2">
-              <label className="text
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
