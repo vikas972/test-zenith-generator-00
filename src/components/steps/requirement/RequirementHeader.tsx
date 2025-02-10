@@ -1,9 +1,8 @@
-
 import { CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, MapPin } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
-import { Requirement } from "../types";
+import { Requirement } from "./types";
 import { getStatusIcon, getStatusDescription } from "./requirementUtils";
 
 interface RequirementHeaderProps {

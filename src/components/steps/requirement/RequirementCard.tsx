@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { BookOpen, MapPin } from "lucide-react";
@@ -6,7 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { RequirementHeader } from "./RequirementHeader";
 import { RequirementContent } from "./RequirementContent";
-import { Requirement } from "../types";
+import { Requirement } from "./types";
 
 interface RequirementCardProps {
   requirement: Requirement;
