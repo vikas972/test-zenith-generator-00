@@ -892,7 +892,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleEditRequirement(selectedDetailedRequirement!)}
+              onClick={(e) => selectedDetailedRequirement && handleEditRequirement(selectedDetailedRequirement, e)}
               className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
             >
               <Edit className="h-4 w-4 mr-1" />
