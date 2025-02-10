@@ -1,4 +1,3 @@
-
 import { FileText, Cloud, Database, Globe, Loader2, XCircle, CheckCircle, RefreshCw, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { SourceCard } from "../SourceCard";
 import { useState } from "react";
@@ -68,7 +67,26 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     },
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
+    {
+      id: "1",
+      name: "PaymentService_Requirements.doc",
+      uploadTime: new Date(2024, 2, 15, 10, 30),
+      status: "completed"
+    },
+    {
+      id: "2",
+      name: "TradeFinance_Specs.pdf",
+      uploadTime: new Date(2024, 2, 15, 11, 45),
+      status: "completed"
+    },
+    {
+      id: "3",
+      name: "SupplyChain_SRS.docx",
+      uploadTime: new Date(2024, 2, 15, 14, 20),
+      status: "parsing"
+    }
+  ]);
 
   const handleFileSelect = (fileId: string) => {
     setSelectedFile(fileId);
