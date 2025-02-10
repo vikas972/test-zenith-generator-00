@@ -54,7 +54,7 @@ interface DocumentContext {
 export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [isContextExpanded, setIsContextExpanded] = useState(true);
+  const [isContextExpanded, setIsContextExpanded] = useState(false);
   const [documentContext, setDocumentContext] = useState<DocumentContext>({
     documentType: "",
     documentFormat: "",
@@ -246,25 +246,31 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
           ))}
         </div>
 
-        <Card className="mb-8">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-xl font-semibold">Document Context</CardTitle>
-            <button
-              onClick={() => setIsContextExpanded(!isContextExpanded)}
-              className="text-gray-500 hover:text-gray-700"
-            >
-              {isContextExpanded ? <ChevronUp /> : <ChevronDown />}
-            </button>
-          </CardHeader>
-          {selectedFile && (
-            <div className="px-6 py-2 bg-primary/5 border-b">
-              <p className="text-sm font-medium">
-                Selected File: <span className="text-primary">{uploadedFiles.find(f => f.id === selectedFile)?.name}</span>
-              </p>
+        <Card className="mb-8 shadow-sm border-gray-200">
+          <CardHeader 
+            className={`flex flex-row items-center justify-between space-y-0 pb-2 ${!isContextExpanded ? 'border-b-0' : ''}`}
+            onClick={() => setIsContextExpanded(!isContextExpanded)}
+            style={{ cursor: 'pointer' }}
+          >
+            <div className="flex items-center justify-between w-full">
+              <div className="flex items-center gap-3">
+                <CardTitle className="text-xl font-semibold">Document Context</CardTitle>
+                {selectedFile && (
+                  <span className="text-sm text-gray-500">
+                    Selected: {uploadedFiles.find(f => f.id === selectedFile)?.name}
+                  </span>
+                )}
+              </div>
+              <button
+                className="text-gray-500 hover:text-gray-700 transition-colors"
+                aria-label={isContextExpanded ? 'Collapse section' : 'Expand section'}
+              >
+                {isContextExpanded ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+              </button>
             </div>
-          )}
+          </CardHeader>
           {isContextExpanded && (
-            <CardContent className="space-y-6">
+            <CardContent className="space-y-6 pt-6 border-t border-gray-200">
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="documentType">Document Type</Label>
