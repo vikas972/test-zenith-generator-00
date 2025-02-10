@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -305,6 +304,20 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     }
   };
 
+  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
+    e.preventDefault();
+    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
+    // Highlight source text
+    const sourceElement = document.getElementById('source-content');
+    if (sourceElement) {
+      const text = sourceElement.innerHTML;
+      const highlightedText = text.slice(0, req.source.startIndex) +
+        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
+        text.slice(req.source.endIndex);
+      sourceElement.innerHTML = highlightedText;
+    }
+  };
+
   const renderRequirementList = (req: Requirement) => (
     <div key={req.id}>
       <Card 
@@ -315,7 +328,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       >
         <CardHeader 
           className="py-3"
-          onClick={() => handleRequirementClick(req)}
+          onClick={(e) => handleRequirementClick(req, e)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -758,19 +771,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       </Card>
     </div>
   );
-
-  const handleRequirementClick = (req: Requirement) => {
-    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
-    // Highlight source text
-    const sourceElement = document.getElementById('source-content');
-    if (sourceElement) {
-      const text = sourceElement.innerHTML;
-      const highlightedText = text.slice(0, req.source.startIndex) +
-        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
-        text.slice(req.source.endIndex);
-      sourceElement.innerHTML = highlightedText;
-    }
-  };
 
   const renderDetailedRequirementDialog = () => (
     <Dialog open={!!selectedDetailedRequirement} onOpenChange={() => setSelectedDetailedRequirement(null)}>
