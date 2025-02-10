@@ -43,23 +43,55 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     }
   ]);
 
+  const handleSourceFileSelect = (file: File) => {
+    // Create a new uploaded file entry
+    const newFile: UploadedFile = {
+      id: String(uploadedFiles.length + 1),
+      name: file.name,
+      uploadTime: new Date(),
+      status: "parsing",
+    };
+    
+    setUploadedFiles(prev => [...prev, newFile]);
+    
+    // Set document context with the file name
+    setDocumentContext({
+      documentType: "srs",
+      documentFormat: "ieee830",
+      businessDomain: "payments",
+      agentContext: `Processing ${file.name}`,
+      outputPreferences: {
+        requirementFormat: "REQ-PAY-XXX",
+        validationGranularity: "detailed",
+        namingConvention: "camelCase",
+      },
+    });
+
+    // Set context section to expanded when a file is selected
+    setIsContextExpanded(true);
+    
+    toast.success(`File "${file.name}" selected for processing`);
+
+    // Simulate file processing completion
+    setTimeout(() => {
+      setUploadedFiles(prev =>
+        prev.map(f =>
+          f.id === newFile.id ? { ...f, status: "completed" } : f
+        )
+      );
+      onFileSelect({
+        id: newFile.id,
+        name: file.name,
+        uploadTime: new Date()
+      });
+    }, 2000);
+  };
+
   const handleFileSelect = (fileId: string) => {
     setSelectedFile(fileId);
     const file = uploadedFiles.find(f => f.id === fileId);
     if (file && file.status === "completed") {
       onFileSelect(file);
-      setDocumentContext({
-        documentType: "srs",
-        documentFormat: "ieee830",
-        businessDomain: "payments",
-        agentContext: "This is a corporate banking application focused on payment processing.",
-        outputPreferences: {
-          requirementFormat: "REQ-PAY-XXX",
-          validationGranularity: "detailed",
-          namingConvention: "camelCase",
-        },
-      });
-      toast.success("SPA agent has analyzed the file and set default values");
     } else {
       onFileSelect(null);
     }
@@ -101,22 +133,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   };
 
   const handleImport = () => {
-    const newFile: UploadedFile = {
-      id: String(uploadedFiles.length + 1),
-      name: "requirements.doc",
-      uploadTime: new Date(),
-      status: "parsing",
-    };
-    setUploadedFiles(prev => [...prev, newFile]);
     toast.success("File imported successfully");
-    
-    setTimeout(() => {
-      setUploadedFiles(prev =>
-        prev.map(file =>
-          file.id === newFile.id ? { ...file, status: "completed" } : file
-        )
-      );
-    }, 2000);
   };
 
   const handleReset = () => {
@@ -149,6 +166,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
         <ImportSourcesGrid
           selectedSource={selectedSource}
           onSourceSelect={setSelectedSource}
+          onFileSelect={handleSourceFileSelect}
         />
 
         <DocumentContextSection
