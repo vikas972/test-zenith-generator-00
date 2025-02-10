@@ -1,4 +1,3 @@
-<lov-code>
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1002,4 +1001,140 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   });
                 }}
               >
-                <Plus className="h-4 w-4 mr-
+                <Plus className="h-4 w-4 mr-2" />
+                Add Flow
+              </Button>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Business Rules</label>
+              {editingRequirement.businessRules.map((rule, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={rule}
+                    onChange={(e) => {
+                      const newRules = [...editingRequirement.businessRules];
+                      newRules[index] = e.target.value;
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        businessRules: newRules,
+                      });
+                    }}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const newRules = editingRequirement.businessRules.filter((_, i) => i !== index);
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        businessRules: newRules,
+                      });
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingRequirement({
+                    ...editingRequirement,
+                    businessRules: [...editingRequirement.businessRules, ""],
+                  });
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Business Rule
+              </Button>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Validations & Data Elements</label>
+              <div className="grid grid-cols-3 gap-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    placeholder="Name"
+                    value={editingRequirement.dataElements[0].name}
+                    onChange={(e) => {
+                      const newElements = [...editingRequirement.dataElements];
+                      newElements[0] = { ...editingRequirement.dataElements[0], name: e.target.value };
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        dataElements: newElements,
+                      });
+                    }}
+                  />
+                  <Input
+                    placeholder="Type"
+                    value={editingRequirement.dataElements[0].type}
+                    onChange={(e) => {
+                      const newElements = [...editingRequirement.dataElements];
+                      newElements[0] = { ...editingRequirement.dataElements[0], type: e.target.value };
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        dataElements: newElements,
+                      });
+                    }}
+                  />
+                </div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const newElements = editingRequirement.dataElements.filter((_, i) => i !== 0);
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        dataElements: newElements,
+                      });
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </div>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingRequirement({
+                    ...editingRequirement,
+                    dataElements: [
+                      ...editingRequirement.dataElements,
+                      { name: "", type: "", required: false },
+                    ],
+                  });
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Data Element
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+
+  return (
+    <div className="flex gap-4 h-full">
+      <div className="flex-1 overflow-auto">
+        {requirements.map((req) => renderRequirementList(req))}
+      </div>
+      <div className="w-1/3 border-l p-4">
+        <div className="prose prose-sm">
+          <h3 className="text-lg font-semibold mb-4">Source Document</h3>
+          <div
+            id="source-content"
+            className="whitespace-pre-wrap text-sm"
+            dangerouslySetInnerHTML={{ __html: sourceContent }}
+          />
+        </div>
+      </div>
+      {renderDetailedRequirementDialog()}
+      {renderEditDialog()}
+    </div>
+  );
+};
