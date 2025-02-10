@@ -10,6 +10,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
   const [isContextExpanded, setIsContextExpanded] = useState(false);
+  const [pendingFile, setPendingFile] = useState<File | null>(null);
   const [documentContext, setDocumentContext] = useState<DocumentContext>({
     documentType: "",
     documentFormat: "",
@@ -44,15 +45,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   ]);
 
   const handleSourceFileSelect = (file: File) => {
-    // Create a new uploaded file entry
-    const newFile: UploadedFile = {
-      id: String(uploadedFiles.length + 1),
-      name: file.name,
-      uploadTime: new Date(),
-      status: "parsing",
-    };
-    
-    setUploadedFiles(prev => [...prev, newFile]);
+    setPendingFile(file);
     
     // Set document context with the file name when selected from source
     setDocumentContext({
@@ -71,20 +64,6 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     setIsContextExpanded(true);
     
     toast.success(`File "${file.name}" selected for processing`);
-
-    // Simulate file processing completion
-    setTimeout(() => {
-      setUploadedFiles(prev =>
-        prev.map(f =>
-          f.id === newFile.id ? { ...f, status: "completed" } : f
-        )
-      );
-      onFileSelect({
-        id: newFile.id,
-        name: file.name,
-        uploadTime: new Date()
-      });
-    }, 2000);
   };
 
   const handleFileSelect = (fileId: string) => {
@@ -122,11 +101,42 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   };
 
   const handleImport = () => {
+    if (!pendingFile) {
+      toast.error("No file selected to import");
+      return;
+    }
+
+    // Create a new uploaded file entry
+    const newFile: UploadedFile = {
+      id: String(uploadedFiles.length + 1),
+      name: pendingFile.name,
+      uploadTime: new Date(),
+      status: "parsing",
+    };
+    
+    setUploadedFiles(prev => [...prev, newFile]);
+    
+    // Simulate file processing completion
+    setTimeout(() => {
+      setUploadedFiles(prev =>
+        prev.map(f =>
+          f.id === newFile.id ? { ...f, status: "completed" } : f
+        )
+      );
+      onFileSelect({
+        id: newFile.id,
+        name: pendingFile.name,
+        uploadTime: new Date()
+      });
+    }, 2000);
+
+    // Clear the pending file after import
+    setPendingFile(null);
     toast.success("File imported successfully");
   };
 
   const handleReset = () => {
-    if (selectedFile) {
+    if (pendingFile) {
       setDocumentContext({
         documentType: "srs",
         documentFormat: "ieee830",
