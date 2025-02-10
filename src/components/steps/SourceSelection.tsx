@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { ImportSourcesGrid } from "./source-selection/ImportSourcesGrid";
@@ -22,45 +23,24 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     },
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    {
-      id: "1",
-      name: "PaymentService_Requirements.doc",
-      uploadTime: new Date(2024, 2, 15, 10, 30),
-      status: "completed"
-    },
-    {
-      id: "2",
-      name: "TradeFinance_Specs.pdf",
-      uploadTime: new Date(2024, 2, 15, 11, 45),
-      status: "completed"
-    },
-    {
-      id: "3",
-      name: "SupplyChain_SRS.docx",
-      uploadTime: new Date(2024, 2, 15, 14, 20),
-      status: "parsing"
-    }
-  ]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   const handleSourceFileSelect = (file: File) => {
     setPendingFile(file);
+    setIsContextExpanded(true);
     
     // Set document context with the file name when selected from source
     setDocumentContext({
-      documentType: "srs",
-      documentFormat: "ieee830",
-      businessDomain: "payments",
+      documentType: "",
+      documentFormat: "",
+      businessDomain: "",
       agentContext: `Processing ${file.name}`,
       outputPreferences: {
-        requirementFormat: "REQ-PAY-XXX",
+        requirementFormat: "REQ-XXX",
         validationGranularity: "detailed",
         namingConvention: "camelCase",
       },
     });
-
-    // Set context section to expanded when a file is selected from source
-    setIsContextExpanded(true);
     
     toast.success(`File "${file.name}" selected for processing`);
   };
@@ -107,7 +87,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
 
     // Create a new uploaded file entry
     const newFile: UploadedFile = {
-      id: String(uploadedFiles.length + 1),
+      id: String(Date.now()),
       name: pendingFile.name,
       uploadTime: new Date(),
       status: "parsing",
@@ -122,32 +102,40 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
           f.id === newFile.id ? { ...f, status: "completed" } : f
         )
       );
-      onFileSelect({
-        id: newFile.id,
-        name: pendingFile.name,
-        uploadTime: new Date()
-      });
     }, 2000);
 
     // Clear the pending file after import
     setPendingFile(null);
+    setIsContextExpanded(false);
+    setDocumentContext({
+      documentType: "",
+      documentFormat: "",
+      businessDomain: "",
+      agentContext: "",
+      outputPreferences: {
+        requirementFormat: "REQ-XXX",
+        validationGranularity: "detailed",
+        namingConvention: "camelCase",
+      },
+    });
+    
     toast.success("File imported successfully");
   };
 
   const handleReset = () => {
     if (pendingFile) {
       setDocumentContext({
-        documentType: "srs",
-        documentFormat: "ieee830",
-        businessDomain: "payments",
-        agentContext: "This is a corporate banking application focused on payment processing.",
+        documentType: "",
+        documentFormat: "",
+        businessDomain: "",
+        agentContext: `Processing ${pendingFile.name}`,
         outputPreferences: {
-          requirementFormat: "REQ-PAY-XXX",
+          requirementFormat: "REQ-XXX",
           validationGranularity: "detailed",
           namingConvention: "camelCase",
         },
       });
-      toast.success("Reset to SPA agent's default values");
+      toast.success("Reset to default values");
     }
   };
 
@@ -190,3 +178,4 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     </div>
   );
 };
+

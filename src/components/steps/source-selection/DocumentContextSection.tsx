@@ -28,7 +28,7 @@ interface DocumentContextSectionProps {
   onContextUpdate: (field: keyof DocumentContext, value: any) => void;
   onReset: () => void;
   onImport: () => void;
-  pendingFile: File | null; // Add this prop
+  pendingFile: File | null;
 }
 
 export const DocumentContextSection = ({
@@ -40,8 +40,18 @@ export const DocumentContextSection = ({
   onContextUpdate,
   onReset,
   onImport,
-  pendingFile, // Add this prop
+  pendingFile,
 }: DocumentContextSectionProps) => {
+  // Check if all required fields are filled
+  const isFormValid = 
+    pendingFile && 
+    documentContext.documentType && 
+    documentContext.documentFormat && 
+    documentContext.businessDomain && 
+    documentContext.outputPreferences.requirementFormat &&
+    documentContext.outputPreferences.validationGranularity &&
+    documentContext.outputPreferences.namingConvention;
+
   return (
     <Card className="mb-8 shadow-sm border-gray-200">
       <CardHeader 
@@ -201,13 +211,13 @@ export const DocumentContextSection = ({
             <Button
               variant="outline"
               onClick={onReset}
-              disabled={!selectedFile}
+              disabled={!pendingFile}
             >
               Reset to Defaults
             </Button>
             <Button
               onClick={onImport}
-              disabled={!selectedFile}
+              disabled={!isFormValid}
             >
               Import File
             </Button>
@@ -217,3 +227,4 @@ export const DocumentContextSection = ({
     </Card>
   );
 };
+
