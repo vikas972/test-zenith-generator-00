@@ -792,7 +792,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 <AccordionItem value="flows">
                   <AccordionTrigger 
                     className="text-sm font-medium"
-                    onClick={(e: React.MouseEvent) => selectedDetailedRequirement && handleRequirementClick(selectedDetailedRequirement, e)}
+                    onClick={(e) => selectedDetailedRequirement && handleRequirementClick(selectedDetailedRequirement, e)}
                   >
                     <Activity className="h-4 w-4 mr-2" />
                     Functional Flows
