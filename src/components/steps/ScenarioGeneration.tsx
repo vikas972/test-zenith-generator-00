@@ -758,7 +758,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     </div>
   );
 
-  const handleRequirementClick = (req: Requirement) => {
+  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
+    e.stopPropagation();
     setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
     // Highlight source text
     const sourceElement = document.getElementById('source-content');
