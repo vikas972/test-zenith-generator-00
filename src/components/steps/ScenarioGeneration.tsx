@@ -304,6 +304,24 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     }
   };
 
+  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
+    // Highlight source text
+    const sourceElement = document.getElementById('source-content');
+    if (sourceElement) {
+      const text = sourceElement.innerHTML;
+      const highlightedText = text.slice(0, req.source.startIndex) +
+        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
+        text.slice(req.source.endIndex);
+      sourceElement.innerHTML = highlightedText;
+    }
+  };
+
+  const handleDetailedRequirementClick = (req: Requirement) => {
+    setSelectedDetailedRequirement(req);
+  };
+
   const renderRequirementList = (req: Requirement) => (
     <div key={req.id}>
       <Card 
@@ -314,7 +332,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       >
         <CardHeader 
           className="py-3"
-          onClick={() => handleRequirementClick(req)}
+          onClick={(e) => handleRequirementClick(req, e)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -758,20 +776,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     </div>
   );
 
-  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
-    // Highlight source text
-    const sourceElement = document.getElementById('source-content');
-    if (sourceElement) {
-      const text = sourceElement.innerHTML;
-      const highlightedText = text.slice(0, req.source.startIndex) +
-        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
-        text.slice(req.source.endIndex);
-      sourceElement.innerHTML = highlightedText;
-    }
-  };
-
   const renderDetailedRequirementDialog = () => (
     <Dialog open={!!selectedDetailedRequirement} onOpenChange={() => setSelectedDetailedRequirement(null)}>
       <DialogContent className="max-w-4xl">
@@ -786,7 +790,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             <CardContent className="pt-4">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="flows">
-                  <AccordionTrigger className="text-sm font-medium">
+                  <AccordionTrigger 
+                    className="text-sm font-medium"
+                    onClick={(e) => selectedDetailedRequirement && handleRequirementClick(selectedDetailedRequirement, e)}
+                  >
                     <Activity className="h-4 w-4 mr-2" />
                     Functional Flows
                   </AccordionTrigger>
