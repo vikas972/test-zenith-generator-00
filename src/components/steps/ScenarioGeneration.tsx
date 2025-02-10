@@ -1171,122 +1171,122 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         </div>
       </div>
 
-      <Tabs value={currentTab} onValueChange={setCurrentTab}>
-        <TabsList>
-          <TabsTrigger value="requirements" className="flex items-center gap-2">
-            <FileText className="h-4 w-4" />
-            Requirements
-          </TabsTrigger>
-          <TabsTrigger value="scenarios" className="flex items-center gap-2">
-            <Database className="h-4 w-4" />
-            Generated Scenarios
-          </TabsTrigger>
-          <TabsTrigger value="source" className="flex items-center gap-2">
-            <BookOpen className="h-4 w-4" />
-            Source Document
-          </TabsTrigger>
-        </TabsList>
+      <div className="grid grid-cols-12 gap-4">
+        <div className="col-span-7">
+          <Tabs value={currentTab} onValueChange={setCurrentTab}>
+            <TabsList>
+              <TabsTrigger value="requirements" className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                Requirements
+              </TabsTrigger>
+              <TabsTrigger value="scenarios" className="flex items-center gap-2">
+                <Database className="h-4 w-4" />
+                Generated Scenarios
+              </TabsTrigger>
+            </TabsList>
 
-        <TabsContent value="requirements" className="space-y-4">
-          <div className="flex items-center space-x-2">
-            <div className="relative flex-1">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search requirements..."
-                className="pl-8"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </div>
-            <Button variant="outline" size="icon">
-              <Filter className="h-4 w-4" />
-            </Button>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              New Requirement
-            </Button>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleRerunSelected}
-                disabled={selectedRequirements.length === 0}
-              >
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Regenerate Selected
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleRerunAll}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Regenerate All
-              </Button>
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            {requirements.map((req) => renderRequirementList(req))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="scenarios" className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {scenarios.map((scenario) => (
-              <Card key={scenario.id}>
-                <CardHeader>
-                  <CardTitle className="text-lg">{scenario.name}</CardTitle>
-                  <CardDescription>{scenario.description}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Coverage</span>
-                      <span className="text-sm">{scenario.coverage}%</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Status</span>
-                      <Badge variant="outline">{scenario.status}</Badge>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium">Confidence</span>
-                      <span className="text-sm">
-                        {(scenario.confidenceScore * 100).toFixed(0)}%
-                      </span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="source" className="space-y-4">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4 text-gray-500" />
-                  <span className="text-sm text-gray-500">
-                    Last modified: {selectedFile?.uploadTime.toLocaleDateString()}
-                  </span>
+            <TabsContent value="requirements" className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder="Search requirements..."
+                    className="pl-8"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
-                <Button variant="outline" size="sm">
-                  <ZoomIn className="h-4 w-4 mr-2" />
-                  Zoom
+                <Button variant="outline" size="icon">
+                  <Filter className="h-4 w-4" />
+                </Button>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  New Requirement
                 </Button>
               </div>
+
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleRerunSelected}
+                    disabled={selectedRequirements.length === 0}
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Regenerate Selected
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleRerunAll}>
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Regenerate All
+                  </Button>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                {requirements.map((req) => renderRequirementList(req))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="scenarios" className="space-y-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {scenarios.map((scenario) => (
+                  <Card key={scenario.id}>
+                    <CardHeader>
+                      <CardTitle className="text-lg">{scenario.name}</CardTitle>
+                      <CardDescription>{scenario.description}</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Coverage</span>
+                          <span className="text-sm">{scenario.coverage}%</span>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Status</span>
+                          <Badge variant="outline">{scenario.status}</Badge>
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <span className="text-sm font-medium">Confidence</span>
+                          <span className="text-sm">
+                            {(scenario.confidenceScore * 100).toFixed(0)}%
+                          </span>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        <div className="col-span-5">
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BookOpen className="h-5 w-5" />
+                Source Document
+              </CardTitle>
+              <CardDescription>
+                Original requirements document with highlighting
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
               <div
                 id="source-content"
-                className="prose prose-sm max-w-none"
+                className="prose prose-sm max-w-none h-[calc(100vh-20rem)] overflow-y-auto"
                 style={{ whiteSpace: "pre-wrap" }}
               >
                 {sourceContent}
               </div>
             </CardContent>
           </Card>
-        </TabsContent>
-      </Tabs>
+        </div>
+      </div>
+
+      {renderDetailedRequirementDialog()}
+      {renderEditDialog()}
     </div>
   );
 };
