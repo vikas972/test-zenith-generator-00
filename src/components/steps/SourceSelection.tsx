@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { ImportSourcesGrid } from "./source-selection/ImportSourcesGrid";
@@ -177,6 +176,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
           onContextUpdate={handleContextUpdate}
           onReset={handleReset}
           onImport={handleImport}
+          pendingFile={pendingFile}
         />
 
         <ImportedFilesTable

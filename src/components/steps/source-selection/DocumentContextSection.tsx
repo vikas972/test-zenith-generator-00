@@ -28,6 +28,7 @@ interface DocumentContextSectionProps {
   onContextUpdate: (field: keyof DocumentContext, value: any) => void;
   onReset: () => void;
   onImport: () => void;
+  pendingFile: File | null; // Add this prop
 }
 
 export const DocumentContextSection = ({
@@ -39,6 +40,7 @@ export const DocumentContextSection = ({
   onContextUpdate,
   onReset,
   onImport,
+  pendingFile, // Add this prop
 }: DocumentContextSectionProps) => {
   return (
     <Card className="mb-8 shadow-sm border-gray-200">
@@ -50,7 +52,11 @@ export const DocumentContextSection = ({
         <div className="flex items-center justify-between w-full">
           <div className="flex items-center gap-3">
             <CardTitle className="text-xl font-semibold">Document Context</CardTitle>
-            {selectedFile && (
+            {pendingFile ? (
+              <span className="text-sm text-gray-500">
+                Selected: {pendingFile.name}
+              </span>
+            ) : selectedFile && (
               <span className="text-sm text-gray-500">
                 Selected: {uploadedFiles.find(f => f.id === selectedFile)?.name}
               </span>
