@@ -304,20 +304,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     }
   };
 
-  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
-    e.preventDefault();
-    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
-    // Highlight source text
-    const sourceElement = document.getElementById('source-content');
-    if (sourceElement) {
-      const text = sourceElement.innerHTML;
-      const highlightedText = text.slice(0, req.source.startIndex) +
-        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
-        text.slice(req.source.endIndex);
-      sourceElement.innerHTML = highlightedText;
-    }
-  };
-
   const renderRequirementList = (req: Requirement) => (
     <div key={req.id}>
       <Card 
@@ -328,7 +314,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       >
         <CardHeader 
           className="py-3"
-          onClick={(e) => handleRequirementClick(req, e)}
+          onClick={() => handleRequirementClick(req)}
         >
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -772,6 +758,19 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     </div>
   );
 
+  const handleRequirementClick = (req: Requirement) => {
+    setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
+    // Highlight source text
+    const sourceElement = document.getElementById('source-content');
+    if (sourceElement) {
+      const text = sourceElement.innerHTML;
+      const highlightedText = text.slice(0, req.source.startIndex) +
+        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
+        text.slice(req.source.endIndex);
+      sourceElement.innerHTML = highlightedText;
+    }
+  };
+
   const renderDetailedRequirementDialog = () => (
     <Dialog open={!!selectedDetailedRequirement} onOpenChange={() => setSelectedDetailedRequirement(null)}>
       <DialogContent className="max-w-4xl">
@@ -786,10 +785,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             <CardContent className="pt-4">
               <Accordion type="single" collapsible className="w-full">
                 <AccordionItem value="flows">
-                  <AccordionTrigger 
-                    className="text-sm font-medium"
-                    onClick={(e: React.MouseEvent) => handleRequirementClick(selectedDetailedRequirement!, e)}
-                  >
+                  <AccordionTrigger className="text-sm font-medium">
                     <Activity className="h-4 w-4 mr-2" />
                     Functional Flows
                   </AccordionTrigger>
@@ -1001,7 +997,296 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 Add Flow
               </Button>
             </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Business Rules</label>
+              {editingRequirement.businessRules.map((rule, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={rule}
+                    onChange={(e) => {
+                      const newRules = [...editingRequirement.businessRules];
+                      newRules[index] = e.target.value;
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        businessRules: newRules,
+                      });
+                    }}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const newRules = editingRequirement.businessRules.filter((_, i) => i !== index);
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        businessRules: newRules,
+                      });
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingRequirement({
+                    ...editingRequirement,
+                    businessRules: [...editingRequirement.businessRules, ""],
+                  });
+                }}
+                className="w-full"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Business Rule
+              </Button>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Validations</label>
+              {editingRequirement.validations.map((validation, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={validation}
+                    onChange={(e) => {
+                      const newValidations = [...editingRequirement.validations];
+                      newValidations[index] = e.target.value;
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        validations: newValidations,
+                      });
+                    }}
+                    className="flex-1"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => {
+                      const newValidations = editingRequirement.validations.filter((_, i) => i !== index);
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        validations: newValidations,
+                      });
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingRequirement({
+                    ...editingRequirement,
+                    validations: [...editingRequirement.validations, ""],
+                  });
+                }}
+                className="w-full"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Validation
+              </Button>
+            </div>
+
+            <div className="grid gap-2">
+              <label className="text-sm font-medium">Data Elements</label>
+              {editingRequirement.dataElements.map((element, index) => (
+                <div key={index} className="grid grid-cols-3 gap-2">
+                  <Input
+                    placeholder="Name"
+                    value={element.name}
+                    onChange={(e) => {
+                      const newElements = [...editingRequirement.dataElements];
+                      newElements[index] = { ...element, name: e.target.value };
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        dataElements: newElements,
+                      });
+                    }}
+                  />
+                  <Input
+                    placeholder="Type"
+                    value={element.type}
+                    onChange={(e) => {
+                      const newElements = [...editingRequirement.dataElements];
+                      newElements[index] = { ...element, type: e.target.value };
+                      setEditingRequirement({
+                        ...editingRequirement,
+                        dataElements: newElements,
+                      });
+                    }}
+                  />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => {
+                        const newElements = editingRequirement.dataElements.filter((_, i) => i !== index);
+                        setEditingRequirement({
+                          ...editingRequirement,
+                          dataElements: newElements,
+                        });
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setEditingRequirement({
+                    ...editingRequirement,
+                    dataElements: [
+                      ...editingRequirement.dataElements,
+                      { name: "", type: "", required: false },
+                    ],
+                  });
+                }}
+                className="w-full"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Data Element
+              </Button>
+            </div>
           </div>
         )}
       </DialogContent>
     </Dialog>
+  );
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div className="space-y-1">
+          <h2 className="text-2xl font-semibold tracking-tight">
+            Requirements & Scenarios
+          </h2>
+          <p className="text-sm text-muted-foreground">
+            Manage and generate test scenarios from requirements
+          </p>
+        </div>
+      </div>
+
+      <Tabs value={currentTab} onValueChange={setCurrentTab}>
+        <TabsList>
+          <TabsTrigger value="requirements" className="flex items-center gap-2">
+            <FileText className="h-4 w-4" />
+            Requirements
+          </TabsTrigger>
+          <TabsTrigger value="scenarios" className="flex items-center gap-2">
+            <Database className="h-4 w-4" />
+            Generated Scenarios
+          </TabsTrigger>
+          <TabsTrigger value="source" className="flex items-center gap-2">
+            <BookOpen className="h-4 w-4" />
+            Source Document
+          </TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="requirements" className="space-y-4">
+          <div className="flex items-center space-x-2">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search requirements..."
+                className="pl-8"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+              />
+            </div>
+            <Button variant="outline" size="icon">
+              <Filter className="h-4 w-4" />
+            </Button>
+            <Button>
+              <Plus className="h-4 w-4 mr-2" />
+              New Requirement
+            </Button>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRerunSelected}
+                disabled={selectedRequirements.length === 0}
+              >
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Regenerate Selected
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleRerunAll}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Regenerate All
+              </Button>
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            {requirements.map((req) => renderRequirementList(req))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="scenarios" className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {scenarios.map((scenario) => (
+              <Card key={scenario.id}>
+                <CardHeader>
+                  <CardTitle className="text-lg">{scenario.name}</CardTitle>
+                  <CardDescription>{scenario.description}</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Coverage</span>
+                      <span className="text-sm">{scenario.coverage}%</span>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Status</span>
+                      <Badge variant="outline">{scenario.status}</Badge>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium">Confidence</span>
+                      <span className="text-sm">
+                        {(scenario.confidenceScore * 100).toFixed(0)}%
+                      </span>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </TabsContent>
+
+        <TabsContent value="source" className="space-y-4">
+          <Card>
+            <CardContent className="p-6">
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-500">
+                    Last modified: {selectedFile?.uploadTime.toLocaleDateString()}
+                  </span>
+                </div>
+                <Button variant="outline" size="sm">
+                  <ZoomIn className="h-4 w-4 mr-2" />
+                  Zoom
+                </Button>
+              </div>
+              <div
+                id="source-content"
+                className="prose prose-sm max-w-none"
+                style={{ whiteSpace: "pre-wrap" }}
+              >
+                {sourceContent}
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+      </Tabs>
+    </div>
+  );
+};
