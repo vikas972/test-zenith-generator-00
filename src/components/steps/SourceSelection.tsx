@@ -1,4 +1,5 @@
-import { FileText, Cloud, Database, Globe, Loader2, XCircle, CheckCircle, RefreshCw, Trash2 } from "lucide-react";
+
+import { FileText, Cloud, Database, Globe, Loader2, XCircle, CheckCircle, RefreshCw, Trash2, ChevronDown, ChevronUp } from "lucide-react";
 import { SourceCard } from "../SourceCard";
 import { useState } from "react";
 import {
@@ -43,9 +44,7 @@ interface DocumentContext {
   documentType: string;
   documentFormat: string;
   businessDomain: string;
-  technicalDomain: string;
-  compliance: string[];
-  systemComponents: string[];
+  agentContext: string;
   outputPreferences: {
     requirementFormat: string;
     validationGranularity: string;
@@ -56,13 +55,12 @@ interface DocumentContext {
 export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
   const [selectedFile, setSelectedFile] = useState<string | null>(null);
+  const [isContextExpanded, setIsContextExpanded] = useState(true);
   const [documentContext, setDocumentContext] = useState<DocumentContext>({
     documentType: "",
     documentFormat: "",
     businessDomain: "",
-    technicalDomain: "",
-    compliance: [],
-    systemComponents: [],
+    agentContext: "",
     outputPreferences: {
       requirementFormat: "REQ-XXX",
       validationGranularity: "detailed",
@@ -70,32 +68,26 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     },
   });
 
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    {
-      id: "1",
-      name: "requirements.doc",
-      uploadTime: new Date(),
-      status: "completed",
-    },
-    {
-      id: "2",
-      name: "test-cases.xlsx",
-      uploadTime: new Date(),
-      status: "parsing",
-    },
-    {
-      id: "3",
-      name: "specifications.pdf",
-      uploadTime: new Date(),
-      status: "failed",
-    },
-  ]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
 
   const handleFileSelect = (fileId: string) => {
     setSelectedFile(fileId);
     const file = uploadedFiles.find(f => f.id === fileId);
     if (file && file.status === "completed") {
       onFileSelect(file);
+      // Simulate SPA agent setting default values
+      setDocumentContext({
+        documentType: "srs",
+        documentFormat: "ieee830",
+        businessDomain: "payments",
+        agentContext: "This is a corporate banking application focused on payment processing.",
+        outputPreferences: {
+          requirementFormat: "REQ-PAY-XXX",
+          validationGranularity: "detailed",
+          namingConvention: "camelCase",
+        },
+      });
+      toast.success("SPA agent has analyzed the file and set default values");
     } else {
       onFileSelect(null);
     }
@@ -159,8 +151,58 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     setUploadedFiles(files => files.filter(file => file.id !== fileId));
     if (selectedFile === fileId) {
       setSelectedFile(null);
+      // Reset context when file is deleted
+      setDocumentContext({
+        documentType: "",
+        documentFormat: "",
+        businessDomain: "",
+        agentContext: "",
+        outputPreferences: {
+          requirementFormat: "REQ-XXX",
+          validationGranularity: "detailed",
+          namingConvention: "camelCase",
+        },
+      });
     }
     toast.success("File deleted successfully");
+  };
+
+  const handleImport = () => {
+    const newFile: UploadedFile = {
+      id: String(uploadedFiles.length + 1),
+      name: "requirements.doc",
+      uploadTime: new Date(),
+      status: "parsing",
+    };
+    setUploadedFiles(prev => [...prev, newFile]);
+    toast.success("File imported successfully");
+    
+    // Simulate parsing completion after 2 seconds
+    setTimeout(() => {
+      setUploadedFiles(prev =>
+        prev.map(file =>
+          file.id === newFile.id ? { ...file, status: "completed" } : file
+        )
+      );
+    }, 2000);
+  };
+
+  const handleReset = () => {
+    if (selectedFile) {
+      // Reset to SPA agent's default values
+      setDocumentContext({
+        documentType: "srs",
+        documentFormat: "ieee830",
+        businessDomain: "payments",
+        agentContext: "This is a corporate banking application focused on payment processing.",
+        outputPreferences: {
+          requirementFormat: "REQ-PAY-XXX",
+          validationGranularity: "detailed",
+          namingConvention: "camelCase",
+        },
+      });
+      toast.success("Reset to SPA agent's default values");
+    }
   };
 
   return (
@@ -187,161 +229,166 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
         </div>
 
         <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Document Context</CardTitle>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-xl font-semibold">Document Context</CardTitle>
+            <button
+              onClick={() => setIsContextExpanded(!isContextExpanded)}
+              className="text-gray-500 hover:text-gray-700"
+            >
+              {isContextExpanded ? <ChevronUp /> : <ChevronDown />}
+            </button>
           </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <Label htmlFor="documentType">Document Type</Label>
-                <Select
-                  onValueChange={(value) => handleContextUpdate("documentType", value)}
-                  value={documentContext.documentType}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select document type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="brd">Business Requirements Document</SelectItem>
-                    <SelectItem value="srs">Software Requirements Specification</SelectItem>
-                    <SelectItem value="userStories">User Stories</SelectItem>
-                    <SelectItem value="technicalSpec">Technical Specification</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="documentFormat">Document Format</Label>
-                <Select
-                  onValueChange={(value) => handleContextUpdate("documentFormat", value)}
-                  value={documentContext.documentFormat}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select format" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="ieee830">IEEE 830</SelectItem>
-                    <SelectItem value="agile">Agile User Stories</SelectItem>
-                    <SelectItem value="gherkin">Gherkin</SelectItem>
-                    <SelectItem value="custom">Custom Format</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="businessDomain">Business Domain</Label>
-                <Select
-                  onValueChange={(value) => handleContextUpdate("businessDomain", value)}
-                  value={documentContext.businessDomain}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select business domain" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="finance">Finance</SelectItem>
-                    <SelectItem value="healthcare">Healthcare</SelectItem>
-                    <SelectItem value="ecommerce">E-commerce</SelectItem>
-                    <SelectItem value="education">Education</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="technicalDomain">Technical Domain</Label>
-                <Select
-                  onValueChange={(value) => handleContextUpdate("technicalDomain", value)}
-                  value={documentContext.technicalDomain}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select technical domain" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="web">Web Application</SelectItem>
-                    <SelectItem value="mobile">Mobile App</SelectItem>
-                    <SelectItem value="api">API Services</SelectItem>
-                    <SelectItem value="desktop">Desktop Application</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="systemComponents">System Components</Label>
-                <Textarea 
-                  placeholder="Enter system components (one per line)"
-                  value={documentContext.systemComponents.join('\n')}
-                  onChange={(e) => handleContextUpdate("systemComponents", e.target.value.split('\n'))}
-                  className="h-24"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="compliance">Compliance Requirements</Label>
-                <Textarea 
-                  placeholder="Enter compliance requirements (one per line)"
-                  value={documentContext.compliance.join('\n')}
-                  onChange={(e) => handleContextUpdate("compliance", e.target.value.split('\n'))}
-                  className="h-24"
-                />
-              </div>
+          {selectedFile && (
+            <div className="px-6 py-2 bg-primary/5 border-b">
+              <p className="text-sm font-medium">
+                Selected File: <span className="text-primary">{uploadedFiles.find(f => f.id === selectedFile)?.name}</span>
+              </p>
             </div>
-
-            <div className="border-t pt-6">
-              <h3 className="text-sm font-semibold mb-4">Output Preferences</h3>
-              <div className="grid md:grid-cols-3 gap-4">
+          )}
+          {isContextExpanded && (
+            <CardContent className="space-y-6">
+              <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label htmlFor="requirementFormat">Requirement ID Format</Label>
-                  <Input 
-                    placeholder="e.g., REQ-XXX"
-                    value={documentContext.outputPreferences.requirementFormat}
-                    onChange={(e) => handleContextUpdate("outputPreferences", {
-                      ...documentContext.outputPreferences,
-                      requirementFormat: e.target.value
-                    })}
+                  <Label htmlFor="documentType">Document Type</Label>
+                  <Select
+                    onValueChange={(value) => handleContextUpdate("documentType", value)}
+                    value={documentContext.documentType}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select document type" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="brd">Business Requirements Document</SelectItem>
+                      <SelectItem value="srs">Software Requirements Specification</SelectItem>
+                      <SelectItem value="userStories">User Stories</SelectItem>
+                      <SelectItem value="technicalSpec">Technical Specification</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="documentFormat">Document Format</Label>
+                  <Select
+                    onValueChange={(value) => handleContextUpdate("documentFormat", value)}
+                    value={documentContext.documentFormat}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select format" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="ieee830">IEEE 830</SelectItem>
+                      <SelectItem value="agile">Agile User Stories</SelectItem>
+                      <SelectItem value="gherkin">Gherkin</SelectItem>
+                      <SelectItem value="custom">Custom Format</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="businessDomain">Business Domain</Label>
+                  <Select
+                    onValueChange={(value) => handleContextUpdate("businessDomain", value)}
+                    value={documentContext.businessDomain}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select business domain" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="payments">Payments</SelectItem>
+                      <SelectItem value="tradeFinance">Trade Finance</SelectItem>
+                      <SelectItem value="supplyChain">Supply Chain Management</SelectItem>
+                      <SelectItem value="cashManagement">Cash Management</SelectItem>
+                      <SelectItem value="forex">Foreign Exchange</SelectItem>
+                      <SelectItem value="lending">Corporate Lending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="agentContext">Additional Context for SPA Agent</Label>
+                  <Textarea 
+                    placeholder="Provide any additional context that will help the SPA agent generate more accurate parsed output..."
+                    value={documentContext.agentContext}
+                    onChange={(e) => handleContextUpdate("agentContext", e.target.value)}
+                    className="h-24"
                   />
                 </div>
+              </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="validationGranularity">Validation Detail Level</Label>
-                  <Select
-                    onValueChange={(value) => handleContextUpdate("outputPreferences", {
-                      ...documentContext.outputPreferences,
-                      validationGranularity: value
-                    })}
-                    value={documentContext.outputPreferences.validationGranularity}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="basic">Basic</SelectItem>
-                      <SelectItem value="detailed">Detailed</SelectItem>
-                      <SelectItem value="comprehensive">Comprehensive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div className="border-t pt-6">
+                <h3 className="text-sm font-semibold mb-4">Output Preferences</h3>
+                <div className="grid md:grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="requirementFormat">Requirement ID Format</Label>
+                    <Input 
+                      placeholder="e.g., REQ-XXX"
+                      value={documentContext.outputPreferences.requirementFormat}
+                      onChange={(e) => handleContextUpdate("outputPreferences", {
+                        ...documentContext.outputPreferences,
+                        requirementFormat: e.target.value
+                      })}
+                    />
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="namingConvention">Naming Convention</Label>
-                  <Select
-                    onValueChange={(value) => handleContextUpdate("outputPreferences", {
-                      ...documentContext.outputPreferences,
-                      namingConvention: value
-                    })}
-                    value={documentContext.outputPreferences.namingConvention}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="camelCase">camelCase</SelectItem>
-                      <SelectItem value="PascalCase">PascalCase</SelectItem>
-                      <SelectItem value="snake_case">snake_case</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Label htmlFor="validationGranularity">Validation Detail Level</Label>
+                    <Select
+                      onValueChange={(value) => handleContextUpdate("outputPreferences", {
+                        ...documentContext.outputPreferences,
+                        validationGranularity: value
+                      })}
+                      value={documentContext.outputPreferences.validationGranularity}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="basic">Basic</SelectItem>
+                        <SelectItem value="detailed">Detailed</SelectItem>
+                        <SelectItem value="comprehensive">Comprehensive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="namingConvention">Naming Convention</Label>
+                    <Select
+                      onValueChange={(value) => handleContextUpdate("outputPreferences", {
+                        ...documentContext.outputPreferences,
+                        namingConvention: value
+                      })}
+                      value={documentContext.outputPreferences.namingConvention}
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="camelCase">camelCase</SelectItem>
+                        <SelectItem value="PascalCase">PascalCase</SelectItem>
+                        <SelectItem value="snake_case">snake_case</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
               </div>
-            </div>
-          </CardContent>
+
+              <div className="flex justify-end space-x-4 pt-4">
+                <Button
+                  variant="outline"
+                  onClick={handleReset}
+                  disabled={!selectedFile}
+                >
+                  Reset to Defaults
+                </Button>
+                <Button
+                  onClick={handleImport}
+                  disabled={!selectedSource}
+                >
+                  Import File
+                </Button>
+              </div>
+            </CardContent>
+          )}
         </Card>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
