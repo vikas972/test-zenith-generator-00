@@ -1,4 +1,3 @@
-<lov-code>
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -1004,4 +1003,4 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             </div>
 
             <div className="grid gap-2">
-              <label
+              <label className="text
