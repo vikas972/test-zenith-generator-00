@@ -54,7 +54,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     
     setUploadedFiles(prev => [...prev, newFile]);
     
-    // Set document context with the file name
+    // Set document context with the file name when selected from source
     setDocumentContext({
       documentType: "srs",
       documentFormat: "ieee830",
@@ -67,7 +67,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
       },
     });
 
-    // Set context section to expanded when a file is selected
+    // Set context section to expanded when a file is selected from source
     setIsContextExpanded(true);
     
     toast.success(`File "${file.name}" selected for processing`);
@@ -117,17 +117,6 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
     setUploadedFiles(files => files.filter(file => file.id !== fileId));
     if (selectedFile === fileId) {
       setSelectedFile(null);
-      setDocumentContext({
-        documentType: "",
-        documentFormat: "",
-        businessDomain: "",
-        agentContext: "",
-        outputPreferences: {
-          requirementFormat: "REQ-XXX",
-          validationGranularity: "detailed",
-          namingConvention: "camelCase",
-        },
-      });
     }
     toast.success("File deleted successfully");
   };
