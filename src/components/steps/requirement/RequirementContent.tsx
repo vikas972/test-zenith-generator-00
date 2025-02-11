@@ -1,148 +1,80 @@
 
 import { CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { 
-  Activity,
-  Edit,
-  RefreshCw,
-  History,
-  Shield,
-  List
-} from "lucide-react";
-import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { RequirementFlows } from "./RequirementFlows";
-import { RequirementBusinessRules } from "./RequirementBusinessRules";
-import { RequirementValidations } from "./RequirementValidations";
-import { RequirementMissingInfo } from "./RequirementMissingInfo";
+import { Activity, Shield, List, AlertCircle } from "lucide-react";
 import { type Requirement } from "./types";
 
 interface RequirementContentProps {
   requirement: Requirement;
-  editingRequirement: Requirement | null;
-  onEditRequirement: (requirement: Requirement, e: React.MouseEvent) => void;
-  onSaveRequirement: (e: React.MouseEvent) => void;
-  setEditingRequirement: (requirement: Requirement | null) => void;
-  handleRerunForRequirement: (requirementId: string) => void;
-  setIsHistoryOpen: (isOpen: boolean) => void;
 }
 
-export const RequirementContent = ({
-  requirement,
-  editingRequirement,
-  onEditRequirement,
-  onSaveRequirement,
-  setEditingRequirement,
-  handleRerunForRequirement,
-  setIsHistoryOpen,
-}: RequirementContentProps) => {
+export const RequirementContent = ({ requirement }: RequirementContentProps) => {
   return (
     <CardContent>
-      <Accordion type="single" collapsible>
-        <AccordionItem value="flows" onClick={(e) => e.stopPropagation()}>
-          <AccordionTrigger className="text-sm font-medium">
-            <Activity className="h-4 w-4 mr-2" />
-            Functional Flows
-          </AccordionTrigger>
-          <AccordionContent>
-            <RequirementFlows
-              requirement={requirement}
-              editingRequirement={editingRequirement}
-              setEditingRequirement={setEditingRequirement}
-            />
-          </AccordionContent>
-        </AccordionItem>
+      <div className="space-y-6">
+        {/* Functional Flows */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Activity className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Functional Flows</h3>
+          </div>
+          <div className="space-y-2">
+            {requirement.flows.map((flow) => (
+              <div key={flow.id} className="text-sm">
+                {flow.description}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <AccordionItem value="rules" onClick={(e) => e.stopPropagation()}>
-          <AccordionTrigger className="text-sm font-medium">
-            <Shield className="h-4 w-4 mr-2" />
-            Business Rules
-          </AccordionTrigger>
-          <AccordionContent>
-            <RequirementBusinessRules
-              requirement={requirement}
-              editingRequirement={editingRequirement}
-              setEditingRequirement={setEditingRequirement}
-            />
-          </AccordionContent>
-        </AccordionItem>
+        {/* Business Rules */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <Shield className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Business Rules</h3>
+          </div>
+          <div className="space-y-2">
+            {requirement.businessRules.map((rule) => (
+              <div key={rule.id} className="text-sm">
+                {rule.description}
+              </div>
+            ))}
+          </div>
+        </div>
 
-        <AccordionItem value="validations" onClick={(e) => e.stopPropagation()}>
-          <AccordionTrigger className="text-sm font-medium">
-            <List className="h-4 w-4 mr-2" />
-            Validations & Data Elements
-          </AccordionTrigger>
-          <AccordionContent>
-            <RequirementValidations
-              requirement={requirement}
-              editingRequirement={editingRequirement}
-              setEditingRequirement={setEditingRequirement}
-            />
-          </AccordionContent>
-        </AccordionItem>
-      </Accordion>
+        {/* Data Elements */}
+        <div>
+          <div className="flex items-center gap-2 mb-2">
+            <List className="h-4 w-4" />
+            <h3 className="text-sm font-semibold">Data Elements</h3>
+          </div>
+          <div className="space-y-2">
+            {requirement.dataElements.map((element) => (
+              <div key={element.id} className="text-sm flex items-center gap-2">
+                <span className="font-medium">{element.name}</span>
+                <span className="text-gray-500">({element.type})</span>
+                {element.required && (
+                  <span className="text-xs text-red-500">Required</span>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
 
-      <RequirementMissingInfo requirement={requirement} />
-
-      <div className="mt-4 flex justify-end gap-2">
-        {editingRequirement?.id === requirement.id ? (
-          <>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setEditingRequirement(null);
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              variant="default"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onSaveRequirement(e);
-              }}
-            >
-              Save Changes
-            </Button>
-          </>
-        ) : (
-          <>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => onEditRequirement(requirement, e)}
-              className="text-blue-600 hover:text-blue-700 hover:bg-blue-50"
-            >
-              <Edit className="h-4 w-4 mr-1" />
-              Edit
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                handleRerunForRequirement(requirement.id);
-              }}
-              className="text-primary hover:text-primary-hover hover:bg-primary/10"
-            >
-              <RefreshCw className="h-4 w-4 mr-1" />
-              Regenerate
-            </Button>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                setIsHistoryOpen(true);
-              }}
-              className="text-gray-600 hover:text-gray-700 hover:bg-gray-50"
-            >
-              <History className="h-4 w-4 mr-1" />
-              History
-            </Button>
-          </>
+        {/* Missing Information */}
+        {requirement.missingInfo.length > 0 && (
+          <div className="mt-4 p-4 bg-yellow-50 rounded-md">
+            <div className="flex items-start gap-2">
+              <AlertCircle className="h-5 w-5 text-yellow-500 mt-0.5" />
+              <div>
+                <h4 className="text-sm font-medium text-yellow-800">Missing Information</h4>
+                <ul className="mt-2 text-sm text-yellow-700 list-disc pl-5">
+                  {requirement.missingInfo.map((info, index) => (
+                    <li key={index}>{info}</li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
         )}
       </div>
     </CardContent>

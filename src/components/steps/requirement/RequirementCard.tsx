@@ -1,62 +1,53 @@
-import { useState } from "react";
-import { Card, CardHeader, CardContent } from "@/components/ui/card";
-import { BookOpen, MapPin } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { cn } from "@/lib/utils";
+
+import { Card } from "@/components/ui/card";
 import { RequirementHeader } from "./RequirementHeader";
 import { RequirementContent } from "./RequirementContent";
-import { Requirement } from "./types";
+import { type Requirement } from "./types";
+import { cn } from "@/lib/utils";
 
 interface RequirementCardProps {
   requirement: Requirement;
-  expandedRequirement: string | null;
-  editingRequirement: Requirement | null;
-  onEditRequirement: (requirement: Requirement, e: React.MouseEvent) => void;
-  onRequirementClick: (requirement: Requirement, e: React.MouseEvent) => void;
-  onSaveRequirement: (e: React.MouseEvent) => void;
-  setEditingRequirement: (requirement: Requirement | null) => void;
-  handleRerunForRequirement: (requirementId: string) => void;
-  setIsHistoryOpen: (isOpen: boolean) => void;
+  isExpanded: boolean;
+  isEditing: boolean;
+  isSelected: boolean;
+  onToggleSelect: (checked: boolean) => void;
+  onEdit: (e: React.MouseEvent) => void;
+  onSave: (e: React.MouseEvent) => void;
+  onCancel: (e: React.MouseEvent) => void;
+  onClick: () => void;
+  onFunctionalAreaChange: (value: string) => void;
 }
 
 export const RequirementCard = ({
   requirement,
-  expandedRequirement,
-  editingRequirement,
-  onEditRequirement,
-  onRequirementClick,
-  onSaveRequirement,
-  setEditingRequirement,
-  handleRerunForRequirement,
-  setIsHistoryOpen,
+  isExpanded,
+  isEditing,
+  isSelected,
+  onToggleSelect,
+  onEdit,
+  onSave,
+  onCancel,
+  onClick,
+  onFunctionalAreaChange,
 }: RequirementCardProps) => {
   return (
-    <div key={requirement.id}>
-      <Card 
-        className={cn(
-          "mb-2 hover:border-primary cursor-pointer transition-colors",
-          expandedRequirement === requirement.id && "border-primary"
-        )}
-      >
-        <RequirementHeader
-          requirement={requirement}
-          editingRequirement={editingRequirement}
-          onRequirementClick={onRequirementClick}
-          setEditingRequirement={setEditingRequirement}
-        />
-
-        {expandedRequirement === requirement.id && (
-          <RequirementContent
-            requirement={requirement}
-            editingRequirement={editingRequirement}
-            onEditRequirement={onEditRequirement}
-            onSaveRequirement={onSaveRequirement}
-            setEditingRequirement={setEditingRequirement}
-            handleRerunForRequirement={handleRerunForRequirement}
-            setIsHistoryOpen={setIsHistoryOpen}
-          />
-        )}
-      </Card>
-    </div>
+    <Card className={cn(
+      "mb-4",
+      isExpanded && "border-primary"
+    )}>
+      <RequirementHeader
+        requirement={requirement}
+        isEditing={isEditing}
+        isExpanded={isExpanded}
+        isSelected={isSelected}
+        onToggleSelect={onToggleSelect}
+        onEdit={onEdit}
+        onSave={onSave}
+        onCancel={onCancel}
+        onClick={onClick}
+        onFunctionalAreaChange={onFunctionalAreaChange}
+      />
+      {isExpanded && <RequirementContent requirement={requirement} />}
+    </Card>
   );
 };
