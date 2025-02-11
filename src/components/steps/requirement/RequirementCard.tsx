@@ -39,7 +39,7 @@ export const RequirementCard = ({
       "mb-4 relative",
       isExpanded && "border-primary"
     )}>
-      <div className="absolute right-12 top-2 z-10 flex gap-1">
+      <div className="absolute right-20 top-2 z-10 flex gap-2">
         {!isEditing && (
           <Button
             variant="ghost"
