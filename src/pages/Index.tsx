@@ -49,27 +49,28 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
       <WizardSteps currentStep={currentStep} steps={STEPS} />
-      <main className="pb-12">
+      <main className="flex-1 flex flex-col">
         {renderStep()}
-        <div className="container mx-auto px-4 mt-8 flex justify-end">
-          {currentStep > 0 && (
+        <div className="border-t mt-auto">
+          <div className="container mx-auto px-4 py-4 flex justify-end gap-4">
+            {currentStep > 0 && (
+              <Button
+                variant="outline"
+                onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
+              >
+                Previous
+              </Button>
+            )}
             <Button
-              variant="outline"
-              onClick={() => setCurrentStep((prev) => Math.max(0, prev - 1))}
-              className="mr-4"
+              onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
+              disabled={currentStep === STEPS.length - 1}
             >
-              Previous
+              Next
             </Button>
-          )}
-          <Button
-            onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
-            disabled={currentStep === STEPS.length - 1}
-          >
-            Next
-          </Button>
+          </div>
         </div>
       </main>
     </div>
