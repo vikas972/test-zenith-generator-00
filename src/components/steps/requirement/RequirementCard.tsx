@@ -39,7 +39,20 @@ export const RequirementCard = ({
       "mb-4 relative",
       isExpanded && "border-primary"
     )}>
-      <div className="absolute -right-2 top-2 z-10">
+      <div className="absolute right-12 top-2 z-10 flex gap-1">
+        {!isEditing && (
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              onEdit(e);
+            }}
+            className="text-gray-500 hover:text-blue-500"
+          >
+            Edit
+          </Button>
+        )}
         <Button
           variant="ghost"
           size="sm"
