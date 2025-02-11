@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
@@ -85,6 +86,15 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
   };
 
+  const handleDeleteRequirement = (requirementId: string) => {
+    setRequirements(prevReqs => prevReqs.filter(req => req.id !== requirementId));
+    setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
+    toast({
+      title: "Requirement Deleted",
+      description: "The requirement has been successfully deleted.",
+    });
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="flex-1 overflow-auto">
@@ -109,6 +119,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               setEditingRequirement(null);
             }}
             onClick={() => handleRequirementClick(req)}
+            onDelete={() => handleDeleteRequirement(req.id)}
             onFunctionalAreaChange={(value) =>
               setRequirements((prevReqs) =>
                 prevReqs.map((r) =>
