@@ -79,7 +79,7 @@ export const RequirementHeader = ({
               }}
               className="text-gray-500 hover:text-blue-500"
             >
-              Edit
+              <Edit className="h-4 w-4" />
             </Button>
           )}
           {isEditing ? (
@@ -113,7 +113,7 @@ export const RequirementHeader = ({
                 e.stopPropagation();
                 onEdit(e);
               }}
-              className="text-gray-500 hover:text-blue-500"
+              className="text-gray-500 hover:text-red-500"
             >
               <Trash className="h-4 w-4" />
             </Button>
