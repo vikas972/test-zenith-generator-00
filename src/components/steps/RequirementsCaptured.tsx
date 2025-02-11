@@ -199,25 +199,35 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
           isSourceMaximized ? "hidden" : "flex"
         )}
       >
-        <div className="px-6 py-6 bg-white border-b">
+        <div className="px-8 py-6 bg-white border-b">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">
-                Requirements Captured
-              </h1>
-              <p className="text-gray-500">
-                Review and edit captured requirements from{" "}
-                {selectedFile ? selectedFile.name : "the uploaded document"}
-              </p>
+              <div className="flex flex-col gap-1">
+                <h1 className="text-2xl font-semibold text-gray-900">
+                  Requirements
+                </h1>
+                <h1 className="text-2xl font-semibold text-gray-900 -mt-1">
+                  Captured
+                </h1>
+                <p className="text-sm text-gray-500 mt-1">
+                  Review and edit captured requirements from{" "}
+                  {selectedFile?.name || "requirements.pdf"}
+                </p>
+              </div>
             </div>
             <div className="flex gap-2 items-center">
-              <Button onClick={handleAddNewRequirement}>
+              <Button 
+                onClick={handleAddNewRequirement}
+                className="bg-blue-500 hover:bg-blue-600"
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Add Requirement
               </Button>
               <Button 
                 onClick={handleRegenerateSelected}
                 disabled={selectedRequirements.length === 0}
+                variant="outline"
+                className="bg-white"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
