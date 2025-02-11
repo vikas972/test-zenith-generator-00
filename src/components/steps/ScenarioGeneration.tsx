@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { RequirementCard } from "./requirement/RequirementCard";
-import { type Requirement, type Scenario } from "./requirement/types";
+import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
 
 interface ScenarioGenerationProps {
@@ -10,7 +10,7 @@ interface ScenarioGenerationProps {
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
   const { toast } = useToast();
   const [currentTab, setCurrentTab] = useState("requirements");
-  const [editingRequirement, setEditingRequirement] = useState<Requirement | null>(null);
+  const [editingRequirement, setEditingRequirement] = useState<string | null>(null);
   const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string | null>(null);
@@ -24,108 +24,32 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       id: "1",
       requirementId: "REQ-001",
       functionalArea: "User Authentication",
-      actors: "End User",
+      description: "The system shall provide secure authentication mechanisms",
+      actors: ["End User", "System"],
       flows: [
-        "User provides credentials",
-        "System validates credentials",
-        "System grants access"
+        { id: "f1", description: "User enters credentials" },
+        { id: "f2", description: "System validates credentials" }
       ],
       businessRules: [
-        "Password must be at least 8 characters",
-        "Account locks after 3 failed attempts"
-      ],
-      validations: [
-        "Email format validation",
-        "Password complexity check"
+        { id: "br1", description: "Password must be at least 8 characters" },
+        { id: "br2", description: "Account locks after 3 failed attempts" }
       ],
       dataElements: [
-        { name: "Email", type: "string", required: true },
-        { name: "Password", type: "string", required: true }
+        { id: "de1", name: "Username", type: "string", required: true },
+        { id: "de2", name: "Password", type: "string", required: true }
       ],
-      status: "complete",
-      missingInfo: ["Password reset process details"],
-      dependencies: ["REQ-005"],
+      missingInfo: ["Password reset flow", "2FA requirements"],
+      status: "completed",
+      confidence: 0.85,
       source: {
         paragraph: 2,
         page: 1,
-        text: "The system shall provide secure user authentication mechanisms including password validation and account lockout policies.",
+        text: "The system shall provide secure authentication mechanisms.",
         startIndex: 50,
         endIndex: 150
       }
-    },
-    {
-      id: "2",
-      requirementId: "REQ-002",
-      functionalArea: "User Management",
-      actors: "Administrator",
-      flows: [
-        "Admin accesses user management",
-        "System displays user list",
-        "Admin performs user operations"
-      ],
-      businessRules: [
-        "Only admins can manage users",
-        "User deletion requires confirmation"
-      ],
-      validations: [
-        "Admin role verification",
-        "User data validation"
-      ],
-      dataElements: [
-        { name: "Username", type: "string", required: true },
-        { name: "Role", type: "enum", required: true }
-      ],
-      status: "needs_review",
-      source: {
-        paragraph: 3,
-        page: 1,
-        text: "Administrators shall be able to create, modify, and delete user accounts with appropriate access controls.",
-        startIndex: 151,
-        endIndex: 250
-      }
     }
   ]);
-
-  const [scenarios, setScenarios] = useState<Scenario[]>([
-    {
-      id: "1",
-      name: "Basic User Authentication Flow",
-      description: "Verify user login with valid credentials",
-      coverage: 85,
-      requirements: ["REQ-001"],
-      details: "Test basic user authentication flow",
-      status: "Ready",
-      conditions: ["Valid credentials", "Active user account"],
-      confidenceScore: 0.9
-    },
-    {
-      id: "2",
-      name: "Failed Login Attempts",
-      description: "Verify account lockout after multiple failed attempts",
-      coverage: 90,
-      requirements: ["REQ-001"],
-      details: "Test account lockout functionality",
-      status: "Ready",
-      conditions: ["Invalid credentials", "Multiple attempts"],
-      confidenceScore: 0.85
-    }
-  ]);
-
-  const [sourceContent, setSourceContent] = useState<string>(`
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    
-    REQ-001: User Authentication
-    The system shall provide secure user authentication mechanisms including password validation and account lockout policies.
-    
-    REQ-002: User Management
-    Administrators shall be able to create, modify, and delete user accounts with appropriate access controls.
-    
-    REQ-003: Payment Processing
-    The system must handle secure payment transactions with proper validation and error handling.
-    
-    REQ-004: Reporting
-    Generate comprehensive reports for system activities and user transactions.
-  `);
 
   const handleCreateRequirement = () => {
     toast({
@@ -137,22 +61,17 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
   const handleEditRequirement = (requirement: Requirement, e: React.MouseEvent) => {
     e.stopPropagation();
-    setEditingRequirement(requirement);
+    setEditingRequirement(requirement.id);
     setExpandedRequirement(requirement.id);
   };
 
   const handleSaveRequirement = (e: React.MouseEvent) => {
     e.stopPropagation();
-    if (editingRequirement) {
-      setRequirements(requirements.map(req => 
-        req.id === editingRequirement.id ? editingRequirement : req
-      ));
-      setEditingRequirement(null);
-      toast({
-        title: "Requirement Updated",
-        description: "The requirement has been successfully updated.",
-      });
-    }
+    setEditingRequirement(null);
+    toast({
+      title: "Requirement Updated",
+      description: "The requirement has been successfully updated.",
+    });
   };
 
   const handleRerunForRequirement = (requirementId: string) => {
@@ -162,18 +81,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
-  const handleRequirementClick = (req: Requirement, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleRequirementClick = (req: Requirement) => {
     setExpandedRequirement(expandedRequirement === req.id ? null : req.id);
-    // Highlight source text
-    const sourceElement = document.getElementById('source-content');
-    if (sourceElement) {
-      const text = sourceElement.innerHTML;
-      const highlightedText = text.slice(0, req.source.startIndex) +
-        `<mark class="bg-primary/20">${text.slice(req.source.startIndex, req.source.endIndex)}</mark>` +
-        text.slice(req.source.endIndex);
-      sourceElement.innerHTML = highlightedText;
-    }
   };
 
   return (
@@ -183,25 +92,41 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           <RequirementCard
             key={req.id}
             requirement={req}
-            expandedRequirement={expandedRequirement}
-            editingRequirement={editingRequirement}
-            onEditRequirement={handleEditRequirement}
-            onRequirementClick={handleRequirementClick}
-            onSaveRequirement={handleSaveRequirement}
-            setEditingRequirement={setEditingRequirement}
-            handleRerunForRequirement={handleRerunForRequirement}
-            setIsHistoryOpen={setIsHistoryOpen}
+            isExpanded={expandedRequirement === req.id}
+            isEditing={editingRequirement === req.id}
+            isSelected={selectedRequirements.includes(req.id)}
+            onToggleSelect={(checked) => {
+              setSelectedRequirements(prev =>
+                checked
+                  ? [...prev, req.id]
+                  : prev.filter(id => id !== req.id)
+              );
+            }}
+            onEdit={(e) => handleEditRequirement(req, e)}
+            onSave={handleSaveRequirement}
+            onCancel={(e) => {
+              e.stopPropagation();
+              setEditingRequirement(null);
+            }}
+            onClick={() => handleRequirementClick(req)}
+            onFunctionalAreaChange={(value) =>
+              setRequirements((prevReqs) =>
+                prevReqs.map((r) =>
+                  r.id === req.id
+                    ? { ...r, functionalArea: value }
+                    : r
+                )
+              )
+            }
           />
         ))}
       </div>
       <div className="w-1/3 border-l p-4">
         <div className="prose prose-sm">
           <h3 className="text-lg font-semibold mb-4">Source Document</h3>
-          <div
-            id="source-content"
-            className="whitespace-pre-wrap text-sm"
-            dangerouslySetInnerHTML={{ __html: sourceContent }}
-          />
+          <div className="whitespace-pre-wrap text-sm">
+            {/* Source content would go here */}
+          </div>
         </div>
       </div>
     </div>

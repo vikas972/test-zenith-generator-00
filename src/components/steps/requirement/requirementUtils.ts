@@ -1,4 +1,6 @@
 
+import { type Requirement } from "./types";
+
 export const getStatusVariant = (status: string) => {
   switch (status) {
     case "completed":

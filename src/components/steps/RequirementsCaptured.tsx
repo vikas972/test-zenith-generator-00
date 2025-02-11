@@ -136,6 +136,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
 
   const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
   const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
+  const [editingRequirement, setEditingRequirement] = useState<string | null>(null);
   const [sourceContent, setSourceContent] = useState<string>(`
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
     
