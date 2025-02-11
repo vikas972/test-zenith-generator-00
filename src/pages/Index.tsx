@@ -1,7 +1,9 @@
+
 import { useState } from "react";
 import { Header } from "@/components/Header";
 import { WizardSteps } from "@/components/WizardSteps";
 import { SourceSelection } from "@/components/steps/SourceSelection";
+import { RequirementsCaptured } from "@/components/steps/RequirementsCaptured";
 import { ScenarioGeneration } from "@/components/steps/ScenarioGeneration";
 import { TestCases } from "@/components/steps/TestCases";
 import { TestData } from "@/components/steps/TestData";
@@ -10,6 +12,7 @@ import { Button } from "@/components/ui/button";
 
 const STEPS = [
   "Source Selection",
+  "Requirements Captured",
   "Scenario Generation",
   "Test Cases",
   "Test Data",
@@ -31,12 +34,14 @@ const Index = () => {
       case 0:
         return <SourceSelection onFileSelect={setSelectedFile} />;
       case 1:
-        return <ScenarioGeneration selectedFile={selectedFile} />;
+        return <RequirementsCaptured selectedFile={selectedFile} />;
       case 2:
-        return <TestCases selectedFile={selectedFile} />;
+        return <ScenarioGeneration selectedFile={selectedFile} />;
       case 3:
-        return <TestData selectedFile={selectedFile} />;
+        return <TestCases selectedFile={selectedFile} />;
       case 4:
+        return <TestData selectedFile={selectedFile} />;
+      case 5:
         return <Metrics selectedFile={selectedFile} />;
       default:
         return <div>Step {currentStep + 1}</div>;
