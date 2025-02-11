@@ -19,6 +19,7 @@ interface RequirementCardProps {
   onClick: () => void;
   onDelete: () => void;
   onFunctionalAreaChange: (value: string) => void;
+  onSourceChange: (field: 'page' | 'paragraph', value: number) => void;
 }
 
 export const RequirementCard = ({
@@ -33,6 +34,7 @@ export const RequirementCard = ({
   onClick,
   onDelete,
   onFunctionalAreaChange,
+  onSourceChange,
 }: RequirementCardProps) => {
   return (
     <Card className={cn(
@@ -50,6 +52,7 @@ export const RequirementCard = ({
         onCancel={onCancel}
         onClick={onClick}
         onFunctionalAreaChange={onFunctionalAreaChange}
+        onSourceChange={onSourceChange}
       />
       {isExpanded && <RequirementContent requirement={requirement} />}
     </Card>
