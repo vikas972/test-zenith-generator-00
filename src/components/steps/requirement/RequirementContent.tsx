@@ -1,6 +1,7 @@
 
 import { CardContent } from "@/components/ui/card";
-import { Activity, Shield, List, AlertCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Activity, Shield, List, AlertCircle, Plus } from "lucide-react";
 import { type Requirement } from "./types";
 
 interface RequirementContentProps {
@@ -13,9 +14,14 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
       <div className="space-y-6">
         {/* Functional Flows */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Activity className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Functional Flows</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Activity className="h-4 w-4" />
+              <h3 className="text-sm font-semibold">Functional Flows</h3>
+            </div>
+            <Button variant="ghost" size="sm">
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
           <div className="space-y-2">
             {requirement.flows.map((flow) => (
@@ -28,9 +34,14 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
 
         {/* Business Rules */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <Shield className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Business Rules</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Shield className="h-4 w-4" />
+              <h3 className="text-sm font-semibold">Business Rules</h3>
+            </div>
+            <Button variant="ghost" size="sm">
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
           <div className="space-y-2">
             {requirement.businessRules.map((rule) => (
@@ -43,9 +54,14 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
 
         {/* Data Elements */}
         <div>
-          <div className="flex items-center gap-2 mb-2">
-            <List className="h-4 w-4" />
-            <h3 className="text-sm font-semibold">Data Elements</h3>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <List className="h-4 w-4" />
+              <h3 className="text-sm font-semibold">Data Elements</h3>
+            </div>
+            <Button variant="ghost" size="sm">
+              <Plus className="h-4 w-4" />
+            </Button>
           </div>
           <div className="space-y-2">
             {requirement.dataElements.map((element) => (
