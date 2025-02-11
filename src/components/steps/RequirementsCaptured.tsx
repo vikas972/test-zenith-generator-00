@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -200,12 +201,12 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       >
         <div className="p-4 border-b bg-white">
           <div className="flex items-center justify-between">
-            <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-4">
               <h2 className="text-lg font-semibold">Requirements Captured</h2>
-              <p className="text-sm text-gray-500">
+              <span className="text-sm text-gray-500">
                 Review and edit captured requirements from{" "}
                 {selectedFile?.name || "requirements.pdf"}
-              </p>
+              </span>
             </div>
             <div className="flex gap-2 items-center">
               <Button 
