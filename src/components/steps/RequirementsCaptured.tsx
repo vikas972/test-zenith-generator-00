@@ -1,7 +1,7 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, RefreshCw, Maximize2, Minimize2 } from "lucide-react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
@@ -190,6 +190,14 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     setIsRequirementsMaximized(false);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      setSelectedRequirements(requirements.map(req => req.id));
+    } else {
+      setSelectedRequirements([]);
+    }
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div 
@@ -232,8 +240,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
               <Button 
                 onClick={handleRegenerateSelected}
                 disabled={selectedRequirements.length === 0}
-                variant="outline"
-                className="bg-white"
+                className="bg-blue-500 hover:bg-blue-600"
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
@@ -243,6 +250,12 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         </div>
 
         <div className="flex-1 overflow-auto px-6 py-4">
+          <div className="mb-4 px-4">
+            <Checkbox
+              checked={selectedRequirements.length === requirements.length}
+              onCheckedChange={handleSelectAll}
+            />
+          </div>
           <div className="space-y-4">
             {requirements.map((requirement) => (
               <RequirementCard
