@@ -239,9 +239,9 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
   const handleAddNewRequirement = () => {
     const newRequirement: Requirement = {
       id: `${Date.now()}`,
-      requirementId: `REQ-${requirements.length + 1}`,
+      requirementId: `REQ-${requirements.length + 1}`.padStart(3, '0'),
       functionalArea: "New Requirement",
-      description: "",
+      description: "Enter requirement description",
       actors: [],
       flows: [],
       businessRules: [],
@@ -260,6 +260,23 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     setRequirements([...requirements, newRequirement]);
     setExpandedRequirement(newRequirement.id);
     setEditingRequirement(newRequirement.id);
+    toast.success("New requirement added");
+  };
+
+  const handleEditRequirement = (requirement: Requirement, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(requirement.id);
+  };
+
+  const handleSaveRequirement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(null);
+    toast.success("Changes saved successfully");
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(null);
   };
 
   const handleRegenerateSelected = () => {
@@ -537,21 +554,14 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingRequirement(null);
-                    }}
+                    onClick={handleCancelEdit}
                   >
                     <X className="h-4 w-4" />
                   </Button>
                   <Button
                     size="sm"
                     variant="ghost"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setEditingRequirement(null);
-                      toast.success("Changes saved successfully");
-                    }}
+                    onClick={handleSaveRequirement}
                   >
                     <Save className="h-4 w-4" />
                   </Button>
@@ -560,10 +570,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                 <Button
                   size="sm"
                   variant="ghost"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setEditingRequirement(requirement.id);
-                  }}
+                  onClick={(e) => handleEditRequirement(requirement, e)}
                 >
                   <Edit className="h-4 w-4" />
                 </Button>
@@ -789,6 +796,8 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
           />
         </div>
       </div>
+
+      {renderElementDialog()}
     </div>
   );
 };
