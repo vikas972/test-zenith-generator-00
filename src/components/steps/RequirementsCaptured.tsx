@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import {
@@ -30,6 +29,7 @@ import {
   List,
   Shield,
   Activity,
+  RefreshCw,
 } from "lucide-react";
 
 interface RequirementsCapturedProps {
