@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, RefreshCw, Maximize2, Minimize2 } from "lucide-react";
+import { Plus, RefreshCw, Maximize2, Minimize2, Trash2 } from "lucide-react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
 import { createNewRequirement } from "./requirement/requirementUtils";
@@ -199,6 +198,24 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     }
   };
 
+  const handleDeleteSelected = () => {
+    if (selectedRequirements.length === 0) {
+      toast.error("Please select at least one requirement to delete");
+      return;
+    }
+    setRequirements(prevReqs => 
+      prevReqs.filter(req => !selectedRequirements.includes(req.id))
+    );
+    setSelectedRequirements([]);
+    toast.success(`Deleted ${selectedRequirements.length} requirements`);
+  };
+
+  const handleDeleteRequirement = (requirementId: string) => {
+    setRequirements(prevReqs => prevReqs.filter(req => req.id !== requirementId));
+    setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
+    toast.success("Requirement deleted successfully");
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div 
@@ -253,6 +270,14 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
               </Button>
+              <Button 
+                onClick={handleDeleteSelected}
+                disabled={selectedRequirements.length === 0}
+                variant="destructive"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Selected
+              </Button>
             </div>
           </div>
         </div>
@@ -287,6 +312,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                   setEditingRequirement(null);
                 }}
                 onClick={() => handleRequirementClick(requirement)}
+                onDelete={() => handleDeleteRequirement(requirement.id)}
                 onFunctionalAreaChange={(value) =>
                   setRequirements((prevReqs) =>
                     prevReqs.map((r) =>

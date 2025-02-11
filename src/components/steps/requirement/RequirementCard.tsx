@@ -4,6 +4,8 @@ import { RequirementHeader } from "./RequirementHeader";
 import { RequirementContent } from "./RequirementContent";
 import { type Requirement } from "./types";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Trash } from "lucide-react";
 
 interface RequirementCardProps {
   requirement: Requirement;
@@ -15,6 +17,7 @@ interface RequirementCardProps {
   onSave: (e: React.MouseEvent) => void;
   onCancel: (e: React.MouseEvent) => void;
   onClick: () => void;
+  onDelete: () => void;
   onFunctionalAreaChange: (value: string) => void;
 }
 
@@ -28,13 +31,27 @@ export const RequirementCard = ({
   onSave,
   onCancel,
   onClick,
+  onDelete,
   onFunctionalAreaChange,
 }: RequirementCardProps) => {
   return (
     <Card className={cn(
-      "mb-4",
+      "mb-4 relative",
       isExpanded && "border-primary"
     )}>
+      <div className="absolute right-2 top-2 z-10">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={(e) => {
+            e.stopPropagation();
+            onDelete();
+          }}
+          className="text-gray-500 hover:text-red-500"
+        >
+          <Trash className="h-4 w-4" />
+        </Button>
+      </div>
       <RequirementHeader
         requirement={requirement}
         isEditing={isEditing}
