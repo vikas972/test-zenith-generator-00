@@ -4,7 +4,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
-import { MapPin, Edit, Save, X, ChevronDown, ChevronRight } from "lucide-react";
+import { MapPin, Edit, Save, X, ChevronDown, ChevronRight, Trash } from "lucide-react";
 import { type Requirement } from "./types";
 import { getStatusVariant } from "./requirementUtils";
 
@@ -59,7 +59,7 @@ export const RequirementHeader = ({
             )}
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 text-gray-500">
             <MapPin className="h-4 w-4" />
             <span className="text-xs">
@@ -69,30 +69,53 @@ export const RequirementHeader = ({
           <Badge variant={getStatusVariant(requirement.status)}>
             {requirement.status.replace("_", " ")}
           </Badge>
+          {!isEditing && (
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(e);
+              }}
+              className="text-gray-500 hover:text-blue-500"
+            >
+              Edit
+            </Button>
+          )}
           {isEditing ? (
-            <>
+            <div className="flex items-center gap-2">
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={onCancel}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onCancel(e);
+                }}
               >
                 <X className="h-4 w-4" />
               </Button>
               <Button
                 size="sm"
                 variant="ghost"
-                onClick={onSave}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onSave(e);
+                }}
               >
                 <Save className="h-4 w-4" />
               </Button>
-            </>
+            </div>
           ) : (
             <Button
-              size="sm"
               variant="ghost"
-              onClick={onEdit}
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(e);
+              }}
+              className="text-gray-500 hover:text-blue-500"
             >
-              <Edit className="h-4 w-4" />
+              <Trash className="h-4 w-4" />
             </Button>
           )}
           {isExpanded ? (

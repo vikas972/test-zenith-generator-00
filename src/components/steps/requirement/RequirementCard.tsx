@@ -39,32 +39,6 @@ export const RequirementCard = ({
       "mb-4 relative",
       isExpanded && "border-primary"
     )}>
-      <div className="absolute right-20 top-2 z-10 flex gap-2">
-        {!isEditing && (
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={(e) => {
-              e.stopPropagation();
-              onEdit(e);
-            }}
-            className="text-gray-500 hover:text-blue-500"
-          >
-            Edit
-          </Button>
-        )}
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={(e) => {
-            e.stopPropagation();
-            onDelete();
-          }}
-          className="text-gray-500 hover:text-red-500"
-        >
-          <Trash className="h-4 w-4" />
-        </Button>
-      </div>
       <RequirementHeader
         requirement={requirement}
         isEditing={isEditing}
