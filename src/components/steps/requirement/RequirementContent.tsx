@@ -2,13 +2,43 @@
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Activity, Shield, List, AlertCircle, Plus } from "lucide-react";
-import { type Requirement } from "./types";
+import { type Requirement, type Flow, type BusinessRule, type DataElement } from "./types";
+import { toast } from "sonner";
 
 interface RequirementContentProps {
   requirement: Requirement;
 }
 
 export const RequirementContent = ({ requirement }: RequirementContentProps) => {
+  const handleAddFlow = () => {
+    const newFlow: Flow = {
+      id: `f${requirement.flows.length + 1}`,
+      description: "New flow description"
+    };
+    requirement.flows.push(newFlow);
+    toast.success("New flow added");
+  };
+
+  const handleAddBusinessRule = () => {
+    const newRule: BusinessRule = {
+      id: `br${requirement.businessRules.length + 1}`,
+      description: "New business rule"
+    };
+    requirement.businessRules.push(newRule);
+    toast.success("New business rule added");
+  };
+
+  const handleAddDataElement = () => {
+    const newElement: DataElement = {
+      id: `de${requirement.dataElements.length + 1}`,
+      name: "New Element",
+      type: "string",
+      required: false
+    };
+    requirement.dataElements.push(newElement);
+    toast.success("New data element added");
+  };
+
   return (
     <CardContent>
       <div className="space-y-6">
@@ -19,7 +49,7 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               <Activity className="h-4 w-4" />
               <h3 className="text-sm font-semibold">Functional Flows</h3>
             </div>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleAddFlow}>
               <Plus className="h-4 w-4" />
             </Button>
           </div>
@@ -39,7 +69,7 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               <Shield className="h-4 w-4" />
               <h3 className="text-sm font-semibold">Business Rules</h3>
             </div>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleAddBusinessRule}>
               <Plus className="h-4 w-4" />
             </Button>
           </div>
@@ -59,7 +89,7 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               <List className="h-4 w-4" />
               <h3 className="text-sm font-semibold">Data Elements</h3>
             </div>
-            <Button variant="ghost" size="sm">
+            <Button variant="ghost" size="sm" onClick={handleAddDataElement}>
               <Plus className="h-4 w-4" />
             </Button>
           </div>

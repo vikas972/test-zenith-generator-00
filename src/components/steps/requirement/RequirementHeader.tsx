@@ -19,6 +19,7 @@ interface RequirementHeaderProps {
   onCancel: (e: React.MouseEvent) => void;
   onClick: () => void;
   onFunctionalAreaChange: (value: string) => void;
+  onSourceChange?: (field: 'page' | 'paragraph', value: number) => void;
 }
 
 export const RequirementHeader = ({
@@ -32,6 +33,7 @@ export const RequirementHeader = ({
   onCancel,
   onClick,
   onFunctionalAreaChange,
+  onSourceChange,
 }: RequirementHeaderProps) => {
   return (
     <CardHeader 
@@ -62,9 +64,28 @@ export const RequirementHeader = ({
         <div className="flex items-center gap-4">
           <div className="flex items-center gap-1 text-gray-500">
             <MapPin className="h-4 w-4" />
-            <span className="text-xs">
-              Page {requirement.source.page}, ¶{requirement.source.paragraph}
-            </span>
+            {isEditing ? (
+              <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+                <span className="text-xs">Page</span>
+                <Input
+                  type="number"
+                  value={requirement.source.page}
+                  onChange={(e) => onSourceChange?.('page', Number(e.target.value))}
+                  className="w-16 h-7 text-xs"
+                />
+                <span className="text-xs">¶</span>
+                <Input
+                  type="number"
+                  value={requirement.source.paragraph}
+                  onChange={(e) => onSourceChange?.('paragraph', Number(e.target.value))}
+                  className="w-16 h-7 text-xs"
+                />
+              </div>
+            ) : (
+              <span className="text-xs">
+                Page {requirement.source.page}, ¶{requirement.source.paragraph}
+              </span>
+            )}
           </div>
           <Badge variant={getStatusVariant(requirement.status)}>
             {requirement.status.replace("_", " ")}

@@ -216,6 +216,22 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     toast.success("Requirement deleted successfully");
   };
 
+  const handleSourceChange = (requirementId: string, field: 'page' | 'paragraph', value: number) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? {
+              ...req,
+              source: {
+                ...req.source,
+                [field]: value
+              }
+            }
+          : req
+      )
+    );
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div 
@@ -322,6 +338,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                     )
                   )
                 }
+                onSourceChange={(field, value) => handleSourceChange(requirement.id, field, value)}
               />
             ))}
           </div>
