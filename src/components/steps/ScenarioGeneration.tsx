@@ -95,6 +95,22 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
+  const handleSourceChange = (requirementId: string, field: 'page' | 'paragraph', value: number) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? {
+              ...req,
+              source: {
+                ...req.source,
+                [field]: value
+              }
+            }
+          : req
+      )
+    );
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="flex-1 overflow-auto">
@@ -129,6 +145,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 )
               )
             }
+            onSourceChange={(field, value) => handleSourceChange(req.id, field, value)}
           />
         ))}
       </div>
