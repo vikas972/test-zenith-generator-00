@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -230,6 +231,13 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
               </Button>
             </div>
             <div className="flex gap-2 items-center">
+              <div className="flex items-center gap-2 px-4">
+                <Checkbox
+                  checked={selectedRequirements.length === requirements.length}
+                  onCheckedChange={handleSelectAll}
+                />
+                <span className="text-sm text-gray-500">Select All</span>
+              </div>
               <Button 
                 onClick={handleAddNewRequirement}
                 className="bg-blue-500 hover:bg-blue-600"
@@ -250,12 +258,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         </div>
 
         <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="mb-4 px-4">
-            <Checkbox
-              checked={selectedRequirements.length === requirements.length}
-              onCheckedChange={handleSelectAll}
-            />
-          </div>
           <div className="space-y-4">
             {requirements.map((requirement) => (
               <RequirementCard
