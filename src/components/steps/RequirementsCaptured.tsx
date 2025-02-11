@@ -200,13 +200,26 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         )}
       >
         <div className="p-4 border-b bg-white">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-semibold">Requirements Captured</h2>
-              <span className="text-sm text-gray-500">
-                Review and edit captured requirements from{" "}
-                {selectedFile?.name || "requirements.pdf"}
-              </span>
+          <div className="flex flex-col gap-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <h2 className="text-lg font-semibold">Requirements Captured</h2>
+                <span className="text-sm text-gray-500">
+                  Review and edit captured requirements from{" "}
+                  {selectedFile?.name || "requirements.pdf"}
+                </span>
+              </div>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleRequirementsMaximize}
+              >
+                {isRequirementsMaximized ? (
+                  <Minimize2 className="h-4 w-4" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" />
+                )}
+              </Button>
             </div>
             <div className="flex gap-2 items-center">
               <Button 
@@ -224,18 +237,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
-              </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={toggleRequirementsMaximize}
-                className="ml-2"
-              >
-                {isRequirementsMaximized ? (
-                  <Minimize2 className="h-4 w-4" />
-                ) : (
-                  <Maximize2 className="h-4 w-4" />
-                )}
               </Button>
             </div>
           </div>
