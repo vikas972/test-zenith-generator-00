@@ -1,10 +1,12 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
-import { Plus, RefreshCw } from "lucide-react";
+import { Plus, RefreshCw, Maximize2, Minimize2 } from "lucide-react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
 import { createNewRequirement } from "./requirement/requirementUtils";
+import { cn } from "@/lib/utils";
 
 interface RequirementsCapturedProps {
   selectedFile: {
@@ -146,6 +148,8 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     REQ-002: User Management
     Administrators shall be able to create, modify, and delete user accounts with appropriate access controls.
   `);
+  const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
+  const [isSourceMaximized, setIsSourceMaximized] = useState(false);
 
   const handleRequirementClick = (requirement: Requirement) => {
     setExpandedRequirement(expandedRequirement === requirement.id ? null : requirement.id);
@@ -176,9 +180,25 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     toast.success(`Regenerating ${selectedRequirements.length} requirements`);
   };
 
+  const toggleRequirementsMaximize = () => {
+    setIsRequirementsMaximized(!isRequirementsMaximized);
+    setIsSourceMaximized(false);
+  };
+
+  const toggleSourceMaximize = () => {
+    setIsSourceMaximized(!isSourceMaximized);
+    setIsRequirementsMaximized(false);
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
-      <div className="flex-1 flex flex-col h-full">
+      <div 
+        className={cn(
+          "flex flex-col h-full transition-all duration-300",
+          isRequirementsMaximized ? "w-full" : "flex-1",
+          isSourceMaximized ? "hidden" : "flex"
+        )}
+      >
         <div className="px-6 py-6 bg-white border-b">
           <div className="flex items-center justify-between">
             <div>
@@ -190,7 +210,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                 {selectedFile ? selectedFile.name : "the uploaded document"}
               </p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center">
               <Button onClick={handleAddNewRequirement}>
                 <Plus className="h-4 w-4 mr-2" />
                 Add Requirement
@@ -201,6 +221,18 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
               >
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={toggleRequirementsMaximize}
+                className="ml-2"
+              >
+                {isRequirementsMaximized ? (
+                  <Minimize2 className="h-4 w-4" />
+                ) : (
+                  <Maximize2 className="h-4 w-4" />
+                )}
               </Button>
             </div>
           </div>
@@ -251,9 +283,26 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         </div>
       </div>
 
-      <div className="w-1/3 border-l flex flex-col bg-gray-50">
-        <div className="p-4 border-b bg-white">
+      <div 
+        className={cn(
+          "border-l flex flex-col bg-gray-50 transition-all duration-300",
+          isSourceMaximized ? "w-full" : "w-1/3",
+          isRequirementsMaximized ? "hidden" : "flex"
+        )}
+      >
+        <div className="p-4 border-b bg-white flex justify-between items-center">
           <h2 className="text-lg font-semibold">Source Document</h2>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleSourceMaximize}
+          >
+            {isSourceMaximized ? (
+              <Minimize2 className="h-4 w-4" />
+            ) : (
+              <Maximize2 className="h-4 w-4" />
+            )}
+          </Button>
         </div>
         <div className="flex-1 p-4 overflow-auto">
           <div
