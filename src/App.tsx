@@ -21,12 +21,14 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <TooltipProvider>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-          <Toaster />
-          <Sonner />
+          <div className="min-h-screen">
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+            <Toaster />
+            <Sonner />
+          </div>
         </TooltipProvider>
       </BrowserRouter>
     </QueryClientProvider>

@@ -49,13 +49,13 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       <WizardSteps currentStep={currentStep} steps={STEPS} />
-      <main className="flex-1 flex flex-col">
+      <main className="container mx-auto px-4 py-8">
         {renderStep()}
-        <div className="border-t mt-auto">
-          <div className="container mx-auto px-4 py-4 flex justify-end gap-4">
+        <div className="border-t mt-8">
+          <div className="py-4 flex justify-end gap-4">
             {currentStep > 0 && (
               <Button
                 variant="outline"
