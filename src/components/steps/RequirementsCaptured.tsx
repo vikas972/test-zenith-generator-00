@@ -37,7 +37,10 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         { id: "de1", name: "Username", type: "string", required: true },
         { id: "de2", name: "Password", type: "string", required: true },
       ],
-      missingInfo: ["Password reset flow", "2FA requirements"],
+      missingInfo: [
+        { id: "mi1", category: "flows", description: "Password reset flow" },
+        { id: "mi2", category: "business_rules", description: "2FA requirements" }
+      ],
       status: "needs_review",
       confidence: 0.85,
       source: {
@@ -66,7 +69,10 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         { id: "de3", name: "Email", type: "string", required: true },
         { id: "de4", name: "Role", type: "enum", required: true },
       ],
-      missingInfo: ["Role hierarchy definition", "Permission matrix"],
+      missingInfo: [
+        { id: "mi3", category: "flows", description: "Role hierarchy definition" },
+        { id: "mi4", category: "business_rules", description: "Permission matrix" }
+      ],
       status: "in_progress",
       confidence: 0.75,
       source: {
@@ -95,7 +101,10 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         { id: "de5", name: "ResetToken", type: "string", required: true },
         { id: "de6", name: "ExpiryTime", type: "datetime", required: true },
       ],
-      missingInfo: ["Rate limiting rules", "Recovery email template"],
+      missingInfo: [
+        { id: "mi5", category: "flows", description: "Rate limiting rules" },
+        { id: "mi6", category: "business_rules", description: "Recovery email template" }
+      ],
       status: "completed",
       confidence: 0.95,
       source: {
@@ -124,7 +133,10 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         { id: "de7", name: "SessionID", type: "string", required: true },
         { id: "de8", name: "LastActivity", type: "timestamp", required: true },
       ],
-      missingInfo: ["Session revival mechanism", "Multi-device handling"],
+      missingInfo: [
+        { id: "mi7", category: "flows", description: "Session revival mechanism" },
+        { id: "mi8", category: "business_rules", description: "Multi-device handling" }
+      ],
       status: "needs_review",
       confidence: 0.80,
       source: {

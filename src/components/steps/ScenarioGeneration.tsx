@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
@@ -39,7 +38,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         { id: "de1", name: "Username", type: "string", required: true },
         { id: "de2", name: "Password", type: "string", required: true }
       ],
-      missingInfo: ["Password reset flow", "2FA requirements"],
+      missingInfo: [
+        { id: "mi1", category: "flows", description: "Password reset flow" },
+        { id: "mi2", category: "business_rules", description: "2FA requirements" }
+      ],
       status: "completed",
       confidence: 0.85,
       source: {
