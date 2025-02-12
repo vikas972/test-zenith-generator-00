@@ -4,7 +4,7 @@ import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Activity, Shield, List, Plus, Pencil, Save, X, Check, AlertCircle } from "lucide-react";
+import { Activity, Shield, List, Plus, Pencil, Save, X, Check } from "lucide-react";
 import { type Requirement, type Flow, type BusinessRule, type DataElement } from "./types";
 import { toast } from "sonner";
 
@@ -142,7 +142,10 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               .filter(info => info.category === "flows")
               .map(info => (
                 <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <div className="flex-1">
+                    <span className="text-sm text-yellow-700">{info.description}</span>
+                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -211,7 +214,10 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               .filter(info => info.category === "business_rules")
               .map(info => (
                 <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <div className="flex-1">
+                    <span className="text-sm text-yellow-700">{info.description}</span>
+                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
@@ -284,7 +290,10 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               .filter(info => info.category === "data_elements")
               .map(info => (
                 <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <div className="flex-1">
+                    <span className="text-sm text-yellow-700">{info.description}</span>
+                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
+                  </div>
                   <Button
                     variant="ghost"
                     size="sm"
