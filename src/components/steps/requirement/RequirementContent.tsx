@@ -1,101 +1,71 @@
-
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Activity, Shield, List, Plus, Pencil, Save, X, Check } from "lucide-react";
-import { type Requirement, type Flow, type BusinessRule, type DataElement } from "./types";
+import { Activity, Shield, List, Plus, Pencil, Save, X, Check, Network, Box } from "lucide-react";
+import { type Requirement, type Flow, type BusinessRule, type DataElement, type IntegrationPoint, type ExpectedBehavior } from "./types";
 import { toast } from "sonner";
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import { cn } from "@/lib/utils";
 
 interface RequirementContentProps {
   requirement: Requirement;
 }
 
 export const RequirementContent = ({ requirement }: RequirementContentProps) => {
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState("");
   const [isFlowDialogOpen, setIsFlowDialogOpen] = useState(false);
   const [isBusinessRuleDialogOpen, setIsBusinessRuleDialogOpen] = useState(false);
   const [isDataElementDialogOpen, setIsDataElementDialogOpen] = useState(false);
-  const [newItemValue, setNewItemValue] = useState("");
-  const [newDataElement, setNewDataElement] = useState<{ name: string; type: string; required: boolean }>({
-    name: "",
-    type: "string",
-    required: false
+  const [isIntegrationDialogOpen, setIsIntegrationDialogOpen] = useState(false);
+  const [isBehaviorDialogOpen, setIsBehaviorDialogOpen] = useState(false);
+  const [newIntegration, setNewIntegration] = useState<{
+    system: string;
+    type: string;
+    expectedBehavior: string;
+  }>({
+    system: "",
+    type: "",
+    expectedBehavior: ""
+  });
+  const [newBehavior, setNewBehavior] = useState<{
+    type: "success" | "error" | "system";
+    condition: string;
+    outcome: string;
+  }>({
+    type: "success",
+    condition: "",
+    outcome: ""
   });
 
-  const handleAddFlow = () => {
-    if (!newItemValue.trim()) return;
-    const newFlow: Flow = {
-      id: `f${requirement.flows.length + 1}`,
-      description: newItemValue
+  const handleAddIntegration = () => {
+    if (!newIntegration.system.trim()) return;
+    const newPoint: IntegrationPoint = {
+      id: `ip${requirement.integrationPoints?.length + 1 || 1}`,
+      ...newIntegration
     };
-    requirement.flows.push(newFlow);
-    setNewItemValue("");
-    setIsFlowDialogOpen(false);
-    toast.success("New flow added");
+    requirement.integrationPoints = [...(requirement.integrationPoints || []), newPoint];
+    setNewIntegration({ system: "", type: "", expectedBehavior: "" });
+    setIsIntegrationDialogOpen(false);
+    toast.success("New integration point added");
   };
 
-  const handleAddBusinessRule = () => {
-    if (!newItemValue.trim()) return;
-    const newRule: BusinessRule = {
-      id: `br${requirement.businessRules.length + 1}`,
-      description: newItemValue
+  const handleAddBehavior = () => {
+    if (!newBehavior.condition.trim()) return;
+    const newBehaviorItem: ExpectedBehavior = {
+      id: `eb${requirement.expectedBehaviors?.length + 1 || 1}`,
+      ...newBehavior
     };
-    requirement.businessRules.push(newRule);
-    setNewItemValue("");
-    setIsBusinessRuleDialogOpen(false);
-    toast.success("New business rule added");
-  };
-
-  const handleAddDataElement = () => {
-    if (!newDataElement.name.trim()) return;
-    const newElement: DataElement = {
-      id: `de${requirement.dataElements.length + 1}`,
-      ...newDataElement
-    };
-    requirement.dataElements.push(newElement);
-    setNewDataElement({ name: "", type: "string", required: false });
-    setIsDataElementDialogOpen(false);
-    toast.success("New data element added");
-  };
-
-  const handleStartEdit = (id: string, value: string) => {
-    setEditingItemId(id);
-    setEditingValue(value);
-  };
-
-  const handleSaveEdit = (type: 'flow' | 'rule' | 'element') => {
-    if (!editingItemId) return;
-
-    switch (type) {
-      case 'flow':
-        requirement.flows = requirement.flows.map(flow =>
-          flow.id === editingItemId ? { ...flow, description: editingValue } : flow
-        );
-        break;
-      case 'rule':
-        requirement.businessRules = requirement.businessRules.map(rule =>
-          rule.id === editingItemId ? { ...rule, description: editingValue } : rule
-        );
-        break;
-      case 'element':
-        requirement.dataElements = requirement.dataElements.map(element =>
-          element.id === editingItemId ? { ...element, name: editingValue } : element
-        );
-        break;
-    }
-
-    setEditingItemId(null);
-    setEditingValue("");
-    toast.success("Changes saved");
+    requirement.expectedBehaviors = [...(requirement.expectedBehaviors || []), newBehaviorItem];
+    setNewBehavior({ type: "success", condition: "", outcome: "" });
+    setIsBehaviorDialogOpen(false);
+    toast.success("New expected behavior added");
   };
 
   return (
     <CardContent>
       <div className="space-y-6">
-        {/* Functional Flows */}
+        {/* Functional Flows Section */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -106,68 +76,61 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <div className="space-y-2">
-            {requirement.flows.map((flow) => (
-              <div key={flow.id} className="text-sm flex items-center gap-2 group">
-                {editingItemId === flow.id ? (
-                  <div className="flex-1 flex items-center gap-2">
-                    <Input
-                      value={editingValue}
-                      onChange={(e) => setEditingValue(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button size="sm" variant="ghost" onClick={() => handleSaveEdit('flow')}>
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setEditingItemId(null)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <span className="flex-1">{flow.description}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100"
-                      onClick={() => handleStartEdit(flow.id, flow.description)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
-            ))}
-            {requirement.missingInfo
-              .filter(info => info.category === "flows")
-              .map(info => (
-                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <div className="flex-1">
-                    <span className="text-sm text-yellow-700">{info.description}</span>
-                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-yellow-100"
-                    onClick={() => {
-                      const newFlow: Flow = {
-                        id: `f${requirement.flows.length + 1}`,
-                        description: info.description
-                      };
-                      requirement.flows.push(newFlow);
-                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
-                      toast.success("Flow added from recommendation");
-                    }}
-                  >
-                    <Check className="h-4 w-4 text-green-600" />
-                  </Button>
-                </div>
-              ))}
-          </div>
+          <Accordion type="single" collapsible className="w-full">
+            <AccordionItem value="primary">
+              <AccordionTrigger>Primary Flows</AccordionTrigger>
+              <AccordionContent>
+                {requirement.flows
+                  .filter(flow => flow.type === "primary")
+                  .map((flow) => (
+                    <div key={flow.id} className="mb-2 p-2 border rounded">
+                      <div className="font-medium">{flow.description}</div>
+                      {flow.steps?.map(step => (
+                        <div key={step.id} className="ml-4 mt-1">
+                          <div className="text-sm">• {step.description}</div>
+                          <div className="text-sm text-gray-600 ml-4">
+                            Expected: {step.expectedOutcome}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ))}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="alternative">
+              <AccordionTrigger>Alternative Flows</AccordionTrigger>
+              <AccordionContent>
+                {requirement.flows
+                  .filter(flow => flow.type === "alternative")
+                  .map((flow) => (
+                    <div key={flow.id} className="mb-2 p-2 border rounded">
+                      <div className="font-medium">{flow.description}</div>
+                      <div className="text-sm text-gray-600 ml-4">
+                        Expected: {flow.expectedOutcome}
+                      </div>
+                    </div>
+                  ))}
+              </AccordionContent>
+            </AccordionItem>
+            <AccordionItem value="exception">
+              <AccordionTrigger>Exception Flows</AccordionTrigger>
+              <AccordionContent>
+                {requirement.flows
+                  .filter(flow => flow.type === "exception")
+                  .map((flow) => (
+                    <div key={flow.id} className="mb-2 p-2 border rounded">
+                      <div className="font-medium">{flow.description}</div>
+                      <div className="text-sm text-gray-600 ml-4">
+                        Expected: {flow.expectedOutcome}
+                      </div>
+                    </div>
+                  ))}
+              </AccordionContent>
+            </AccordionItem>
+          </Accordion>
         </div>
 
-        {/* Business Rules */}
+        {/* Business Rules Section */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -178,68 +141,37 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
               <Plus className="h-4 w-4" />
             </Button>
           </div>
-          <div className="space-y-2">
-            {requirement.businessRules.map((rule) => (
-              <div key={rule.id} className="text-sm flex items-center gap-2 group">
-                {editingItemId === rule.id ? (
-                  <div className="flex-1 flex items-center gap-2">
-                    <Input
-                      value={editingValue}
-                      onChange={(e) => setEditingValue(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button size="sm" variant="ghost" onClick={() => handleSaveEdit('rule')}>
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setEditingItemId(null)}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <>
-                    <span className="flex-1">{rule.description}</span>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100"
-                      onClick={() => handleStartEdit(rule.id, rule.description)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </>
-                )}
-              </div>
+          <Accordion type="single" collapsible className="w-full">
+            {["authentication", "security", "system"].map((category) => (
+              <AccordionItem key={category} value={category}>
+                <AccordionTrigger className="capitalize">
+                  {category.replace("_", " ")} Rules
+                </AccordionTrigger>
+                <AccordionContent>
+                  {requirement.businessRules
+                    .filter(rule => rule.category === category)
+                    .map((rule) => (
+                      <div key={rule.id} className="mb-2 p-2 border rounded">
+                        <div className="font-medium">{rule.description}</div>
+                        {rule.validationCriteria && (
+                          <div className="text-sm text-gray-600 ml-4">
+                            Validation: {rule.validationCriteria}
+                          </div>
+                        )}
+                        {rule.parameters && (
+                          <div className="text-sm text-gray-600 ml-4">
+                            Parameters: {rule.parameters}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                </AccordionContent>
+              </AccordionItem>
             ))}
-            {requirement.missingInfo
-              .filter(info => info.category === "business_rules")
-              .map(info => (
-                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <div className="flex-1">
-                    <span className="text-sm text-yellow-700">{info.description}</span>
-                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-yellow-100"
-                    onClick={() => {
-                      const newRule: BusinessRule = {
-                        id: `br${requirement.businessRules.length + 1}`,
-                        description: info.description
-                      };
-                      requirement.businessRules.push(newRule);
-                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
-                      toast.success("Business rule added from recommendation");
-                    }}
-                  >
-                    <Check className="h-4 w-4 text-green-600" />
-                  </Button>
-                </div>
-              ))}
-          </div>
+          </Accordion>
         </div>
 
-        {/* Data Elements */}
+        {/* Data Elements Section */}
         <div>
           <div className="flex items-center justify-between mb-2">
             <div className="flex items-center gap-2">
@@ -252,144 +184,158 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
           </div>
           <div className="space-y-2">
             {requirement.dataElements.map((element) => (
-              <div key={element.id} className="text-sm flex items-center gap-2 group">
-                {editingItemId === element.id ? (
-                  <div className="flex-1 flex items-center gap-2">
-                    <Input
-                      value={editingValue}
-                      onChange={(e) => setEditingValue(e.target.value)}
-                      className="flex-1"
-                    />
-                    <Button size="sm" variant="ghost" onClick={() => handleSaveEdit('element')}>
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setEditingItemId(null)}>
-                      <X className="h-4 w-4" />
-                    </Button>
+              <div key={element.id} className="p-2 border rounded">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium">{element.name}</span>
+                  <span className="text-gray-500">({element.type})</span>
+                  {element.required && (
+                    <span className="text-xs text-red-500">Required</span>
+                  )}
+                </div>
+                {element.format && (
+                  <div className="text-sm text-gray-600 ml-4">
+                    Format: {element.format}
                   </div>
-                ) : (
-                  <>
-                    <span className="font-medium">{element.name}</span>
-                    <span className="text-gray-500">({element.type})</span>
-                    {element.required && (
-                      <span className="text-xs text-red-500">Required</span>
-                    )}
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="opacity-0 group-hover:opacity-100"
-                      onClick={() => handleStartEdit(element.id, element.name)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </>
+                )}
+                {element.validationRules && element.validationRules.length > 0 && (
+                  <div className="text-sm text-gray-600 ml-4">
+                    Validation Rules:
+                    <ul className="list-disc ml-4">
+                      {element.validationRules.map((rule, index) => (
+                        <li key={index}>{rule}</li>
+                      ))}
+                    </ul>
+                  </div>
                 )}
               </div>
             ))}
-            {requirement.missingInfo
-              .filter(info => info.category === "data_elements")
-              .map(info => (
-                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
-                  <div className="flex-1">
-                    <span className="text-sm text-yellow-700">{info.description}</span>
-                    <span className="text-xs text-yellow-600 ml-2">(Recommended)</span>
-                  </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="hover:bg-yellow-100"
-                    onClick={() => {
-                      setNewDataElement({
-                        name: info.description,
-                        type: "string",
-                        required: false
-                      });
-                      setIsDataElementDialogOpen(true);
-                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
-                      toast.success("Data element suggestion accepted");
-                    }}
-                  >
-                    <Check className="h-4 w-4 text-green-600" />
-                  </Button>
-                </div>
-              ))}
           </div>
         </div>
 
-        {/* Add Flow Dialog */}
-        <Dialog open={isFlowDialogOpen} onOpenChange={setIsFlowDialogOpen}>
+        {/* Integration Points Section */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Network className="h-4 w-4" />
+              <h3 className="text-sm font-semibold">Integration Points</h3>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => setIsIntegrationDialogOpen(true)}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          <div className="space-y-2">
+            {requirement.integrationPoints?.map((point) => (
+              <div key={point.id} className="p-2 border rounded">
+                <div className="font-medium">{point.system}</div>
+                <div className="text-sm text-gray-600">
+                  Type: {point.type}
+                </div>
+                <div className="text-sm text-gray-600">
+                  Expected Behavior: {point.expectedBehavior}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Expected Behaviors Section */}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Box className="h-4 w-4" />
+              <h3 className="text-sm font-semibold">Expected Behaviors</h3>
+            </div>
+            <Button variant="ghost" size="sm" onClick={() => setIsBehaviorDialogOpen(true)}>
+              <Plus className="h-4 w-4" />
+            </Button>
+          </div>
+          <Accordion type="single" collapsible className="w-full">
+            {["success", "error", "system"].map((type) => (
+              <AccordionItem key={type} value={type}>
+                <AccordionTrigger className="capitalize">
+                  {type === "success" ? "Success Conditions" :
+                   type === "error" ? "Error Conditions" : "System Responses"}
+                </AccordionTrigger>
+                <AccordionContent>
+                  {requirement.expectedBehaviors
+                    ?.filter(behavior => behavior.type === type)
+                    .map((behavior) => (
+                      <div key={behavior.id} className="mb-2 p-2 border rounded">
+                        <div className="font-medium">Condition: {behavior.condition}</div>
+                        <div className="text-sm text-gray-600 ml-4">
+                          Expected Outcome: {behavior.outcome}
+                        </div>
+                      </div>
+                    ))}
+                </AccordionContent>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </div>
+
+        {/* New Integration Point Dialog */}
+        <Dialog open={isIntegrationDialogOpen} onOpenChange={setIsIntegrationDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Flow</DialogTitle>
+              <DialogTitle>Add New Integration Point</DialogTitle>
             </DialogHeader>
-            <div className="py-4">
+            <div className="space-y-4 py-4">
               <Input
-                placeholder="Enter flow description"
-                value={newItemValue}
-                onChange={(e) => setNewItemValue(e.target.value)}
+                placeholder="External System"
+                value={newIntegration.system}
+                onChange={(e) => setNewIntegration(prev => ({ ...prev, system: e.target.value }))}
+              />
+              <Input
+                placeholder="Integration Type"
+                value={newIntegration.type}
+                onChange={(e) => setNewIntegration(prev => ({ ...prev, type: e.target.value }))}
+              />
+              <Input
+                placeholder="Expected Behavior"
+                value={newIntegration.expectedBehavior}
+                onChange={(e) => setNewIntegration(prev => ({ ...prev, expectedBehavior: e.target.value }))}
               />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsFlowDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleAddFlow}>Add Flow</Button>
+              <Button variant="outline" onClick={() => setIsIntegrationDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleAddIntegration}>Add Integration</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
 
-        {/* Add Business Rule Dialog */}
-        <Dialog open={isBusinessRuleDialogOpen} onOpenChange={setIsBusinessRuleDialogOpen}>
+        {/* New Expected Behavior Dialog */}
+        <Dialog open={isBehaviorDialogOpen} onOpenChange={setIsBehaviorDialogOpen}>
           <DialogContent>
             <DialogHeader>
-              <DialogTitle>Add New Business Rule</DialogTitle>
+              <DialogTitle>Add New Expected Behavior</DialogTitle>
             </DialogHeader>
-            <div className="py-4">
-              <Input
-                placeholder="Enter business rule description"
-                value={newItemValue}
-                onChange={(e) => setNewItemValue(e.target.value)}
-              />
-            </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsBusinessRuleDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleAddBusinessRule}>Add Rule</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        {/* Add Data Element Dialog */}
-        <Dialog open={isDataElementDialogOpen} onOpenChange={setIsDataElementDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Add New Data Element</DialogTitle>
-            </DialogHeader>
-            <div className="py-4 space-y-4">
-              <Input
-                placeholder="Element name"
-                value={newDataElement.name}
-                onChange={(e) => setNewDataElement(prev => ({ ...prev, name: e.target.value }))}
-              />
+            <div className="space-y-4 py-4">
               <select
                 className="w-full border rounded-md p-2"
-                value={newDataElement.type}
-                onChange={(e) => setNewDataElement(prev => ({ ...prev, type: e.target.value }))}
+                value={newBehavior.type}
+                onChange={(e) => setNewBehavior(prev => ({ 
+                  ...prev, 
+                  type: e.target.value as "success" | "error" | "system"
+                }))}
               >
-                <option value="string">String</option>
-                <option value="number">Number</option>
-                <option value="boolean">Boolean</option>
-                <option value="date">Date</option>
+                <option value="success">Success Condition</option>
+                <option value="error">Error Condition</option>
+                <option value="system">System Response</option>
               </select>
-              <div className="flex items-center gap-2">
-                <input
-                  type="checkbox"
-                  checked={newDataElement.required}
-                  onChange={(e) => setNewDataElement(prev => ({ ...prev, required: e.target.checked }))}
-                />
-                <label>Required</label>
-              </div>
+              <Input
+                placeholder="Condition"
+                value={newBehavior.condition}
+                onChange={(e) => setNewBehavior(prev => ({ ...prev, condition: e.target.value }))}
+              />
+              <Input
+                placeholder="Expected Outcome"
+                value={newBehavior.outcome}
+                onChange={(e) => setNewBehavior(prev => ({ ...prev, outcome: e.target.value }))}
+              />
             </div>
             <DialogFooter>
-              <Button variant="outline" onClick={() => setIsDataElementDialogOpen(false)}>Cancel</Button>
-              <Button onClick={handleAddDataElement}>Add Element</Button>
+              <Button variant="outline" onClick={() => setIsBehaviorDialogOpen(false)}>Cancel</Button>
+              <Button onClick={handleAddBehavior}>Add Behavior</Button>
             </DialogFooter>
           </DialogContent>
         </Dialog>
