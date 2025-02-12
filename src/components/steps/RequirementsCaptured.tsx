@@ -26,17 +26,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "The system shall provide secure authentication mechanisms",
       actors: ["End User", "System"],
       flows: [
-        { id: "f1", description: "User enters credentials" },
-        { id: "f2", description: "System validates credentials" },
+        { id: "f1", description: "User enters credentials", type: "primary" },
+        { id: "f2", description: "System validates credentials", type: "primary" }
       ],
       businessRules: [
-        { id: "br1", description: "Password must be at least 8 characters" },
-        { id: "br2", description: "Account locks after 3 failed attempts" },
+        { id: "br1", description: "Password must be at least 8 characters", category: "security" },
+        { id: "br2", description: "Account locks after 3 failed attempts", category: "security" }
       ],
       dataElements: [
         { id: "de1", name: "Username", type: "string", required: true },
-        { id: "de2", name: "Password", type: "string", required: true },
+        { id: "de2", name: "Password", type: "string", required: true }
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi1", category: "flows", description: "Password reset flow" },
         { id: "mi2", category: "business_rules", description: "2FA requirements" }
@@ -58,17 +60,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "Administrators shall be able to manage user accounts",
       actors: ["Admin", "System"],
       flows: [
-        { id: "f3", description: "Admin creates new user account" },
-        { id: "f4", description: "Admin modifies user permissions" },
+        { id: "f3", description: "Admin creates new user account", type: "primary" },
+        { id: "f4", description: "Admin modifies user permissions", type: "primary" }
       ],
       businessRules: [
-        { id: "br3", description: "Only admins can modify user roles" },
-        { id: "br4", description: "User email must be unique" },
+        { id: "br3", description: "Only admins can modify user roles", category: "security" },
+        { id: "br4", description: "User email must be unique", category: "system" }
       ],
       dataElements: [
         { id: "de3", name: "Email", type: "string", required: true },
-        { id: "de4", name: "Role", type: "enum", required: true },
+        { id: "de4", name: "Role", type: "enum", required: true }
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi3", category: "flows", description: "Role hierarchy definition" },
         { id: "mi4", category: "business_rules", description: "Permission matrix" }
@@ -81,70 +85,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         text: "Administrators shall have the ability to create, modify, and delete user accounts with appropriate access controls.",
         startIndex: 200,
         endIndex: 300
-      }
-    },
-    {
-      id: "3",
-      requirementId: "REQ-003",
-      functionalArea: "Password Recovery",
-      description: "System shall provide password recovery mechanism",
-      actors: ["User", "System", "Email Service"],
-      flows: [
-        { id: "f5", description: "User requests password reset" },
-        { id: "f6", description: "System sends recovery email" },
-      ],
-      businessRules: [
-        { id: "br5", description: "Reset links expire after 24 hours" },
-        { id: "br6", description: "New password must be different from last 3" },
-      ],
-      dataElements: [
-        { id: "de5", name: "ResetToken", type: "string", required: true },
-        { id: "de6", name: "ExpiryTime", type: "datetime", required: true },
-      ],
-      missingInfo: [
-        { id: "mi5", category: "flows", description: "Rate limiting rules" },
-        { id: "mi6", category: "business_rules", description: "Recovery email template" }
-      ],
-      status: "completed",
-      confidence: 0.95,
-      source: {
-        paragraph: 4,
-        page: 2,
-        text: "The system must implement a secure password recovery mechanism with time-limited reset tokens.",
-        startIndex: 350,
-        endIndex: 450
-      }
-    },
-    {
-      id: "4",
-      requirementId: "REQ-004",
-      functionalArea: "Session Management",
-      description: "System shall manage user sessions securely",
-      actors: ["User", "System"],
-      flows: [
-        { id: "f7", description: "System creates session on login" },
-        { id: "f8", description: "System invalidates session on logout" },
-      ],
-      businessRules: [
-        { id: "br7", description: "Sessions expire after 30 minutes of inactivity" },
-        { id: "br8", description: "Maximum 5 concurrent sessions per user" },
-      ],
-      dataElements: [
-        { id: "de7", name: "SessionID", type: "string", required: true },
-        { id: "de8", name: "LastActivity", type: "timestamp", required: true },
-      ],
-      missingInfo: [
-        { id: "mi7", category: "flows", description: "Session revival mechanism" },
-        { id: "mi8", category: "business_rules", description: "Multi-device handling" }
-      ],
-      status: "needs_review",
-      confidence: 0.80,
-      source: {
-        paragraph: 5,
-        page: 2,
-        text: "User sessions must be managed securely with proper timeout and concurrent session controls.",
-        startIndex: 500,
-        endIndex: 600
       }
     }
   ]);
