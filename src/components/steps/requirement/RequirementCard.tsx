@@ -51,6 +51,7 @@ export const RequirementCard = ({
         onSave={onSave}
         onCancel={onCancel}
         onClick={onClick}
+        onDelete={onDelete}
         onFunctionalAreaChange={onFunctionalAreaChange}
         onSourceChange={onSourceChange}
         onStatusChange={onStatusChange}
