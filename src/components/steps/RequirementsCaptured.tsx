@@ -2,7 +2,8 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, RefreshCw, Maximize2, Minimize2, Trash2 } from "lucide-react";
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Plus, RefreshCw, Maximize2, Minimize2, Trash2, CheckSquare } from "lucide-react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
 import { createNewRequirement } from "./requirement/requirementUtils";
@@ -232,6 +233,23 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     );
   };
 
+  const handleBulkStatusChange = (newStatus: "completed" | "needs_review" | "in_progress") => {
+    if (selectedRequirements.length === 0) {
+      toast.error("Please select at least one requirement");
+      return;
+    }
+
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        selectedRequirements.includes(req.id)
+          ? { ...req, status: newStatus }
+          : req
+      )
+    );
+
+    toast.success(`Updated status to ${newStatus.replace("_", " ")} for ${selectedRequirements.length} requirements`);
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div 
@@ -286,6 +304,28 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Regenerate Selected
               </Button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button 
+                    className="bg-blue-500 hover:bg-blue-600"
+                    disabled={selectedRequirements.length === 0}
+                  >
+                    <CheckSquare className="h-4 w-4 mr-2" />
+                    Change Status
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onSelect={() => handleBulkStatusChange("completed")}>
+                    Mark as Completed
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleBulkStatusChange("needs_review")}>
+                    Mark as Needs Review
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onSelect={() => handleBulkStatusChange("in_progress")}>
+                    Mark as In Progress
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
               <Button 
                 onClick={handleDeleteSelected}
                 disabled={selectedRequirements.length === 0}

@@ -16,6 +16,12 @@ export interface DataElement {
   required: boolean;
 }
 
+export interface MissingInfo {
+  id: string;
+  category: "flows" | "business_rules" | "data_elements";
+  description: string;
+}
+
 export interface Source {
   paragraph: number;
   page: number;
@@ -33,7 +39,7 @@ export interface Requirement {
   flows: Flow[];
   businessRules: BusinessRule[];
   dataElements: DataElement[];
-  missingInfo: string[];
+  missingInfo: MissingInfo[];
   status: "completed" | "needs_review" | "in_progress";
   confidence: number;
   source: Source;
