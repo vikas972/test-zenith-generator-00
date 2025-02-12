@@ -3,7 +3,7 @@ import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Activity, Shield, List, AlertCircle, Plus, Pencil, Save, X } from "lucide-react";
+import { Activity, Shield, List, Plus, Pencil, Save, X, Check } from "lucide-react";
 import { type Requirement, type Flow, type BusinessRule, type DataElement } from "./types";
 import { toast } from "sonner";
 
@@ -137,6 +137,29 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                 )}
               </div>
             ))}
+            {requirement.missingInfo
+              .filter(info => info.category === "flows")
+              .map(info => (
+                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
+                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-yellow-100"
+                    onClick={() => {
+                      const newFlow: Flow = {
+                        id: `f${requirement.flows.length + 1}`,
+                        description: info.description
+                      };
+                      requirement.flows.push(newFlow);
+                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
+                      toast.success("Flow added from recommendation");
+                    }}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                </div>
+              ))}
           </div>
         </div>
 
@@ -183,6 +206,29 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                 )}
               </div>
             ))}
+            {requirement.missingInfo
+              .filter(info => info.category === "business_rules")
+              .map(info => (
+                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
+                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-yellow-100"
+                    onClick={() => {
+                      const newRule: BusinessRule = {
+                        id: `br${requirement.businessRules.length + 1}`,
+                        description: info.description
+                      };
+                      requirement.businessRules.push(newRule);
+                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
+                      toast.success("Business rule added from recommendation");
+                    }}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                </div>
+              ))}
           </div>
         </div>
 
@@ -233,6 +279,30 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                 )}
               </div>
             ))}
+            {requirement.missingInfo
+              .filter(info => info.category === "data_elements")
+              .map(info => (
+                <div key={info.id} className="flex items-center gap-2 p-2 border border-yellow-200 bg-yellow-50 rounded-md">
+                  <span className="flex-1 text-sm text-yellow-700">{info.description}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="hover:bg-yellow-100"
+                    onClick={() => {
+                      setNewDataElement({
+                        name: info.description,
+                        type: "string",
+                        required: false
+                      });
+                      setIsDataElementDialogOpen(true);
+                      requirement.missingInfo = requirement.missingInfo.filter(mi => mi.id !== info.id);
+                      toast.success("Data element suggestion accepted");
+                    }}
+                  >
+                    <Check className="h-4 w-4 text-green-600" />
+                  </Button>
+                </div>
+              ))}
           </div>
         </div>
 
