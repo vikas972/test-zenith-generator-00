@@ -36,13 +36,13 @@ export const getStatusDescription = (status: string) => {
 export const getStatusVariant = (status: string) => {
   switch (status) {
     case "completed":
-      return "success";
-    case "needs_review":
-      return "warning";
-    case "in_progress":
       return "default";
-    default:
+    case "needs_review":
       return "secondary";
+    case "in_progress":
+      return "outline";
+    default:
+      return "destructive";
   }
 };
 
