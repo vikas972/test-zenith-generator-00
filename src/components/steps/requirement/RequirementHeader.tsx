@@ -19,6 +19,7 @@ interface RequirementHeaderProps {
   onSave: (e: React.MouseEvent) => void;
   onCancel: (e: React.MouseEvent) => void;
   onClick: () => void;
+  onDelete: () => void;
   onFunctionalAreaChange: (value: string) => void;
   onSourceChange?: (field: 'page' | 'paragraph', value: number) => void;
   onStatusChange?: (status: "completed" | "needs_review" | "in_progress") => void;
@@ -34,6 +35,7 @@ export const RequirementHeader = ({
   onSave,
   onCancel,
   onClick,
+  onDelete,
   onFunctionalAreaChange,
   onSourceChange,
   onStatusChange,
@@ -153,7 +155,7 @@ export const RequirementHeader = ({
               size="sm"
               onClick={(e) => {
                 e.stopPropagation();
-                onEdit(e);
+                onDelete();
               }}
               className="text-gray-500 hover:text-red-500"
             >
