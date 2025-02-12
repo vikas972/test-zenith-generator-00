@@ -40,7 +40,7 @@ export const ExpectedBehaviorsSection = ({
               <div key={behavior.id} className="text-sm border rounded-lg p-3">
                 <div className="flex items-center justify-between mb-1">
                   <span className="font-medium">Condition:</span>
-                  <Badge variant="success">Success</Badge>
+                  <Badge variant="secondary" className="bg-green-100 text-green-800 hover:bg-green-200">Success</Badge>
                 </div>
                 <div className="text-gray-600 mb-2">{behavior.condition}</div>
                 <div className="text-xs">
