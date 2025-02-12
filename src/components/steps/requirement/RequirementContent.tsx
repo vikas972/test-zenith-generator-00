@@ -1,9 +1,10 @@
+
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Activity, Shield, List, Plus, Pencil, Save, X, Check } from "lucide-react";
+import { Activity, Shield, List, Plus, Pencil, Save, X, Check, AlertCircle } from "lucide-react";
 import { type Requirement, type Flow, type BusinessRule, type DataElement } from "./types";
 import { toast } from "sonner";
 
