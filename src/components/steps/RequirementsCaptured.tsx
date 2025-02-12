@@ -262,6 +262,17 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     toast.success(`Updated status to ${newStatus.replace("_", " ")} for ${selectedRequirements.length} requirements`);
   };
 
+  const handleStatusChange = (requirementId: string, newStatus: "completed" | "needs_review" | "in_progress") => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, status: newStatus }
+          : req
+      )
+    );
+    toast.success(`Status updated to ${newStatus.replace("_", " ")}`);
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div 
@@ -391,6 +402,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
                   )
                 }
                 onSourceChange={(field, value) => handleSourceChange(requirement.id, field, value)}
+                onStatusChange={(status) => handleStatusChange(requirement.id, status)}
               />
             ))}
           </div>

@@ -4,8 +4,6 @@ import { RequirementHeader } from "./RequirementHeader";
 import { RequirementContent } from "./RequirementContent";
 import { type Requirement } from "./types";
 import { cn } from "@/lib/utils";
-import { Button } from "@/components/ui/button";
-import { Trash } from "lucide-react";
 
 interface RequirementCardProps {
   requirement: Requirement;
@@ -20,6 +18,7 @@ interface RequirementCardProps {
   onDelete: () => void;
   onFunctionalAreaChange: (value: string) => void;
   onSourceChange: (field: 'page' | 'paragraph', value: number) => void;
+  onStatusChange: (status: "completed" | "needs_review" | "in_progress") => void;
 }
 
 export const RequirementCard = ({
@@ -35,6 +34,7 @@ export const RequirementCard = ({
   onDelete,
   onFunctionalAreaChange,
   onSourceChange,
+  onStatusChange,
 }: RequirementCardProps) => {
   return (
     <Card className={cn(
@@ -53,6 +53,7 @@ export const RequirementCard = ({
         onClick={onClick}
         onFunctionalAreaChange={onFunctionalAreaChange}
         onSourceChange={onSourceChange}
+        onStatusChange={onStatusChange}
       />
       {isExpanded && <RequirementContent requirement={requirement} />}
     </Card>

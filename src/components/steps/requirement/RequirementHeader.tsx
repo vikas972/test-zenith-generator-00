@@ -3,6 +3,7 @@ import { CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Checkbox } from "@/components/ui/checkbox";
 import { MapPin, Edit, Save, X, ChevronDown, ChevronRight, Trash } from "lucide-react";
 import { type Requirement } from "./types";
@@ -20,6 +21,7 @@ interface RequirementHeaderProps {
   onClick: () => void;
   onFunctionalAreaChange: (value: string) => void;
   onSourceChange?: (field: 'page' | 'paragraph', value: number) => void;
+  onStatusChange?: (status: "completed" | "needs_review" | "in_progress") => void;
 }
 
 export const RequirementHeader = ({
@@ -34,6 +36,7 @@ export const RequirementHeader = ({
   onClick,
   onFunctionalAreaChange,
   onSourceChange,
+  onStatusChange,
 }: RequirementHeaderProps) => {
   return (
     <CardHeader 
@@ -87,9 +90,26 @@ export const RequirementHeader = ({
               </span>
             )}
           </div>
-          <Badge variant={getStatusVariant(requirement.status)}>
-            {requirement.status.replace("_", " ")}
-          </Badge>
+          {isEditing ? (
+            <Select
+              defaultValue={requirement.status}
+              onValueChange={onStatusChange}
+              onClick={(e) => e.stopPropagation()}
+            >
+              <SelectTrigger className="w-[140px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="needs_review">Needs Review</SelectItem>
+                <SelectItem value="in_progress">In Progress</SelectItem>
+              </SelectContent>
+            </Select>
+          ) : (
+            <Badge variant={getStatusVariant(requirement.status)}>
+              {requirement.status.replace("_", " ")}
+            </Badge>
+          )}
           {!isEditing && (
             <Button
               variant="ghost"
