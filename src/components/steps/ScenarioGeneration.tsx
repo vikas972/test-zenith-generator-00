@@ -113,6 +113,20 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     );
   };
 
+  const handleStatusChange = (requirementId: string, newStatus: "completed" | "needs_review" | "in_progress") => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, status: newStatus }
+          : req
+      )
+    );
+    toast({
+      title: "Status Updated",
+      description: `Status changed to ${newStatus.replace("_", " ")}`
+    });
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="flex-1 overflow-auto">
@@ -148,6 +162,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               )
             }
             onSourceChange={(field, value) => handleSourceChange(req.id, field, value)}
+            onStatusChange={(status) => handleStatusChange(req.id, status)}
           />
         ))}
       </div>

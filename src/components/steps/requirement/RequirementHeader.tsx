@@ -91,20 +91,21 @@ export const RequirementHeader = ({
             )}
           </div>
           {isEditing ? (
-            <Select
-              defaultValue={requirement.status}
-              onValueChange={onStatusChange}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <SelectTrigger className="w-[140px]">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="completed">Completed</SelectItem>
-                <SelectItem value="needs_review">Needs Review</SelectItem>
-                <SelectItem value="in_progress">In Progress</SelectItem>
-              </SelectContent>
-            </Select>
+            <div onClick={(e) => e.stopPropagation()}>
+              <Select
+                defaultValue={requirement.status}
+                onValueChange={onStatusChange}
+              >
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="completed">Completed</SelectItem>
+                  <SelectItem value="needs_review">Needs Review</SelectItem>
+                  <SelectItem value="in_progress">In Progress</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
           ) : (
             <Badge variant={getStatusVariant(requirement.status)}>
               {requirement.status.replace("_", " ")}
