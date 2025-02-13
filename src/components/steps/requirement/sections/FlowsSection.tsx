@@ -1,8 +1,9 @@
 
 import { useState } from "react";
-import { Activity, Plus, Pencil, Save, X, Check } from "lucide-react";
+import { Activity, Plus, Pencil, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
 import { type Flow } from "../types";
 import { toast } from "sonner";
 
@@ -13,15 +14,43 @@ interface FlowsSectionProps {
 }
 
 export const FlowsSection = ({ flows, onAddFlow, onUpdateFlow }: FlowsSectionProps) => {
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [editingValue, setEditingValue] = useState("");
+  const [editingFlow, setEditingFlow] = useState<Flow | null>(null);
+  const [editValue, setEditValue] = useState("");
 
   const flowsByType = flows.reduce((acc, flow) => {
-    const type = flow.type || "primary";
+    const type = flow.type;
     if (!acc[type]) acc[type] = [];
     acc[type].push(flow);
     return acc;
   }, {} as Record<string, Flow[]>);
+
+  const handleEdit = (flow: Flow) => {
+    setEditingFlow(flow);
+    setEditValue(flow.description);
+  };
+
+  const handleSave = () => {
+    if (editingFlow && editValue.trim()) {
+      onUpdateFlow(editingFlow.id, {
+        ...editingFlow,
+        description: editValue.trim()
+      });
+      setEditingFlow(null);
+      setEditValue("");
+      toast.success("Flow updated successfully");
+    }
+  };
+
+  const handleAddToSection = (type: "primary" | "alternative" | "exception") => {
+    const newFlow: Flow = {
+      id: `f${Date.now()}`,
+      type,
+      description: `New ${type} flow`,
+      steps: [],
+    };
+    onAddFlow(newFlow);
+    toast.success(`New ${type} flow added`);
+  };
 
   const renderFlowSteps = (flow: Flow) => {
     if (!flow.steps?.length) return null;
@@ -38,27 +67,52 @@ export const FlowsSection = ({ flows, onAddFlow, onUpdateFlow }: FlowsSectionPro
     );
   };
 
-  const renderFlowSection = (type: string, flows: Flow[]) => {
+  const renderFlowSection = (type: "primary" | "alternative" | "exception") => {
     const title = type.charAt(0).toUpperCase() + type.slice(1);
+    const flows = flowsByType[type] || [];
     
     return (
       <div key={type} className="space-y-2">
-        <h4 className="text-sm font-semibold text-gray-700">{title} Flows</h4>
+        <div className="flex items-center justify-between">
+          <h4 className="text-sm font-semibold text-gray-700">{title} Flows</h4>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={() => handleAddToSection(type)}
+          >
+            <Plus className="h-4 w-4" />
+          </Button>
+        </div>
         {flows.map((flow) => (
           <div key={flow.id} className="pl-4 py-2 border-l-2 border-gray-200">
             <div className="flex items-center justify-between group">
-              <span className="text-sm">{flow.description}</span>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="opacity-0 group-hover:opacity-100"
-                onClick={() => {
-                  setEditingItemId(flow.id);
-                  setEditingValue(flow.description);
-                }}
-              >
-                <Pencil className="h-4 w-4" />
-              </Button>
+              {editingFlow?.id === flow.id ? (
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={editValue}
+                    onChange={(e) => setEditValue(e.target.value)}
+                    className="min-w-[300px]"
+                  />
+                  <Button variant="ghost" size="sm" onClick={handleSave}>
+                    <Save className="h-4 w-4" />
+                  </Button>
+                  <Button variant="ghost" size="sm" onClick={() => setEditingFlow(null)}>
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ) : (
+                <>
+                  <span className="text-sm">{flow.description}</span>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="opacity-0 group-hover:opacity-100"
+                    onClick={() => handleEdit(flow)}
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                </>
+              )}
             </div>
             {renderFlowSteps(flow)}
             {flow.errorHandling && (
@@ -68,38 +122,25 @@ export const FlowsSection = ({ flows, onAddFlow, onUpdateFlow }: FlowsSectionPro
             )}
           </div>
         ))}
+        {flows.length === 0 && (
+          <div className="text-sm text-gray-500 italic pl-4">
+            No {type} flows defined
+          </div>
+        )}
       </div>
     );
   };
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-4">
-        <div className="flex items-center gap-2">
-          <Activity className="h-4 w-4" />
-          <h3 className="text-sm font-semibold">Functional Flows</h3>
-        </div>
-        <Button 
-          variant="ghost" 
-          size="sm"
-          onClick={() => {
-            const newFlow: Flow = {
-              id: `f${flows.length + 1}`,
-              type: "primary",
-              description: "New flow",
-              steps: []
-            };
-            onAddFlow(newFlow);
-            toast.success("New flow added");
-          }}
-        >
-          <Plus className="h-4 w-4" />
-        </Button>
+      <div className="flex items-center gap-2 mb-4">
+        <Activity className="h-4 w-4" />
+        <h3 className="text-sm font-semibold">Functional Flows</h3>
       </div>
-      <div className="space-y-4">
-        {renderFlowSection("primary", flowsByType.primary || [])}
-        {renderFlowSection("alternative", flowsByType.alternative || [])}
-        {renderFlowSection("exception", flowsByType.exception || [])}
+      <div className="space-y-6">
+        {renderFlowSection("primary")}
+        {renderFlowSection("alternative")}
+        {renderFlowSection("exception")}
       </div>
     </div>
   );
