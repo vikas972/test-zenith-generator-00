@@ -25,6 +25,8 @@ export const createNewRequirement = (requirementsLength: number): Requirement =>
   flows: [],
   businessRules: [],
   dataElements: [],
+  integrationPoints: [],
+  expectedBehaviors: [],
   missingInfo: [],
   status: "in_progress",
   confidence: 0,
@@ -36,3 +38,4 @@ export const createNewRequirement = (requirementsLength: number): Requirement =>
     endIndex: 0
   }
 });
+

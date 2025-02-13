@@ -127,17 +127,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "Administrators shall be able to manage user accounts",
       actors: ["Admin", "System"],
       flows: [
-        { id: "f3", description: "Admin creates new user account" },
-        { id: "f4", description: "Admin modifies user permissions" },
+        { id: "f3", description: "Admin creates new user account", type: "primary" },
+        { id: "f4", description: "Admin modifies user permissions", type: "primary" },
       ],
       businessRules: [
-        { id: "br3", description: "Only admins can modify user roles" },
-        { id: "br4", description: "User email must be unique" },
+        { id: "br3", description: "Only admins can modify user roles", category: "authentication" },
+        { id: "br4", description: "User email must be unique", category: "authentication" },
       ],
       dataElements: [
         { id: "de3", name: "Email", type: "string", required: true },
         { id: "de4", name: "Role", type: "enum", required: true },
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi3", category: "flows", description: "Role hierarchy definition" },
         { id: "mi4", category: "business_rules", description: "Permission matrix" }
@@ -159,17 +161,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "System shall provide password recovery mechanism",
       actors: ["User", "System", "Email Service"],
       flows: [
-        { id: "f5", description: "User requests password reset" },
-        { id: "f6", description: "System sends recovery email" },
+        { id: "f5", description: "User requests password reset", type: "primary" },
+        { id: "f6", description: "System sends recovery email", type: "primary" },
       ],
       businessRules: [
-        { id: "br5", description: "Reset links expire after 24 hours" },
-        { id: "br6", description: "New password must be different from last 3" },
+        { id: "br5", description: "Reset links expire after 24 hours", category: "authentication" },
+        { id: "br6", description: "New password must be different from last 3", category: "authentication" },
       ],
       dataElements: [
         { id: "de5", name: "ResetToken", type: "string", required: true },
         { id: "de6", name: "ExpiryTime", type: "datetime", required: true },
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi5", category: "flows", description: "Rate limiting rules" },
         { id: "mi6", category: "business_rules", description: "Recovery email template" }
@@ -191,17 +195,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "System shall manage user sessions securely",
       actors: ["User", "System"],
       flows: [
-        { id: "f7", description: "System creates session on login" },
-        { id: "f8", description: "System invalidates session on logout" },
+        { id: "f7", description: "System creates session on login", type: "primary" },
+        { id: "f8", description: "System invalidates session on logout", type: "primary" },
       ],
       businessRules: [
-        { id: "br7", description: "Sessions expire after 30 minutes of inactivity" },
-        { id: "br8", description: "Maximum 5 concurrent sessions per user" },
+        { id: "br7", description: "Sessions expire after 30 minutes of inactivity", category: "authentication" },
+        { id: "br8", description: "Maximum 5 concurrent sessions per user", category: "authentication" },
       ],
       dataElements: [
         { id: "de7", name: "SessionID", type: "string", required: true },
         { id: "de8", name: "LastActivity", type: "timestamp", required: true },
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi7", category: "flows", description: "Session revival mechanism" },
         { id: "mi8", category: "business_rules", description: "Multi-device handling" }
