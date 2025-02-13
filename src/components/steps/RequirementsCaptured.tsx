@@ -26,20 +26,89 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "The system shall provide secure authentication mechanisms",
       actors: ["End User", "System"],
       flows: [
-        { id: "f1", description: "User enters credentials" },
-        { id: "f2", description: "System validates credentials" },
+        { 
+          id: "f1", 
+          description: "User enters credentials",
+          type: "primary",
+          steps: [
+            {
+              id: "s1",
+              description: "User inputs username and password",
+              expectedOutcome: "Input fields are validated"
+            }
+          ]
+        },
+        { 
+          id: "f2", 
+          description: "System validates credentials",
+          type: "primary",
+          steps: [
+            {
+              id: "s2",
+              description: "System checks credentials against database",
+              expectedOutcome: "Credentials are verified"
+            }
+          ]
+        }
       ],
       businessRules: [
-        { id: "br1", description: "Password must be at least 8 characters" },
-        { id: "br2", description: "Account locks after 3 failed attempts" },
+        { 
+          id: "br1", 
+          description: "Password must be at least 8 characters",
+          category: "authentication",
+          validationCriteria: "Length >= 8"
+        },
+        { 
+          id: "br2", 
+          description: "Account locks after 3 failed attempts",
+          category: "security",
+          validationCriteria: "Count failed attempts"
+        }
       ],
       dataElements: [
-        { id: "de1", name: "Username", type: "string", required: true },
-        { id: "de2", name: "Password", type: "string", required: true },
+        { 
+          id: "de1", 
+          name: "Username", 
+          type: "string", 
+          required: true,
+          format: "email",
+          validationRules: ["Valid email format"]
+        },
+        { 
+          id: "de2", 
+          name: "Password", 
+          type: "string", 
+          required: true,
+          validationRules: ["Min 8 chars"]
+        }
+      ],
+      integrationPoints: [
+        {
+          id: "ip1",
+          system: "Email Service",
+          type: "REST API",
+          expectedBehavior: "Send verification emails"
+        }
+      ],
+      expectedBehaviors: [
+        {
+          id: "eb1",
+          type: "success",
+          condition: "Valid credentials",
+          response: "User logged in"
+        }
       ],
       missingInfo: [
-        { id: "mi1", category: "flows", description: "Password reset flow" },
-        { id: "mi2", category: "business_rules", description: "2FA requirements" }
+        { 
+          id: "mi1", 
+          category: "flows", 
+          description: "Password reset flow" 
+        },
+        { 
+          id: "mi2", 
+          category: "business_rules", 
+          description: "2FA requirements" 
+        }
       ],
       status: "needs_review",
       confidence: 0.85,
