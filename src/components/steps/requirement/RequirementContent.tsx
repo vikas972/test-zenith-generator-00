@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { List, Plus, Pencil, Save, X } from "lucide-react";
@@ -22,7 +23,7 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
   const [newFlow, setNewFlow] = useState({ description: "", type: "primary" });
   const [newBusinessRule, setNewBusinessRule] = useState({ description: "", category: "general" });
   const [newDataElement, setNewDataElement] = useState({ name: "", type: "", required: false });
-  const [editingElementId, setEditingElementId] = useState<number | null>(null);
+  const [editingElementId, setEditingElementId] = useState<string | null>(null);
   const [editedElementName, setEditedElementName] = useState<string>("");
 
   const handleAddFlow = () => {
@@ -43,7 +44,7 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
     setIsDataElementDialogOpen(false);
   };
 
-  const handleElementSave = (elementId: number) => {
+  const handleElementSave = (elementId: string) => {
     // Handle saving the edited element
     toast.success("Element saved successfully");
     setEditingElementId(null);
