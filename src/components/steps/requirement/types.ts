@@ -31,20 +31,6 @@ export interface DataElement {
   constraints?: string[];
 }
 
-export interface IntegrationPoint {
-  id: string;
-  system: string;
-  type: string;
-  expectedBehavior: string;
-}
-
-export interface ExpectedBehavior {
-  id: string;
-  type: "success" | "error" | "system";
-  condition: string;
-  outcome: string;
-}
-
 export interface MissingInfo {
   id: string;
   category: "flows" | "business_rules" | "data_elements" | "integration_points" | "expected_behaviors";
@@ -68,8 +54,8 @@ export interface Requirement {
   flows: Flow[];
   businessRules: BusinessRule[];
   dataElements: DataElement[];
-  integrationPoints: IntegrationPoint[];
-  expectedBehaviors: ExpectedBehavior[];
+  integrationPoints: never[];
+  expectedBehaviors: never[];
   missingInfo: MissingInfo[];
   status: "completed" | "needs_review" | "in_progress";
   confidence: number;
