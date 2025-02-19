@@ -36,6 +36,24 @@ export const RequirementCard = ({
   onSourceChange,
   onStatusChange,
 }: RequirementCardProps) => {
+  const handleUpdateFlows = (flows: Requirement['flows']) => {
+    const updatedFlows = requirement.flows.filter(flow => flows.some(f => f.id === flow.id));
+    onFunctionalAreaChange(requirement.functionalArea);
+    return updatedFlows;
+  };
+
+  const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
+    const updatedRules = requirement.businessRules.filter(rule => rules.some(r => r.id === rule.id));
+    onFunctionalAreaChange(requirement.functionalArea);
+    return updatedRules;
+  };
+
+  const handleUpdateDataElements = (elements: Requirement['dataElements']) => {
+    const updatedElements = requirement.dataElements.filter(element => elements.some(e => e.id === element.id));
+    onFunctionalAreaChange(requirement.functionalArea);
+    return updatedElements;
+  };
+
   return (
     <Card className={cn(
       "mb-4 relative",
@@ -59,23 +77,11 @@ export const RequirementCard = ({
       {isExpanded && (
         <RequirementContent
           requirement={requirement}
-          onUpdateFlows={handleUpdateRequirementFlows}
-          onUpdateBusinessRules={handleUpdateRequirementBusinessRules}
-          onUpdateDataElements={handleUpdateRequirementDataElements}
+          onUpdateFlows={handleUpdateFlows}
+          onUpdateBusinessRules={handleUpdateBusinessRules}
+          onUpdateDataElements={handleUpdateDataElements}
         />
       )}
     </Card>
   );
-};
-
-const handleUpdateRequirementFlows = (flows: Requirement['flows']) => {
-  return flows;
-};
-
-const handleUpdateRequirementBusinessRules = (rules: Requirement['businessRules']) => {
-  return rules;
-};
-
-const handleUpdateRequirementDataElements = (elements: Requirement['dataElements']) => {
-  return elements;
 };
