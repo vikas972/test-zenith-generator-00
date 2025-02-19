@@ -32,12 +32,12 @@ export const getStatusDescription = (status: string) => {
   }
 };
 
-export const getStatusVariant = (status: string) => {
+export const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
   switch (status) {
     case "complete":
       return "default";
     case "needs_review":
-      return "warning";
+      return "outline";
     case "in_progress":
       return "secondary";
     case "rejected":
