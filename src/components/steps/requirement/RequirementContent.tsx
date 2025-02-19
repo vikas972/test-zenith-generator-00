@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { List, Plus, Pencil } from "lucide-react";
@@ -152,9 +151,8 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                     variant="ghost" 
                     size="sm" 
                     onClick={() => {
-                      toast({
-                        title: "Edit Data Element",
-                        description: `Editing element ${element.id}`
+                      toast("Editing data element", {
+                        description: `Element ID: ${element.id}`
                       });
                     }}
                   >

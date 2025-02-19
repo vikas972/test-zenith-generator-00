@@ -1,8 +1,9 @@
+
 import { Shield, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type BusinessRule } from "../types";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface BusinessRulesSectionProps {
   rules: BusinessRule[];
@@ -11,9 +12,8 @@ interface BusinessRulesSectionProps {
 
 export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSectionProps) => {
   const handleEdit = (ruleId: string) => {
-    toast({
-      title: "Edit Business Rule",
-      description: `Editing rule ${ruleId}`
+    toast("Editing business rule", {
+      description: `Rule ID: ${ruleId}`
     });
   };
 

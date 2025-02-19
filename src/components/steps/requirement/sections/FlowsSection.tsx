@@ -1,8 +1,9 @@
+
 import { Activity, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type Flow } from "../types";
-import { toast } from "react-toastify";
+import { toast } from "sonner";
 
 interface FlowsSectionProps {
   flows: Flow[];
@@ -11,9 +12,8 @@ interface FlowsSectionProps {
 
 export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
   const handleEdit = (flowId: string) => {
-    toast({
-      title: "Edit Flow",
-      description: `Editing flow ${flowId}`
+    toast("Editing flow", {
+      description: `Flow ID: ${flowId}`
     });
   };
 
