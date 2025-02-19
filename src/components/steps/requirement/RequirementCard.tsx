@@ -36,24 +36,6 @@ export const RequirementCard = ({
   onSourceChange,
   onStatusChange,
 }: RequirementCardProps) => {
-  const handleUpdateFlows = (flows: Requirement['flows']) => {
-    const updatedRequirement = { ...requirement, flows };
-    // Using onFunctionalAreaChange to trigger a re-render in the parent
-    onFunctionalAreaChange(updatedRequirement.functionalArea);
-  };
-
-  const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
-    const updatedRequirement = { ...requirement, businessRules: rules };
-    // Using onFunctionalAreaChange to trigger a re-render in the parent
-    onFunctionalAreaChange(updatedRequirement.functionalArea);
-  };
-
-  const handleUpdateDataElements = (elements: Requirement['dataElements']) => {
-    const updatedRequirement = { ...requirement, dataElements: elements };
-    // Using onFunctionalAreaChange to trigger a re-render in the parent
-    onFunctionalAreaChange(updatedRequirement.functionalArea);
-  };
-
   return (
     <Card className={cn(
       "mb-4 relative",
@@ -77,9 +59,18 @@ export const RequirementCard = ({
       {isExpanded && (
         <RequirementContent
           requirement={requirement}
-          onUpdateFlows={handleUpdateFlows}
-          onUpdateBusinessRules={handleUpdateBusinessRules}
-          onUpdateDataElements={handleUpdateDataElements}
+          onUpdateFlows={(flows) => {
+            const updatedRequirement = { ...requirement, flows };
+            onFunctionalAreaChange(requirement.functionalArea);
+          }}
+          onUpdateBusinessRules={(rules) => {
+            const updatedRequirement = { ...requirement, businessRules: rules };
+            onFunctionalAreaChange(requirement.functionalArea);
+          }}
+          onUpdateDataElements={(elements) => {
+            const updatedRequirement = { ...requirement, dataElements: elements };
+            onFunctionalAreaChange(requirement.functionalArea);
+          }}
         />
       )}
     </Card>
