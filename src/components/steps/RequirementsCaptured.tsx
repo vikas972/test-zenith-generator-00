@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -198,13 +199,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
   const [editingRequirement, setEditingRequirement] = useState<string | null>(null);
   const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
   const [isSourceMaximized, setIsSourceMaximized] = useState(false);
+  const [sourceContent, setSourceContent] = useState(
+    "The system shall provide secure user authentication mechanisms.\n\n" +
+    "Users must be able to reset their passwords through a secure process.\n\n" +
+    "The system must allow users to manage their profile details.\n\n" +
+    "The system must implement role-based access control for security."
+  );
 
   const handleRequirementClick = (requirement: Requirement) => {
     setExpandedRequirement(expandedRequirement === requirement.id ? null : requirement.id);
     
     const sourceElement = document.getElementById('source-content');
     if (sourceElement) {
-      const text = sourceElement.innerHTML;
+      const text = sourceContent;
       const highlightedText = text.slice(0, requirement.source.startIndex) +
         `<mark class="bg-yellow-100">${text.slice(requirement.source.startIndex, requirement.source.endIndex)}</mark>` +
         text.slice(requirement.source.endIndex);
