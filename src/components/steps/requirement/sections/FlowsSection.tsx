@@ -1,9 +1,10 @@
 
-import { Activity, Plus, Pencil } from "lucide-react";
+import { Activity, Plus, Pencil, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type Flow } from "../types";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface FlowsSectionProps {
   flows: Flow[];
@@ -11,11 +12,59 @@ interface FlowsSectionProps {
 }
 
 export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
-  const handleEdit = (flowId: string) => {
-    toast("Editing flow", {
-      description: `Flow ID: ${flowId}`
-    });
+  const [editingFlowId, setEditingFlowId] = useState<string | null>(null);
+  const [editedDescription, setEditedDescription] = useState("");
+
+  const handleEditStart = (flow: Flow) => {
+    setEditingFlowId(flow.id);
+    setEditedDescription(flow.description);
   };
+
+  const handleSave = (flowId: string) => {
+    setEditingFlowId(null);
+    // Here you would typically update the flow in the parent component
+  };
+
+  const handleCancel = () => {
+    setEditingFlowId(null);
+  };
+
+  const renderFlowItem = (flow: Flow) => (
+    <div key={flow.id} className="mb-2 p-2 border rounded">
+      <div className="flex items-center justify-between">
+        {editingFlowId === flow.id ? (
+          <div className="flex-1 flex items-center gap-2">
+            <Input
+              value={editedDescription}
+              onChange={(e) => setEditedDescription(e.target.value)}
+              className="flex-1"
+            />
+            <Button variant="ghost" size="sm" onClick={() => handleSave(flow.id)}>
+              <Save className="h-4 w-4" />
+            </Button>
+            <Button variant="ghost" size="sm" onClick={handleCancel}>
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        ) : (
+          <>
+            <div className="font-medium">{flow.description}</div>
+            <Button variant="ghost" size="sm" onClick={() => handleEditStart(flow)}>
+              <Pencil className="h-4 w-4" />
+            </Button>
+          </>
+        )}
+      </div>
+      {!editingFlowId && flow.steps?.map(step => (
+        <div key={step.id} className="ml-4 mt-1">
+          <div className="text-sm">• {step.description}</div>
+          <div className="text-sm text-gray-600 ml-4">
+            Expected: {step.expectedOutcome}
+          </div>
+        </div>
+      ))}
+    </div>
+  );
 
   return (
     <div>
@@ -32,66 +81,19 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
         <AccordionItem value="primary">
           <AccordionTrigger>Primary Flows</AccordionTrigger>
           <AccordionContent>
-            {flows
-              .filter(flow => flow.type === "primary")
-              .map((flow) => (
-                <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  {flow.steps?.map(step => (
-                    <div key={step.id} className="ml-4 mt-1">
-                      <div className="text-sm">• {step.description}</div>
-                      <div className="text-sm text-gray-600 ml-4">
-                        Expected: {step.expectedOutcome}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ))}
+            {flows.filter(flow => flow.type === "primary").map(renderFlowItem)}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="alternative">
           <AccordionTrigger>Alternative Flows</AccordionTrigger>
           <AccordionContent>
-            {flows
-              .filter(flow => flow.type === "alternative")
-              .map((flow) => (
-                <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="text-sm text-gray-600 ml-4">
-                    Expected: {flow.expectedOutcome}
-                  </div>
-                </div>
-              ))}
+            {flows.filter(flow => flow.type === "alternative").map(renderFlowItem)}
           </AccordionContent>
         </AccordionItem>
         <AccordionItem value="exception">
           <AccordionTrigger>Exception Flows</AccordionTrigger>
           <AccordionContent>
-            {flows
-              .filter(flow => flow.type === "exception")
-              .map((flow) => (
-                <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="flex items-center justify-between">
-                    <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                  </div>
-                  <div className="text-sm text-gray-600 ml-4">
-                    Expected: {flow.expectedOutcome}
-                  </div>
-                </div>
-              ))}
+            {flows.filter(flow => flow.type === "exception").map(renderFlowItem)}
           </AccordionContent>
         </AccordionItem>
       </Accordion>

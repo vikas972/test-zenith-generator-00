@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
-import { List, Plus, Pencil } from "lucide-react";
+import { List, Plus, Pencil, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -22,6 +22,8 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
   const [newFlow, setNewFlow] = useState({ description: "", type: "primary" });
   const [newBusinessRule, setNewBusinessRule] = useState({ description: "", category: "general" });
   const [newDataElement, setNewDataElement] = useState({ name: "", type: "", required: false });
+  const [editingElementId, setEditingElementId] = useState<number | null>(null);
+  const [editedElementName, setEditedElementName] = useState<string>("");
 
   const handleAddFlow = () => {
     // Add flow logic here
@@ -39,6 +41,12 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
     // Add data element logic here
     toast.success("Data element added successfully");
     setIsDataElementDialogOpen(false);
+  };
+
+  const handleElementSave = (elementId: number) => {
+    // Handle saving the edited element
+    toast.success("Element saved successfully");
+    setEditingElementId(null);
   };
 
   return (
@@ -140,39 +148,60 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
             {requirement.dataElements.map((element) => (
               <div key={element.id} className="p-2 border rounded">
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="font-medium">{element.name}</span>
-                    <span className="text-gray-500">({element.type})</span>
-                    {element.required && (
-                      <span className="text-xs text-red-500">Required</span>
-                    )}
-                  </div>
-                  <Button 
-                    variant="ghost" 
-                    size="sm" 
-                    onClick={() => {
-                      toast("Editing data element", {
-                        description: `Element ID: ${element.id}`
-                      });
-                    }}
-                  >
-                    <Pencil className="h-4 w-4" />
-                  </Button>
+                  {editingElementId === element.id ? (
+                    <div className="flex-1 flex items-center gap-2">
+                      <Input
+                        value={editedElementName}
+                        onChange={(e) => setEditedElementName(e.target.value)}
+                        className="flex-1"
+                      />
+                      <Button variant="ghost" size="sm" onClick={() => handleElementSave(element.id)}>
+                        <Save className="h-4 w-4" />
+                      </Button>
+                      <Button variant="ghost" size="sm" onClick={() => setEditingElementId(null)}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center gap-2">
+                        <span className="font-medium">{element.name}</span>
+                        <span className="text-gray-500">({element.type})</span>
+                        {element.required && (
+                          <span className="text-xs text-red-500">Required</span>
+                        )}
+                      </div>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        onClick={() => {
+                          setEditingElementId(element.id);
+                          setEditedElementName(element.name);
+                        }}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </>
+                  )}
                 </div>
-                {element.format && (
-                  <div className="text-sm text-gray-600 ml-4">
-                    Format: {element.format}
-                  </div>
-                )}
-                {element.validationRules && element.validationRules.length > 0 && (
-                  <div className="text-sm text-gray-600 ml-4">
-                    Validation Rules:
-                    <ul className="list-disc ml-4">
-                      {element.validationRules.map((rule, index) => (
-                        <li key={index}>{rule}</li>
-                      ))}
-                    </ul>
-                  </div>
+                {!editingElementId && (
+                  <>
+                    {element.format && (
+                      <div className="text-sm text-gray-600 ml-4">
+                        Format: {element.format}
+                      </div>
+                    )}
+                    {element.validationRules && element.validationRules.length > 0 && (
+                      <div className="text-sm text-gray-600 ml-4">
+                        Validation Rules:
+                        <ul className="list-disc ml-4">
+                          {element.validationRules.map((rule, index) => (
+                            <li key={index}>{rule}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             ))}

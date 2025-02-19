@@ -1,9 +1,10 @@
 
-import { Shield, Plus, Pencil } from "lucide-react";
+import { Shield, Plus, Pencil, Save, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type BusinessRule } from "../types";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { useState } from "react";
 
 interface BusinessRulesSectionProps {
   rules: BusinessRule[];
@@ -11,10 +12,21 @@ interface BusinessRulesSectionProps {
 }
 
 export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSectionProps) => {
-  const handleEdit = (ruleId: string) => {
-    toast("Editing business rule", {
-      description: `Rule ID: ${ruleId}`
-    });
+  const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
+  const [editedDescription, setEditedDescription] = useState("");
+
+  const handleEditStart = (rule: BusinessRule) => {
+    setEditingRuleId(rule.id);
+    setEditedDescription(rule.description);
+  };
+
+  const handleSave = (ruleId: string) => {
+    setEditingRuleId(null);
+    // Here you would typically update the rule in the parent component
+  };
+
+  const handleCancel = () => {
+    setEditingRuleId(null);
   };
 
   return (
@@ -40,20 +52,42 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
                 .map((rule) => (
                   <div key={rule.id} className="mb-2 p-2 border rounded">
                     <div className="flex items-center justify-between">
-                      <div className="font-medium">{rule.description}</div>
-                      <Button variant="ghost" size="sm" onClick={() => handleEdit(rule.id)}>
-                        <Pencil className="h-4 w-4" />
-                      </Button>
+                      {editingRuleId === rule.id ? (
+                        <div className="flex-1 flex items-center gap-2">
+                          <Input
+                            value={editedDescription}
+                            onChange={(e) => setEditedDescription(e.target.value)}
+                            className="flex-1"
+                          />
+                          <Button variant="ghost" size="sm" onClick={() => handleSave(rule.id)}>
+                            <Save className="h-4 w-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={handleCancel}>
+                            <X className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <>
+                          <div className="font-medium">{rule.description}</div>
+                          <Button variant="ghost" size="sm" onClick={() => handleEditStart(rule)}>
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                        </>
+                      )}
                     </div>
-                    {rule.validationCriteria && (
-                      <div className="text-sm text-gray-600 ml-4">
-                        Validation: {rule.validationCriteria}
-                      </div>
-                    )}
-                    {rule.parameters && (
-                      <div className="text-sm text-gray-600 ml-4">
-                        Parameters: {rule.parameters}
-                      </div>
+                    {!editingRuleId && (
+                      <>
+                        {rule.validationCriteria && (
+                          <div className="text-sm text-gray-600 ml-4">
+                            Validation: {rule.validationCriteria}
+                          </div>
+                        )}
+                        {rule.parameters && (
+                          <div className="text-sm text-gray-600 ml-4">
+                            Parameters: {rule.parameters}
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 ))}
