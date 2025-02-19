@@ -1,7 +1,6 @@
-
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
-import { List, Plus, Pencil, Save, X } from "lucide-react";
+import { List, Plus, Pencil, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -27,25 +26,21 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
   const [editedElementName, setEditedElementName] = useState<string>("");
 
   const handleAddFlow = () => {
-    // Add flow logic here
     toast.success("Flow added successfully");
     setIsFlowDialogOpen(false);
   };
 
   const handleAddBusinessRule = () => {
-    // Add business rule logic here
     toast.success("Business rule added successfully");
     setIsBusinessRuleDialogOpen(false);
   };
 
   const handleAddDataElement = () => {
-    // Add data element logic here
     toast.success("Data element added successfully");
     setIsDataElementDialogOpen(false);
   };
 
   const handleElementSave = (elementId: string) => {
-    // Handle saving the edited element
     toast.success("Element saved successfully");
     setEditingElementId(null);
   };
@@ -172,16 +167,28 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                           <span className="text-xs text-red-500">Required</span>
                         )}
                       </div>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        onClick={() => {
-                          setEditingElementId(element.id);
-                          setEditedElementName(element.name);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          onClick={() => {
+                            setEditingElementId(element.id);
+                            setEditedElementName(element.name);
+                          }}
+                        >
+                          <Pencil className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => {
+                            const updatedElements = requirement.dataElements.filter(e => e.id !== element.id);
+                            toast.success("Data element deleted successfully");
+                          }}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
                     </>
                   )}
                 </div>

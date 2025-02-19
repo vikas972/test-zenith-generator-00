@@ -1,17 +1,19 @@
 
-import { Activity, Plus, Pencil, Save, X } from "lucide-react";
+import { Activity, Plus, Pencil, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type Flow } from "../types";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface FlowsSectionProps {
   flows: Flow[];
   onAddClick: () => void;
+  onDelete?: (flowId: string) => void;
 }
 
-export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
+export const FlowsSection = ({ flows, onAddClick, onDelete }: FlowsSectionProps) => {
   const [editingFlowId, setEditingFlowId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
 
@@ -22,11 +24,17 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
 
   const handleSave = (flowId: string) => {
     setEditingFlowId(null);
-    // Here you would typically update the flow in the parent component
   };
 
   const handleCancel = () => {
     setEditingFlowId(null);
+  };
+
+  const handleDelete = (flowId: string) => {
+    if (onDelete) {
+      onDelete(flowId);
+      toast.success("Flow deleted successfully");
+    }
   };
 
   const renderFlowItem = (flow: Flow) => (
@@ -49,9 +57,14 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
         ) : (
           <>
             <div className="font-medium">{flow.description}</div>
-            <Button variant="ghost" size="sm" onClick={() => handleEditStart(flow)}>
-              <Pencil className="h-4 w-4" />
-            </Button>
+            <div className="flex items-center gap-1">
+              <Button variant="ghost" size="sm" onClick={() => handleEditStart(flow)}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="sm" onClick={() => handleDelete(flow.id)}>
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </div>
           </>
         )}
       </div>

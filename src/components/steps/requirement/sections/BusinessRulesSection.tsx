@@ -1,17 +1,19 @@
 
-import { Shield, Plus, Pencil, Save, X } from "lucide-react";
+import { Shield, Plus, Pencil, Save, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type BusinessRule } from "../types";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface BusinessRulesSectionProps {
   rules: BusinessRule[];
   onAddClick: () => void;
+  onDelete?: (ruleId: string) => void;
 }
 
-export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSectionProps) => {
+export const BusinessRulesSection = ({ rules, onAddClick, onDelete }: BusinessRulesSectionProps) => {
   const [editingRuleId, setEditingRuleId] = useState<string | null>(null);
   const [editedDescription, setEditedDescription] = useState("");
 
@@ -22,11 +24,17 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
 
   const handleSave = (ruleId: string) => {
     setEditingRuleId(null);
-    // Here you would typically update the rule in the parent component
   };
 
   const handleCancel = () => {
     setEditingRuleId(null);
+  };
+
+  const handleDelete = (ruleId: string) => {
+    if (onDelete) {
+      onDelete(ruleId);
+      toast.success("Business rule deleted successfully");
+    }
   };
 
   return (
@@ -69,9 +77,14 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
                       ) : (
                         <>
                           <div className="font-medium">{rule.description}</div>
-                          <Button variant="ghost" size="sm" onClick={() => handleEditStart(rule)}>
-                            <Pencil className="h-4 w-4" />
-                          </Button>
+                          <div className="flex items-center gap-1">
+                            <Button variant="ghost" size="sm" onClick={() => handleEditStart(rule)}>
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={() => handleDelete(rule.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </div>
                         </>
                       )}
                     </div>
