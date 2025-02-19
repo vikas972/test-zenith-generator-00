@@ -1,5 +1,5 @@
 
-import { Shield, Plus } from "lucide-react";
+import { Shield, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type BusinessRule } from "../types";
@@ -22,7 +22,7 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
         </Button>
       </div>
       <Accordion type="single" collapsible className="w-full">
-        {["authentication", "security", "system"].map((category) => (
+        {["authentication", "security", "system", "general"].map((category) => (
           <AccordionItem key={category} value={category}>
             <AccordionTrigger className="capitalize">
               {category.replace("_", " ")} Rules
@@ -32,7 +32,12 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
                 .filter(rule => rule.category === category)
                 .map((rule) => (
                   <div key={rule.id} className="mb-2 p-2 border rounded">
-                    <div className="font-medium">{rule.description}</div>
+                    <div className="flex items-center justify-between">
+                      <div className="font-medium">{rule.description}</div>
+                      <Button variant="ghost" size="sm">
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                    </div>
                     {rule.validationCriteria && (
                       <div className="text-sm text-gray-600 ml-4">
                         Validation: {rule.validationCriteria}

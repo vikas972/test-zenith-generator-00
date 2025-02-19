@@ -1,5 +1,5 @@
 
-import { Activity, Plus } from "lucide-react";
+import { Activity, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type Flow } from "../types";
@@ -29,7 +29,12 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
               .filter(flow => flow.type === "primary")
               .map((flow) => (
                 <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="font-medium">{flow.description}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium">{flow.description}</div>
+                    <Button variant="ghost" size="sm">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
                   {flow.steps?.map(step => (
                     <div key={step.id} className="ml-4 mt-1">
                       <div className="text-sm">• {step.description}</div>
@@ -49,7 +54,12 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
               .filter(flow => flow.type === "alternative")
               .map((flow) => (
                 <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="font-medium">{flow.description}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium">{flow.description}</div>
+                    <Button variant="ghost" size="sm">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <div className="text-sm text-gray-600 ml-4">
                     Expected: {flow.expectedOutcome}
                   </div>
@@ -64,7 +74,12 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
               .filter(flow => flow.type === "exception")
               .map((flow) => (
                 <div key={flow.id} className="mb-2 p-2 border rounded">
-                  <div className="font-medium">{flow.description}</div>
+                  <div className="flex items-center justify-between">
+                    <div className="font-medium">{flow.description}</div>
+                    <Button variant="ghost" size="sm">
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                  </div>
                   <div className="text-sm text-gray-600 ml-4">
                     Expected: {flow.expectedOutcome}
                   </div>
