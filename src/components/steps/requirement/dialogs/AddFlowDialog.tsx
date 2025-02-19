@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+type FlowType = "primary" | "alternative" | "exception";
+
 interface AddFlowDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: () => void;
-  flow: { description: string; type: string };
-  onFlowChange: (flow: { description: string; type: "primary" | "alternative" | "exception" }) => void;
+  flow: { description: string; type: FlowType };
+  onFlowChange: (flow: { description: string; type: FlowType }) => void;
 }
 
 export const AddFlowDialog = ({ isOpen, onOpenChange, onAdd, flow, onFlowChange }: AddFlowDialogProps) => {
@@ -33,7 +35,7 @@ export const AddFlowDialog = ({ isOpen, onOpenChange, onAdd, flow, onFlowChange 
             <Label htmlFor="flowType">Type</Label>
             <Select
               value={flow.type}
-              onValueChange={(value) => onFlowChange({ ...flow, type: value as "primary" | "alternative" | "exception" })}
+              onValueChange={(value: FlowType) => onFlowChange({ ...flow, type: value })}
             >
               <SelectTrigger>
                 <SelectValue />

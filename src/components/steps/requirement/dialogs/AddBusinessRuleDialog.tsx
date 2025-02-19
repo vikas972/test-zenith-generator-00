@@ -5,12 +5,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
+type BusinessRuleCategory = "authentication" | "security" | "system" | "general";
+
 interface AddBusinessRuleDialogProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
   onAdd: () => void;
-  rule: { description: string; category: string };
-  onRuleChange: (rule: { description: string; category: "authentication" | "security" | "system" | "general" }) => void;
+  rule: { description: string; category: BusinessRuleCategory };
+  onRuleChange: (rule: { description: string; category: BusinessRuleCategory }) => void;
 }
 
 export const AddBusinessRuleDialog = ({ isOpen, onOpenChange, onAdd, rule, onRuleChange }: AddBusinessRuleDialogProps) => {
@@ -33,7 +35,7 @@ export const AddBusinessRuleDialog = ({ isOpen, onOpenChange, onAdd, rule, onRul
             <Label htmlFor="ruleCategory">Category</Label>
             <Select
               value={rule.category}
-              onValueChange={(value) => onRuleChange({ ...rule, category: value as "authentication" | "security" | "system" | "general" })}
+              onValueChange={(value: BusinessRuleCategory) => onRuleChange({ ...rule, category: value })}
             >
               <SelectTrigger>
                 <SelectValue />

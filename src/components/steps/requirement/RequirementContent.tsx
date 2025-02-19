@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { type Requirement } from "./types";
@@ -17,8 +18,14 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
   const [isFlowDialogOpen, setIsFlowDialogOpen] = useState(false);
   const [isBusinessRuleDialogOpen, setIsBusinessRuleDialogOpen] = useState(false);
   const [isDataElementDialogOpen, setIsDataElementDialogOpen] = useState(false);
-  const [newFlow, setNewFlow] = useState({ description: "", type: "primary" });
-  const [newBusinessRule, setNewBusinessRule] = useState({ description: "", category: "general" });
+  const [newFlow, setNewFlow] = useState<{ description: string; type: "primary" | "alternative" | "exception" }>({ 
+    description: "", 
+    type: "primary" 
+  });
+  const [newBusinessRule, setNewBusinessRule] = useState<{ description: string; category: "authentication" | "security" | "system" | "general" }>({ 
+    description: "", 
+    category: "general" 
+  });
   const [newDataElement, setNewDataElement] = useState({ name: "", type: "", required: false });
 
   const handleAddFlow = () => {
