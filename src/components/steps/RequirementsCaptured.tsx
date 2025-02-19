@@ -358,6 +358,16 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     setEditingRequirement(null);
   };
 
+  const handleFunctionalAreaChange = (requirementId: string, value: string) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, functionalArea: value }
+          : req
+      )
+    );
+  };
+
   return (
     <div className="flex flex-1 h-full overflow-hidden">
       <div className={cn(
@@ -462,7 +472,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
             onCancel={handleCancelEdit}
             onClick={handleRequirementClick}
             onDelete={handleDeleteRequirement}
-            onFunctionalAreaChange={handleFunctionalAreaChange}
+            onFunctionalAreaChange={(requirementId, value) => handleFunctionalAreaChange(requirementId, value)}
             onSourceChange={handleSourceChange}
             onStatusChange={handleStatusChange}
           />
