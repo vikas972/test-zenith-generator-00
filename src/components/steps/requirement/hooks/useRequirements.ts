@@ -16,6 +16,11 @@ export const useRequirements = (initialRequirements: Requirement[]) => {
     setExpandedRequirement(requirement.id);
   };
 
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(null);
+  };
+
   const handleSaveRequirement = (e: React.MouseEvent) => {
     e.stopPropagation();
     setEditingRequirement(null);
@@ -50,6 +55,16 @@ export const useRequirements = (initialRequirements: Requirement[]) => {
               }
             }
           : req
+      )
+    );
+  };
+
+  const handleFunctionalAreaChange = (requirementId: string, value: string) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(r =>
+        r.id === requirementId
+          ? { ...r, functionalArea: value }
+          : r
       )
     );
   };
@@ -105,11 +120,13 @@ export const useRequirements = (initialRequirements: Requirement[]) => {
     expandedRequirement,
     setSelectedRequirements,
     handleEditRequirement,
+    handleCancelEdit,
     handleSaveRequirement,
     handleRequirementClick,
     handleDeleteRequirement,
     handleSourceChange,
     handleStatusChange,
+    handleFunctionalAreaChange,
     handleUpdateRequirementFlows,
     handleUpdateRequirementBusinessRules,
     handleUpdateRequirementDataElements,

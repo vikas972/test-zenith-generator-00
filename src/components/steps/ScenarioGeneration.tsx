@@ -201,14 +201,13 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     expandedRequirement,
     setSelectedRequirements,
     handleEditRequirement,
+    handleCancelEdit,
     handleSaveRequirement,
     handleRequirementClick,
     handleDeleteRequirement,
     handleSourceChange,
     handleStatusChange,
-    handleUpdateRequirementFlows,
-    handleUpdateRequirementBusinessRules,
-    handleUpdateRequirementDataElements,
+    handleFunctionalAreaChange,
   } = useRequirements(initialRequirements);
 
   const handleCreateRequirement = () => {
@@ -235,21 +234,10 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         }}
         onEdit={handleEditRequirement}
         onSave={handleSaveRequirement}
-        onCancel={(e) => {
-          e.stopPropagation();
-          setEditingRequirement(null);
-        }}
+        onCancel={handleCancelEdit}
         onClick={handleRequirementClick}
         onDelete={handleDeleteRequirement}
-        onFunctionalAreaChange={(requirementId, value) => {
-          setRequirements((prevReqs) =>
-            prevReqs.map((r) =>
-              r.id === requirementId
-                ? { ...r, functionalArea: value }
-                : r
-            )
-          );
-        }}
+        onFunctionalAreaChange={handleFunctionalAreaChange}
         onSourceChange={handleSourceChange}
         onStatusChange={handleStatusChange}
       />
