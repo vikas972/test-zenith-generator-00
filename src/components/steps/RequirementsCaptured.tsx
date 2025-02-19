@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
@@ -9,6 +8,7 @@ import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
 import { createNewRequirement } from "./requirement/requirementUtils";
 import { cn } from "@/lib/utils";
+import { RequirementsList } from "./requirement/components/RequirementsList";
 
 interface RequirementsCapturedProps {
   selectedFile: {
@@ -268,6 +268,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
   const handleDeleteRequirement = (requirementId: string) => {
     setRequirements(prevReqs => prevReqs.filter(req => req.id !== requirementId));
     setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
+    toast.success("Requirement deleted successfully");
   };
 
   const handleDeleteFlow = (flowId: string) => {
@@ -339,6 +340,22 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       )
     );
     toast.success(`Status updated to ${newStatus.replace("_", " ")}`);
+  };
+
+  const handleEditRequirement = (requirement: Requirement, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(requirement.id);
+  };
+
+  const handleSaveRequirement = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(null);
+    toast.success("Changes saved successfully");
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditingRequirement(null);
   };
 
   return (
@@ -428,50 +445,27 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         </div>
 
         <div className="flex-1 overflow-auto px-6 py-4">
-          <div className="space-y-4">
-            {requirements.map((requirement) => (
-              <RequirementCard
-                key={requirement.id}
-                requirement={requirement}
-                isExpanded={expandedRequirement === requirement.id}
-                isEditing={editingRequirement === requirement.id}
-                isSelected={selectedRequirements.includes(requirement.id)}
-                onToggleSelect={(checked) => {
-                  setSelectedRequirements(prev =>
-                    checked
-                      ? [...prev, requirement.id]
-                      : prev.filter(id => id !== requirement.id)
-                  );
-                }}
-                onEdit={(e) => {
-                  e.stopPropagation();
-                  setEditingRequirement(requirement.id);
-                }}
-                onSave={(e) => {
-                  e.stopPropagation();
-                  setEditingRequirement(null);
-                  toast.success("Changes saved successfully");
-                }}
-                onCancel={(e) => {
-                  e.stopPropagation();
-                  setEditingRequirement(null);
-                }}
-                onClick={() => handleRequirementClick(requirement)}
-                onDelete={() => handleDeleteRequirement(requirement.id)}
-                onFunctionalAreaChange={(value) =>
-                  setRequirements((prevReqs) =>
-                    prevReqs.map((r) =>
-                      r.id === requirement.id
-                        ? { ...r, functionalArea: value }
-                        : r
-                    )
-                  )
-                }
-                onSourceChange={(field, value) => handleSourceChange(requirement.id, field, value)}
-                onStatusChange={(status) => handleStatusChange(requirement.id, status)}
-              />
-            ))}
-          </div>
+          <RequirementsList
+            requirements={requirements}
+            editingRequirement={editingRequirement}
+            selectedRequirements={selectedRequirements}
+            expandedRequirement={expandedRequirement}
+            onSelect={(requirementId, checked) => {
+              setSelectedRequirements(prev =>
+                checked
+                  ? [...prev, requirementId]
+                  : prev.filter(id => id !== requirementId)
+              );
+            }}
+            onEdit={handleEditRequirement}
+            onSave={handleSaveRequirement}
+            onCancel={handleCancelEdit}
+            onClick={handleRequirementClick}
+            onDelete={handleDeleteRequirement}
+            onFunctionalAreaChange={handleFunctionalAreaChange}
+            onSourceChange={handleSourceChange}
+            onStatusChange={handleStatusChange}
+          />
         </div>
       </div>
 
