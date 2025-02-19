@@ -59,20 +59,23 @@ export const RequirementCard = ({
       {isExpanded && (
         <RequirementContent
           requirement={requirement}
-          onUpdateFlows={(flows) => {
-            const updatedRequirement = { ...requirement, flows };
-            onFunctionalAreaChange(requirement.functionalArea);
-          }}
-          onUpdateBusinessRules={(rules) => {
-            const updatedRequirement = { ...requirement, businessRules: rules };
-            onFunctionalAreaChange(requirement.functionalArea);
-          }}
-          onUpdateDataElements={(elements) => {
-            const updatedRequirement = { ...requirement, dataElements: elements };
-            onFunctionalAreaChange(requirement.functionalArea);
-          }}
+          onUpdateFlows={handleUpdateRequirementFlows}
+          onUpdateBusinessRules={handleUpdateRequirementBusinessRules}
+          onUpdateDataElements={handleUpdateRequirementDataElements}
         />
       )}
     </Card>
   );
+};
+
+const handleUpdateRequirementFlows = (flows: Requirement['flows']) => {
+  return flows;
+};
+
+const handleUpdateRequirementBusinessRules = (rules: Requirement['businessRules']) => {
+  return rules;
+};
+
+const handleUpdateRequirementDataElements = (elements: Requirement['dataElements']) => {
+  return elements;
 };
