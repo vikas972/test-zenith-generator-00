@@ -37,15 +37,21 @@ export const RequirementCard = ({
   onStatusChange,
 }: RequirementCardProps) => {
   const handleUpdateFlows = (flows: Requirement['flows']) => {
-    requirement.flows = flows;
+    const updatedRequirement = { ...requirement, flows };
+    // This will trigger a re-render in the parent
+    onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
   const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
-    requirement.businessRules = rules;
+    const updatedRequirement = { ...requirement, businessRules: rules };
+    // This will trigger a re-render in the parent
+    onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
   const handleUpdateDataElements = (elements: Requirement['dataElements']) => {
-    requirement.dataElements = elements;
+    const updatedRequirement = { ...requirement, dataElements: elements };
+    // This will trigger a re-render in the parent
+    onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
   return (
