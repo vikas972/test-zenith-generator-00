@@ -32,6 +32,21 @@ export const getStatusDescription = (status: string) => {
   }
 };
 
+export const getStatusVariant = (status: string) => {
+  switch (status) {
+    case "complete":
+      return "default";
+    case "needs_review":
+      return "warning";
+    case "in_progress":
+      return "secondary";
+    case "rejected":
+      return "destructive";
+    default:
+      return "default";
+  }
+};
+
 export const createNewRequirement = (requirementsLength: number): Requirement => ({
   id: `${Date.now()}`,
   requirementId: `REQ-${(requirementsLength + 1).toString().padStart(3, '0')}`,

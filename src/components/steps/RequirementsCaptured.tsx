@@ -26,17 +26,35 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
       description: "The system shall provide secure authentication mechanisms",
       actors: ["End User", "System"],
       flows: [
-        { id: "f1", description: "User enters credentials" },
-        { id: "f2", description: "System validates credentials" },
+        { 
+          id: "f1", 
+          description: "User enters credentials",
+          type: "primary"
+        },
+        { 
+          id: "f2", 
+          description: "System validates credentials",
+          type: "primary"
+        }
       ],
       businessRules: [
-        { id: "br1", description: "Password must be at least 8 characters" },
-        { id: "br2", description: "Account locks after 3 failed attempts" },
+        { 
+          id: "br1", 
+          description: "Password must be at least 8 characters",
+          category: "authentication"
+        },
+        { 
+          id: "br2", 
+          description: "Account locks after 3 failed attempts",
+          category: "security"
+        }
       ],
       dataElements: [
         { id: "de1", name: "Username", type: "string", required: true },
-        { id: "de2", name: "Password", type: "string", required: true },
+        { id: "de2", name: "Password", type: "string", required: true }
       ],
+      integrationPoints: [],
+      expectedBehaviors: [],
       missingInfo: [
         { id: "mi1", category: "flows", description: "Password reset flow" },
         { id: "mi2", category: "business_rules", description: "2FA requirements" }
@@ -50,102 +68,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         startIndex: 50,
         endIndex: 150
       }
-    },
-    {
-      id: "2",
-      requirementId: "REQ-002",
-      functionalArea: "User Management",
-      description: "Administrators shall be able to manage user accounts",
-      actors: ["Admin", "System"],
-      flows: [
-        { id: "f3", description: "Admin creates new user account" },
-        { id: "f4", description: "Admin modifies user permissions" },
-      ],
-      businessRules: [
-        { id: "br3", description: "Only admins can modify user roles" },
-        { id: "br4", description: "User email must be unique" },
-      ],
-      dataElements: [
-        { id: "de3", name: "Email", type: "string", required: true },
-        { id: "de4", name: "Role", type: "enum", required: true },
-      ],
-      missingInfo: [
-        { id: "mi3", category: "flows", description: "Role hierarchy definition" },
-        { id: "mi4", category: "business_rules", description: "Permission matrix" }
-      ],
-      status: "in_progress",
-      confidence: 0.75,
-      source: {
-        paragraph: 3,
-        page: 1,
-        text: "Administrators shall have the ability to create, modify, and delete user accounts with appropriate access controls.",
-        startIndex: 200,
-        endIndex: 300
-      }
-    },
-    {
-      id: "3",
-      requirementId: "REQ-003",
-      functionalArea: "Password Recovery",
-      description: "System shall provide password recovery mechanism",
-      actors: ["User", "System", "Email Service"],
-      flows: [
-        { id: "f5", description: "User requests password reset" },
-        { id: "f6", description: "System sends recovery email" },
-      ],
-      businessRules: [
-        { id: "br5", description: "Reset links expire after 24 hours" },
-        { id: "br6", description: "New password must be different from last 3" },
-      ],
-      dataElements: [
-        { id: "de5", name: "ResetToken", type: "string", required: true },
-        { id: "de6", name: "ExpiryTime", type: "datetime", required: true },
-      ],
-      missingInfo: [
-        { id: "mi5", category: "flows", description: "Rate limiting rules" },
-        { id: "mi6", category: "business_rules", description: "Recovery email template" }
-      ],
-      status: "completed",
-      confidence: 0.95,
-      source: {
-        paragraph: 4,
-        page: 2,
-        text: "The system must implement a secure password recovery mechanism with time-limited reset tokens.",
-        startIndex: 350,
-        endIndex: 450
-      }
-    },
-    {
-      id: "4",
-      requirementId: "REQ-004",
-      functionalArea: "Session Management",
-      description: "System shall manage user sessions securely",
-      actors: ["User", "System"],
-      flows: [
-        { id: "f7", description: "System creates session on login" },
-        { id: "f8", description: "System invalidates session on logout" },
-      ],
-      businessRules: [
-        { id: "br7", description: "Sessions expire after 30 minutes of inactivity" },
-        { id: "br8", description: "Maximum 5 concurrent sessions per user" },
-      ],
-      dataElements: [
-        { id: "de7", name: "SessionID", type: "string", required: true },
-        { id: "de8", name: "LastActivity", type: "timestamp", required: true },
-      ],
-      missingInfo: [
-        { id: "mi7", category: "flows", description: "Session revival mechanism" },
-        { id: "mi8", category: "business_rules", description: "Multi-device handling" }
-      ],
-      status: "needs_review",
-      confidence: 0.80,
-      source: {
-        paragraph: 5,
-        page: 2,
-        text: "User sessions must be managed securely with proper timeout and concurrent session controls.",
-        startIndex: 500,
-        endIndex: 600
-      }
     }
   ]);
 
@@ -157,9 +79,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     
     REQ-001: User Authentication
     The system shall provide secure user authentication mechanisms including password validation and account lockout policies.
-    
-    REQ-002: User Management
-    Administrators shall be able to create, modify, and delete user accounts with appropriate access controls.
   `);
   const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
   const [isSourceMaximized, setIsSourceMaximized] = useState(false);
@@ -275,13 +194,11 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
 
   return (
     <div className="flex flex-1 h-full overflow-hidden">
-      <div 
-        className={cn(
-          "flex flex-col h-full transition-all duration-300",
-          isRequirementsMaximized ? "w-full" : "flex-1",
-          isSourceMaximized ? "hidden" : "flex"
-        )}
-      >
+      <div className={cn(
+        "flex flex-col h-full transition-all duration-300",
+        isRequirementsMaximized ? "w-full" : "flex-1",
+        isSourceMaximized ? "hidden" : "flex"
+      )}>
         <div className="p-4 border-b bg-white">
           <div className="flex flex-col gap-4">
             <div className="flex items-center justify-between">
