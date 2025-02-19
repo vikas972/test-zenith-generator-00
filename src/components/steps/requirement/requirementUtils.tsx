@@ -1,4 +1,5 @@
 
+import { type Requirement } from "./types";
 import { CheckCircle, AlertCircle, RefreshCw, XCircle } from "lucide-react";
 
 export const getStatusIcon = (status: string) => {
@@ -30,3 +31,26 @@ export const getStatusDescription = (status: string) => {
       return "";
   }
 };
+
+export const createNewRequirement = (requirementsLength: number): Requirement => ({
+  id: `${Date.now()}`,
+  requirementId: `REQ-${(requirementsLength + 1).toString().padStart(3, '0')}`,
+  functionalArea: "New Requirement",
+  description: "Enter requirement description",
+  actors: [],
+  flows: [],
+  businessRules: [],
+  dataElements: [],
+  integrationPoints: [],
+  expectedBehaviors: [],
+  missingInfo: [],
+  status: "in_progress",
+  confidence: 0,
+  source: {
+    paragraph: 1,
+    page: 1,
+    text: "",
+    startIndex: 0,
+    endIndex: 0
+  }
+});
