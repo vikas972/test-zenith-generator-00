@@ -27,45 +27,17 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       description: "The system shall provide secure authentication mechanisms",
       actors: ["End User", "System"],
       flows: [
-        { 
-          id: "f1", 
-          description: "User enters credentials",
-          type: "primary"
-        },
-        { 
-          id: "f2", 
-          description: "System validates credentials",
-          type: "primary"
-        }
+        { id: "f1", description: "User enters credentials" },
+        { id: "f2", description: "System validates credentials" }
       ],
       businessRules: [
-        { 
-          id: "br1", 
-          description: "Password must be at least 8 characters",
-          category: "authentication"
-        },
-        { 
-          id: "br2", 
-          description: "Account locks after 3 failed attempts",
-          category: "security"
-        }
+        { id: "br1", description: "Password must be at least 8 characters" },
+        { id: "br2", description: "Account locks after 3 failed attempts" }
       ],
       dataElements: [
-        { 
-          id: "de1", 
-          name: "Username", 
-          type: "string", 
-          required: true 
-        },
-        { 
-          id: "de2", 
-          name: "Password", 
-          type: "string", 
-          required: true 
-        }
+        { id: "de1", name: "Username", type: "string", required: true },
+        { id: "de2", name: "Password", type: "string", required: true }
       ],
-      integrationPoints: [],
-      expectedBehaviors: [],
       missingInfo: [
         { id: "mi1", category: "flows", description: "Password reset flow" },
         { id: "mi2", category: "business_rules", description: "2FA requirements" }
