@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { RequirementCard } from "./requirement/RequirementCard";
 import { type Requirement } from "./requirement/types";
@@ -270,6 +269,36 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
+  const handleUpdateRequirementFlows = (requirementId: string, flows: Requirement['flows']) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, flows }
+          : req
+      )
+    );
+  };
+
+  const handleUpdateRequirementBusinessRules = (requirementId: string, rules: Requirement['businessRules']) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, businessRules: rules }
+          : req
+      )
+    );
+  };
+
+  const handleUpdateRequirementDataElements = (requirementId: string, elements: Requirement['dataElements']) => {
+    setRequirements(prevReqs =>
+      prevReqs.map(req =>
+        req.id === requirementId
+          ? { ...req, dataElements: elements }
+          : req
+      )
+    );
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="flex-1 overflow-auto">
@@ -295,15 +324,15 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             }}
             onClick={() => handleRequirementClick(req)}
             onDelete={() => handleDeleteRequirement(req.id)}
-            onFunctionalAreaChange={(value) =>
+            onFunctionalAreaChange={(value) => {
               setRequirements((prevReqs) =>
                 prevReqs.map((r) =>
                   r.id === req.id
                     ? { ...r, functionalArea: value }
                     : r
                 )
-              )
-            }
+              );
+            }}
             onSourceChange={(field, value) => handleSourceChange(req.id, field, value)}
             onStatusChange={(status) => handleStatusChange(req.id, status)}
           />

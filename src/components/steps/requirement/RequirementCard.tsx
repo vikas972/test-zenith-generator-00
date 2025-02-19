@@ -38,19 +38,19 @@ export const RequirementCard = ({
 }: RequirementCardProps) => {
   const handleUpdateFlows = (flows: Requirement['flows']) => {
     const updatedRequirement = { ...requirement, flows };
-    // This will trigger a re-render in the parent
+    // Using onFunctionalAreaChange to trigger a re-render in the parent
     onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
   const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
     const updatedRequirement = { ...requirement, businessRules: rules };
-    // This will trigger a re-render in the parent
+    // Using onFunctionalAreaChange to trigger a re-render in the parent
     onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
   const handleUpdateDataElements = (elements: Requirement['dataElements']) => {
     const updatedRequirement = { ...requirement, dataElements: elements };
-    // This will trigger a re-render in the parent
+    // Using onFunctionalAreaChange to trigger a re-render in the parent
     onFunctionalAreaChange(updatedRequirement.functionalArea);
   };
 
