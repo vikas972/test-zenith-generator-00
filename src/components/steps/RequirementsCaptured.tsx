@@ -6,6 +6,7 @@ import { RequirementsHeader } from "./requirement/components/RequirementsHeader"
 import { SourceViewer } from "./requirement/components/SourceViewer";
 import { useRequirements } from "./requirement/hooks/useRequirements";
 import { createNewRequirement } from "./requirement/requirementUtils";
+import { type Requirement } from "./requirement/types";
 
 interface RequirementsCapturedProps {
   selectedFile: {
@@ -15,7 +16,7 @@ interface RequirementsCapturedProps {
   } | null;
 }
 
-const initialRequirements = [
+const initialRequirements: Requirement[] = [
   {
     id: "1",
     requirementId: "REQ-001",
@@ -49,7 +50,7 @@ const initialRequirements = [
     integrationPoints: [],
     expectedBehaviors: [],
     missingInfo: [],
-    status: "needs_review",
+    status: "needs_review" as const,
     confidence: 0.85,
     source: {
       paragraph: 2,
@@ -92,7 +93,7 @@ const initialRequirements = [
     integrationPoints: [],
     expectedBehaviors: [],
     missingInfo: [],
-    status: "in_progress",
+    status: "in_progress" as const,
     confidence: 0.9,
     source: {
       paragraph: 3,
@@ -135,7 +136,7 @@ const initialRequirements = [
     integrationPoints: [],
     expectedBehaviors: [],
     missingInfo: [],
-    status: "completed",
+    status: "completed" as const,
     confidence: 0.95,
     source: {
       paragraph: 4,
@@ -143,49 +144,6 @@ const initialRequirements = [
       text: "The system must allow users to manage their profile details.",
       startIndex: 230,
       endIndex: 280
-    }
-  },
-  {
-    id: "4",
-    requirementId: "REQ-004",
-    functionalArea: "Access Control",
-    description: "System should implement role-based access control",
-    actors: ["Admin", "System"],
-    flows: [
-      { 
-        id: "f4", 
-        description: "Admin assigns user roles",
-        type: "primary",
-        steps: [
-          {
-            id: "s4",
-            description: "Admin selects user and role",
-            expectedOutcome: "Role is assigned"
-          }
-        ]
-      }
-    ],
-    businessRules: [
-      { 
-        id: "br4", 
-        description: "Only admins can assign roles",
-        category: "security"
-      }
-    ],
-    dataElements: [
-      { id: "de4", name: "Role", type: "enum", required: true }
-    ],
-    integrationPoints: [],
-    expectedBehaviors: [],
-    missingInfo: [],
-    status: "in_progress",
-    confidence: 0.88,
-    source: {
-      paragraph: 5,
-      page: 1,
-      text: "The system must implement role-based access control for security.",
-      startIndex: 290,
-      endIndex: 340
     }
   }
 ];

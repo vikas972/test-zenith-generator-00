@@ -122,6 +122,7 @@ export const useRequirements = (initialRequirements: Requirement[] = []) => {
     setRequirements,
     editingRequirement,
     selectedRequirements,
+    setSelectedRequirements,  // Added this line
     expandedRequirement,
     handleSelectRequirement,
     handleSelectAll,
