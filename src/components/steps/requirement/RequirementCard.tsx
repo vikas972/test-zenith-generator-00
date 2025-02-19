@@ -36,6 +36,18 @@ export const RequirementCard = ({
   onSourceChange,
   onStatusChange,
 }: RequirementCardProps) => {
+  const handleUpdateFlows = (flows: Requirement['flows']) => {
+    requirement.flows = flows;
+  };
+
+  const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
+    requirement.businessRules = rules;
+  };
+
+  const handleUpdateDataElements = (elements: Requirement['dataElements']) => {
+    requirement.dataElements = elements;
+  };
+
   return (
     <Card className={cn(
       "mb-4 relative",
@@ -56,7 +68,14 @@ export const RequirementCard = ({
         onSourceChange={onSourceChange}
         onStatusChange={onStatusChange}
       />
-      {isExpanded && <RequirementContent requirement={requirement} />}
+      {isExpanded && (
+        <RequirementContent
+          requirement={requirement}
+          onUpdateFlows={handleUpdateFlows}
+          onUpdateBusinessRules={handleUpdateBusinessRules}
+          onUpdateDataElements={handleUpdateDataElements}
+        />
+      )}
     </Card>
   );
 };
