@@ -29,12 +29,14 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         { 
           id: "f1", 
           description: "User enters credentials",
-          type: "primary"
-        },
-        { 
-          id: "f2", 
-          description: "System validates credentials",
-          type: "primary"
+          type: "primary",
+          steps: [
+            {
+              id: "s1",
+              description: "User enters username and password",
+              expectedOutcome: "Credentials are submitted"
+            }
+          ]
         }
       ],
       businessRules: [
@@ -42,31 +44,151 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
           id: "br1", 
           description: "Password must be at least 8 characters",
           category: "authentication"
-        },
-        { 
-          id: "br2", 
-          description: "Account locks after 3 failed attempts",
-          category: "security"
         }
       ],
       dataElements: [
-        { id: "de1", name: "Username", type: "string", required: true },
-        { id: "de2", name: "Password", type: "string", required: true }
+        { id: "de1", name: "Username", type: "string", required: true }
       ],
       integrationPoints: [],
       expectedBehaviors: [],
-      missingInfo: [
-        { id: "mi1", category: "flows", description: "Password reset flow" },
-        { id: "mi2", category: "business_rules", description: "2FA requirements" }
-      ],
+      missingInfo: [],
       status: "needs_review",
       confidence: 0.85,
       source: {
         paragraph: 2,
         page: 1,
-        text: "The system shall provide secure user authentication mechanisms including password validation and account lockout policies.",
+        text: "The system shall provide secure user authentication mechanisms.",
         startIndex: 50,
         endIndex: 150
+      }
+    },
+    {
+      id: "2",
+      requirementId: "REQ-002",
+      functionalArea: "Password Reset",
+      description: "Users should be able to reset their passwords securely",
+      actors: ["End User", "System"],
+      flows: [
+        { 
+          id: "f2", 
+          description: "User requests password reset",
+          type: "primary",
+          steps: [
+            {
+              id: "s2",
+              description: "User clicks forgot password",
+              expectedOutcome: "Reset email is sent"
+            }
+          ]
+        }
+      ],
+      businessRules: [
+        { 
+          id: "br2", 
+          description: "Reset link expires in 24 hours",
+          category: "security"
+        }
+      ],
+      dataElements: [
+        { id: "de2", name: "Email", type: "string", required: true }
+      ],
+      integrationPoints: [],
+      expectedBehaviors: [],
+      missingInfo: [],
+      status: "in_progress",
+      confidence: 0.9,
+      source: {
+        paragraph: 3,
+        page: 1,
+        text: "Users must be able to reset their passwords through a secure process.",
+        startIndex: 160,
+        endIndex: 220
+      }
+    },
+    {
+      id: "3",
+      requirementId: "REQ-003",
+      functionalArea: "Profile Management",
+      description: "Users should be able to manage their profile information",
+      actors: ["End User"],
+      flows: [
+        { 
+          id: "f3", 
+          description: "Update profile information",
+          type: "primary",
+          steps: [
+            {
+              id: "s3",
+              description: "User edits profile fields",
+              expectedOutcome: "Profile is updated"
+            }
+          ]
+        }
+      ],
+      businessRules: [
+        { 
+          id: "br3", 
+          description: "Email changes require verification",
+          category: "system"
+        }
+      ],
+      dataElements: [
+        { id: "de3", name: "DisplayName", type: "string", required: false }
+      ],
+      integrationPoints: [],
+      expectedBehaviors: [],
+      missingInfo: [],
+      status: "completed",
+      confidence: 0.95,
+      source: {
+        paragraph: 4,
+        page: 1,
+        text: "The system must allow users to manage their profile details.",
+        startIndex: 230,
+        endIndex: 280
+      }
+    },
+    {
+      id: "4",
+      requirementId: "REQ-004",
+      functionalArea: "Access Control",
+      description: "System should implement role-based access control",
+      actors: ["Admin", "System"],
+      flows: [
+        { 
+          id: "f4", 
+          description: "Admin assigns user roles",
+          type: "primary",
+          steps: [
+            {
+              id: "s4",
+              description: "Admin selects user and role",
+              expectedOutcome: "Role is assigned"
+            }
+          ]
+        }
+      ],
+      businessRules: [
+        { 
+          id: "br4", 
+          description: "Only admins can assign roles",
+          category: "security"
+        }
+      ],
+      dataElements: [
+        { id: "de4", name: "Role", type: "enum", required: true }
+      ],
+      integrationPoints: [],
+      expectedBehaviors: [],
+      missingInfo: [],
+      status: "in_progress",
+      confidence: 0.88,
+      source: {
+        paragraph: 5,
+        page: 1,
+        text: "The system must implement role-based access control for security.",
+        startIndex: 290,
+        endIndex: 340
       }
     }
   ]);
@@ -74,12 +196,6 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
   const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
   const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
   const [editingRequirement, setEditingRequirement] = useState<string | null>(null);
-  const [sourceContent, setSourceContent] = useState<string>(`
-    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    
-    REQ-001: User Authentication
-    The system shall provide secure user authentication mechanisms including password validation and account lockout policies.
-  `);
   const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
   const [isSourceMaximized, setIsSourceMaximized] = useState(false);
 
@@ -145,7 +261,33 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
   const handleDeleteRequirement = (requirementId: string) => {
     setRequirements(prevReqs => prevReqs.filter(req => req.id !== requirementId));
     setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
-    toast.success("Requirement deleted successfully");
+  };
+
+  const handleDeleteFlow = (flowId: string) => {
+    setRequirements(prevReqs => 
+      prevReqs.map(req => ({
+        ...req,
+        flows: req.flows.filter(flow => flow.id !== flowId)
+      }))
+    );
+  };
+
+  const handleDeleteBusinessRule = (ruleId: string) => {
+    setRequirements(prevReqs => 
+      prevReqs.map(req => ({
+        ...req,
+        businessRules: req.businessRules.filter(rule => rule.id !== ruleId)
+      }))
+    );
+  };
+
+  const handleDeleteDataElement = (elementId: string) => {
+    setRequirements(prevReqs => 
+      prevReqs.map(req => ({
+        ...req,
+        dataElements: req.dataElements.filter(element => element.id !== elementId)
+      }))
+    );
   };
 
   const handleSourceChange = (requirementId: string, field: 'page' | 'paragraph', value: number) => {

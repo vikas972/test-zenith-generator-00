@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { type Requirement } from "./types";
-import { toast } from "sonner";
 import { FlowsSection } from "./sections/FlowsSection";
 import { BusinessRulesSection } from "./sections/BusinessRulesSection";
 import { DataElementsSection } from "./sections/DataElementsSection";
@@ -12,9 +11,17 @@ import { AddDataElementDialog } from "./dialogs/AddDataElementDialog";
 
 interface RequirementContentProps {
   requirement: Requirement;
+  onUpdateFlows?: (flows: Requirement['flows']) => void;
+  onUpdateBusinessRules?: (rules: Requirement['businessRules']) => void;
+  onUpdateDataElements?: (elements: Requirement['dataElements']) => void;
 }
 
-export const RequirementContent = ({ requirement }: RequirementContentProps) => {
+export const RequirementContent = ({ 
+  requirement,
+  onUpdateFlows,
+  onUpdateBusinessRules,
+  onUpdateDataElements
+}: RequirementContentProps) => {
   const [isFlowDialogOpen, setIsFlowDialogOpen] = useState(false);
   const [isBusinessRuleDialogOpen, setIsBusinessRuleDialogOpen] = useState(false);
   const [isDataElementDialogOpen, setIsDataElementDialogOpen] = useState(false);
@@ -29,30 +36,30 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
   const [newDataElement, setNewDataElement] = useState({ name: "", type: "", required: false });
 
   const handleAddFlow = () => {
-    toast.success("Flow added successfully");
     setIsFlowDialogOpen(false);
   };
 
   const handleAddBusinessRule = () => {
-    toast.success("Business rule added successfully");
     setIsBusinessRuleDialogOpen(false);
   };
 
   const handleAddDataElement = () => {
-    toast.success("Data element added successfully");
     setIsDataElementDialogOpen(false);
   };
 
   const handleDeleteFlow = (flowId: string) => {
-    toast.success("Flow deleted successfully");
+    const updatedFlows = requirement.flows.filter(flow => flow.id !== flowId);
+    onUpdateFlows?.(updatedFlows);
   };
 
   const handleDeleteBusinessRule = (ruleId: string) => {
-    toast.success("Business rule deleted successfully");
+    const updatedRules = requirement.businessRules.filter(rule => rule.id !== ruleId);
+    onUpdateBusinessRules?.(updatedRules);
   };
 
   const handleDeleteDataElement = (elementId: string) => {
-    toast.success("Data element deleted successfully");
+    const updatedElements = requirement.dataElements.filter(element => element.id !== elementId);
+    onUpdateDataElements?.(updatedElements);
   };
 
   return (
