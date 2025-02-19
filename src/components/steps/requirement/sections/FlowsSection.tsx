@@ -1,8 +1,8 @@
-
 import { Activity, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type Flow } from "../types";
+import { toast } from "react-toastify";
 
 interface FlowsSectionProps {
   flows: Flow[];
@@ -10,6 +10,13 @@ interface FlowsSectionProps {
 }
 
 export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
+  const handleEdit = (flowId: string) => {
+    toast({
+      title: "Edit Flow",
+      description: `Editing flow ${flowId}`
+    });
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
@@ -31,7 +38,7 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
                 <div key={flow.id} className="mb-2 p-2 border rounded">
                   <div className="flex items-center justify-between">
                     <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </div>
@@ -56,7 +63,7 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
                 <div key={flow.id} className="mb-2 p-2 border rounded">
                   <div className="flex items-center justify-between">
                     <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </div>
@@ -76,7 +83,7 @@ export const FlowsSection = ({ flows, onAddClick }: FlowsSectionProps) => {
                 <div key={flow.id} className="mb-2 p-2 border rounded">
                   <div className="flex items-center justify-between">
                     <div className="font-medium">{flow.description}</div>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="ghost" size="sm" onClick={() => handleEdit(flow.id)}>
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </div>

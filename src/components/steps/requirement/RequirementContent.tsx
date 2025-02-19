@@ -148,7 +148,16 @@ export const RequirementContent = ({ requirement }: RequirementContentProps) => 
                       <span className="text-xs text-red-500">Required</span>
                     )}
                   </div>
-                  <Button variant="ghost" size="sm">
+                  <Button 
+                    variant="ghost" 
+                    size="sm" 
+                    onClick={() => {
+                      toast({
+                        title: "Edit Data Element",
+                        description: `Editing element ${element.id}`
+                      });
+                    }}
+                  >
                     <Pencil className="h-4 w-4" />
                   </Button>
                 </div>

@@ -1,8 +1,8 @@
-
 import { Shield, Plus, Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { type BusinessRule } from "../types";
+import { toast } from "react-toastify";
 
 interface BusinessRulesSectionProps {
   rules: BusinessRule[];
@@ -10,6 +10,13 @@ interface BusinessRulesSectionProps {
 }
 
 export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSectionProps) => {
+  const handleEdit = (ruleId: string) => {
+    toast({
+      title: "Edit Business Rule",
+      description: `Editing rule ${ruleId}`
+    });
+  };
+
   return (
     <div>
       <div className="flex items-center justify-between mb-2">
@@ -34,7 +41,7 @@ export const BusinessRulesSection = ({ rules, onAddClick }: BusinessRulesSection
                   <div key={rule.id} className="mb-2 p-2 border rounded">
                     <div className="flex items-center justify-between">
                       <div className="font-medium">{rule.description}</div>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" onClick={() => handleEdit(rule.id)}>
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </div>
