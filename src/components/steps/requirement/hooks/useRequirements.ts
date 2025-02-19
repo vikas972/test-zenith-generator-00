@@ -10,11 +10,11 @@ export const useRequirements = (initialRequirements: Requirement[] = []) => {
   const [expandedRequirement, setExpandedRequirement] = useState<string | null>(null);
 
   const handleSelectRequirement = (requirementId: string, checked: boolean) => {
-    setSelectedRequirements(prev =>
-      checked
-        ? [...prev, requirementId]
-        : prev.filter(id => id !== requirementId)
-    );
+    if (checked) {
+      setSelectedRequirements(prev => [...prev, requirementId]);
+    } else {
+      setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
+    }
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -42,7 +42,9 @@ export const useRequirements = (initialRequirements: Requirement[] = []) => {
   };
 
   const handleDeleteRequirement = (requirementId: string) => {
+    // Remove from requirements array
     setRequirements(prevReqs => prevReqs.filter(req => req.id !== requirementId));
+    // Remove from selected requirements if it was selected
     setSelectedRequirements(prev => prev.filter(id => id !== requirementId));
     toast.success("Requirement deleted successfully");
   };
@@ -52,9 +54,11 @@ export const useRequirements = (initialRequirements: Requirement[] = []) => {
       toast.error("Please select at least one requirement to delete");
       return;
     }
+    // Remove selected requirements from the requirements array
     setRequirements(prevReqs => 
       prevReqs.filter(req => !selectedRequirements.includes(req.id))
     );
+    // Clear selection after deletion
     setSelectedRequirements([]);
     toast.success(`Deleted ${selectedRequirements.length} requirements`);
   };
@@ -122,7 +126,7 @@ export const useRequirements = (initialRequirements: Requirement[] = []) => {
     setRequirements,
     editingRequirement,
     selectedRequirements,
-    setSelectedRequirements,  // Added this line
+    setSelectedRequirements,
     expandedRequirement,
     handleSelectRequirement,
     handleSelectAll,
