@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -48,13 +49,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         editingRequirement={editingRequirement}
         selectedRequirements={selectedRequirements}
         expandedRequirement={expandedRequirement}
-        onSelect={(requirementId, checked) => {
-          handleSelectRequirement(prev =>
-            checked
-              ? [...prev, requirementId]
-              : prev.filter(id => id !== requirementId)
-          );
-        }}
+        onSelect={(requirementId, checked) => handleSelectRequirement(requirementId, checked)}
         onEdit={handleEditRequirement}
         onSave={handleSaveRequirement}
         onCancel={handleCancelEdit}
