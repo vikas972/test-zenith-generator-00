@@ -2,9 +2,11 @@
 import { useState } from "react";
 import { type TestScenarioFlow, type FlowType } from "./types";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2, Edit2 } from "lucide-react";
+import { Plus, Trash2, Edit2, Save, X } from "lucide-react";
 import { AddConditionDialog } from "./dialogs/AddConditionDialog";
 import { useToast } from "@/components/ui/use-toast";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 
 interface ScenarioFlowsProps {
   flows: TestScenarioFlow[];
@@ -30,6 +32,12 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   const { toast } = useToast();
   const [activeFlow, setActiveFlow] = useState<{ type: FlowType; index: number } | null>(null);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [editingState, setEditingState] = useState<{
+    flowIndex: number;
+    subflowIndex: number;
+    field: string | null;
+    value: string;
+  } | null>(null);
 
   const handleAddCondition = (flow: TestScenarioFlow, index: number) => {
     setActiveFlow({ type: flow.type, index });
@@ -48,12 +56,37 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     });
   };
 
-  const handleEditCondition = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
+  const handleEditClick = (e: React.MouseEvent, flowIndex: number, subflowIndex: number, field: string, value: string) => {
     e.stopPropagation();
-    toast({
-      title: "Info",
-      description: "Edit condition functionality coming soon"
+    setEditingState({
+      flowIndex,
+      subflowIndex,
+      field,
+      value
     });
+  };
+
+  const handleSaveEdit = () => {
+    if (editingState) {
+      const newFlows = [...flows];
+      const { flowIndex, subflowIndex, field, value } = editingState;
+      
+      newFlows[flowIndex].subflows[subflowIndex] = {
+        ...newFlows[flowIndex].subflows[subflowIndex],
+        [field]: value
+      };
+      
+      onUpdateFlows(newFlows);
+      setEditingState(null);
+      toast({
+        title: "Success",
+        description: "Changes saved successfully"
+      });
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingState(null);
   };
 
   const handleAddEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
@@ -61,22 +94,6 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     toast({
       title: "Info",
       description: "Add entry functionality coming soon"
-    });
-  };
-
-  const handleDeleteEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
-    e.stopPropagation();
-    toast({
-      title: "Info",
-      description: "Delete entry functionality coming soon"
-    });
-  };
-
-  const handleEditEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
-    e.stopPropagation();
-    toast({
-      title: "Info",
-      description: "Edit entry functionality coming soon"
     });
   };
 
@@ -123,7 +140,30 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
                   <span className="text-gray-400 mt-1">{getFlowTypeIcon(flow.type)}</span>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-start justify-between">
-                      <div className="font-medium">{subflow.name}</div>
+                      <div className="font-medium">
+                        {editingState?.flowIndex === flowIndex && 
+                         editingState?.subflowIndex === subflowIndex && 
+                         editingState?.field === "name" ? (
+                          <div className="flex items-center gap-2">
+                            <Input
+                              value={editingState.value}
+                              onChange={(e) => setEditingState({
+                                ...editingState,
+                                value: e.target.value
+                              })}
+                              className="w-[200px]"
+                            />
+                            <Button variant="ghost" size="sm" onClick={handleSaveEdit}>
+                              <Save className="h-4 w-4" />
+                            </Button>
+                            <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ) : (
+                          subflow.name
+                        )}
+                      </div>
                       <div className="flex items-center gap-1">
                         <Button
                           variant="ghost"
@@ -135,7 +175,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
                         <Button
                           variant="ghost"
                           size="sm"
-                          onClick={(e) => handleEditCondition(e, flowIndex, subflowIndex)}
+                          onClick={(e) => handleEditClick(e, flowIndex, subflowIndex, "name", subflow.name)}
                         >
                           <Edit2 className="h-4 w-4" />
                         </Button>
@@ -150,40 +190,72 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
                     </div>
                     <div className="space-y-2 mt-2">
                       <div className="flex items-center justify-between text-gray-600 border-b pb-2">
-                        <div>Coverage: {subflow.coverage}</div>
+                        <div>
+                          {editingState?.flowIndex === flowIndex && 
+                           editingState?.subflowIndex === subflowIndex && 
+                           editingState?.field === "coverage" ? (
+                            <div className="flex items-center gap-2">
+                              <Textarea
+                                value={editingState.value}
+                                onChange={(e) => setEditingState({
+                                  ...editingState,
+                                  value: e.target.value
+                                })}
+                                className="w-[400px]"
+                              />
+                              <Button variant="ghost" size="sm" onClick={handleSaveEdit}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>Coverage: {subflow.coverage}</>
+                          )}
+                        </div>
                         <div className="flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={(e) => handleEditEntry(e, flowIndex, subflowIndex)}
+                            onClick={(e) => handleEditClick(e, flowIndex, subflowIndex, "coverage", subflow.coverage)}
                           >
                             <Edit2 className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => handleDeleteEntry(e, flowIndex, subflowIndex)}
-                          >
-                            <Trash2 className="h-3 w-3 text-red-500" />
                           </Button>
                         </div>
                       </div>
                       <div className="flex items-center justify-between text-gray-600">
-                        <div>Expected Results: {subflow.expectedResults}</div>
+                        <div>
+                          {editingState?.flowIndex === flowIndex && 
+                           editingState?.subflowIndex === subflowIndex && 
+                           editingState?.field === "expectedResults" ? (
+                            <div className="flex items-center gap-2">
+                              <Textarea
+                                value={editingState.value}
+                                onChange={(e) => setEditingState({
+                                  ...editingState,
+                                  value: e.target.value
+                                })}
+                                className="w-[400px]"
+                              />
+                              <Button variant="ghost" size="sm" onClick={handleSaveEdit}>
+                                <Save className="h-4 w-4" />
+                              </Button>
+                              <Button variant="ghost" size="sm" onClick={handleCancelEdit}>
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <>Expected Results: {subflow.expectedResults}</>
+                          )}
+                        </div>
                         <div className="flex items-center gap-1">
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={(e) => handleEditEntry(e, flowIndex, subflowIndex)}
+                            onClick={(e) => handleEditClick(e, flowIndex, subflowIndex, "expectedResults", subflow.expectedResults)}
                           >
                             <Edit2 className="h-3 w-3" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={(e) => handleDeleteEntry(e, flowIndex, subflowIndex)}
-                          >
-                            <Trash2 className="h-3 w-3 text-red-500" />
                           </Button>
                         </div>
                       </div>
