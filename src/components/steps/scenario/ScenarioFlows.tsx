@@ -77,6 +77,21 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     });
   };
 
+  const handleDeleteEntry = (flowIndex: number, subflowIndex: number, entryIndex: number) => {
+    // Clone the flows array
+    const newFlows = [...flows];
+    // Remove the entry from the subflow's entries array
+    if (newFlows[flowIndex].subflows[subflowIndex].entries) {
+      newFlows[flowIndex].subflows[subflowIndex].entries = 
+        newFlows[flowIndex].subflows[subflowIndex].entries?.filter((_, index) => index !== entryIndex);
+    }
+    onUpdateFlows(newFlows);
+    toast({
+      title: "Success",
+      description: "Entry deleted successfully"
+    });
+  };
+
   const handleAddNewCondition = (condition: { 
     name: string; 
     coverage: string; 
@@ -86,6 +101,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
       const newFlows = [...flows];
       newFlows[activeFlow.index].subflows.push(condition);
       onUpdateFlows(newFlows);
+      setShowAddDialog(false);
       toast({
         title: "Success",
         description: "New condition added successfully"
@@ -105,6 +121,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
           onEditCondition={handleEditClick}
           onDeleteCondition={handleDeleteCondition}
           onAddEntry={handleAddEntry}
+          onDeleteEntry={handleDeleteEntry}
           onSaveEdit={handleSaveEdit}
           onCancelEdit={handleCancelEdit}
           onEditingChange={(value) => setEditingState(prev => prev ? { ...prev, value } : null)}

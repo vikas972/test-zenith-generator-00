@@ -21,9 +21,11 @@ interface FlowConditionProps {
   onEdit: (flowIndex: number, subflowIndex: number, field: string, value: string) => void;
   onDelete: (flowIndex: number, subflowIndex: number) => void;
   onAddEntry: (flowIndex: number, subflowIndex: number) => void;
+  onDeleteEntry?: (flowIndex: number, subflowIndex: number, entryIndex: number) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   onEditingChange: (value: string) => void;
+  entries?: Array<{ description: string }>;
 }
 
 const getFlowTypeIcon = (type: FlowType) => {
@@ -52,10 +54,17 @@ export const FlowCondition = ({
   onEdit,
   onDelete,
   onAddEntry,
+  onDeleteEntry,
   onSaveEdit,
   onCancelEdit,
   onEditingChange,
+  entries = [],
 }: FlowConditionProps) => {
+  const handleDeleteEntry = (entryIndex: number, e: React.MouseEvent) => {
+    e.stopPropagation();
+    onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
+  };
+
   return (
     <div className="text-sm border rounded-md p-3">
       <div className="flex items-start gap-2">
@@ -208,6 +217,25 @@ export const FlowCondition = ({
                 </Button>
               </div>
             </div>
+            {entries.length > 0 && (
+              <div className="mt-4">
+                <h4 className="text-sm font-medium mb-2">Entries:</h4>
+                <div className="space-y-2">
+                  {entries.map((entry, entryIndex) => (
+                    <div key={entryIndex} className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                      <span>{entry.description}</span>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={(e) => handleDeleteEntry(entryIndex, e)}
+                      >
+                        <Trash2 className="h-3 w-3 text-red-500" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
