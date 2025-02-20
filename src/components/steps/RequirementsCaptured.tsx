@@ -1,10 +1,8 @@
-import { useState } from "react";
 import { toast } from "sonner";
-import { cn } from "@/lib/utils";
-import { RequirementsList } from "./requirement/components/RequirementsList";
-import { RequirementsHeader } from "./requirement/components/RequirementsHeader";
+import { RequirementsSection } from "./requirement/components/RequirementsSection";
 import { SourceViewer } from "./requirement/components/SourceViewer";
 import { useRequirements } from "./requirement/hooks/useRequirements";
+import { useRequirementsLayout } from "./requirement/hooks/useRequirementsLayout";
 import { createNewRequirement } from "./requirement/requirementUtils";
 import { type Requirement } from "./requirement/types";
 
@@ -168,12 +166,12 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     handleSourceChange,
   } = useRequirements(initialRequirements);
 
-  const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
-  const [isSourceMaximized, setIsSourceMaximized] = useState(false);
-
-  const expandedSource = expandedRequirement 
-    ? requirements.find(req => req.id === expandedRequirement)?.source?.text 
-    : null;
+  const {
+    isRequirementsMaximized,
+    isSourceMaximized,
+    toggleRequirementsMaximize,
+    toggleSourceMaximize,
+  } = useRequirementsLayout();
 
   const sourceContent = requirements
     .map(req => {
@@ -197,54 +195,32 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     toast.success(`Regenerating ${selectedRequirements.length} requirements`);
   };
 
-  const toggleRequirementsMaximize = () => {
-    setIsRequirementsMaximized(!isRequirementsMaximized);
-    setIsSourceMaximized(false);
-  };
-
-  const toggleSourceMaximize = () => {
-    setIsSourceMaximized(!isSourceMaximized);
-    setIsRequirementsMaximized(false);
-  };
-
   return (
     <div className="flex flex-1 h-full overflow-hidden">
-      <div className={cn(
-        "flex flex-col h-full transition-all duration-300",
-        isRequirementsMaximized ? "w-full" : "flex-1",
-        isSourceMaximized ? "hidden" : "flex"
-      )}>
-        <RequirementsHeader
-          fileName={selectedFile?.name}
-          isMaximized={isRequirementsMaximized}
-          selectedCount={selectedRequirements.length}
-          totalCount={requirements.length}
-          onSelectAll={handleSelectAll}
-          onAddNew={handleAddNewRequirement}
-          onRegenerate={handleRegenerateSelected}
-          onBulkStatusChange={handleBulkStatusChange}
-          onDelete={handleBulkDelete}
-          onToggleMaximize={toggleRequirementsMaximize}
-        />
-
-        <div className="flex-1 overflow-auto px-6 py-4">
-          <RequirementsList
-            requirements={requirements}
-            editingRequirement={editingRequirement}
-            selectedRequirements={selectedRequirements}
-            expandedRequirement={expandedRequirement}
-            onSelect={handleSelectRequirement}
-            onEdit={handleEditRequirement}
-            onSave={handleSaveRequirement}
-            onCancel={handleCancelEdit}
-            onClick={handleRequirementClick}
-            onDelete={handleDeleteRequirement}
-            onFunctionalAreaChange={handleFunctionalAreaChange}
-            onSourceChange={handleSourceChange}
-            onStatusChange={handleStatusChange}
-          />
-        </div>
-      </div>
+      <RequirementsSection
+        fileName={selectedFile?.name}
+        isMaximized={isRequirementsMaximized}
+        requirements={requirements}
+        editingRequirement={editingRequirement}
+        selectedRequirements={selectedRequirements}
+        expandedRequirement={expandedRequirement}
+        onSelectAll={handleSelectAll}
+        onAddNew={handleAddNewRequirement}
+        onRegenerate={handleRegenerateSelected}
+        onBulkStatusChange={handleBulkStatusChange}
+        onBulkDelete={handleBulkDelete}
+        onToggleMaximize={toggleRequirementsMaximize}
+        onSelect={handleSelectRequirement}
+        onEdit={handleEditRequirement}
+        onSave={handleSaveRequirement}
+        onCancel={handleCancelEdit}
+        onClick={handleRequirementClick}
+        onDelete={handleDeleteRequirement}
+        onFunctionalAreaChange={handleFunctionalAreaChange}
+        onSourceChange={handleSourceChange}
+        onStatusChange={handleStatusChange}
+        isSourceMaximized={isSourceMaximized}
+      />
 
       <SourceViewer
         content={sourceContent}
