@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -5,7 +6,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from "lucide-react";
-import { type TestScenario } from "./scenario/types";
+import { type TestScenario, type TestScenarioCondition } from "./scenario/types";
 import {
   Dialog,
   DialogContent,
