@@ -1,9 +1,11 @@
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Plus, Trash2, Edit2, Save, X } from "lucide-react";
+import { Edit2 } from "lucide-react";
 import { FlowType } from "../types";
+import { EditableField } from "./flow-condition/EditableField";
+import { FlowEntries } from "./flow-condition/FlowEntries";
+import { FlowActions } from "./flow-condition/FlowActions";
+import { getFlowTypeIcon } from "./flow-condition/utils";
 
 interface FlowConditionProps {
   flowType: FlowType;
@@ -28,21 +30,6 @@ interface FlowConditionProps {
   entries?: Array<{ description: string }>;
 }
 
-const getFlowTypeIcon = (type: FlowType) => {
-  switch (type) {
-    case "primary":
-      return "→";
-    case "alternate":
-      return "⤷";
-    case "negative":
-      return "⚠";
-    case "exception":
-      return "⚡";
-    default:
-      return "•";
-  }
-};
-
 export const FlowCondition = ({
   flowType,
   flowIndex,
@@ -60,6 +47,11 @@ export const FlowCondition = ({
   onEditingChange,
   entries = [],
 }: FlowConditionProps) => {
+  const isEditing = (field: string) =>
+    editingState?.flowIndex === flowIndex &&
+    editingState?.subflowIndex === subflowIndex &&
+    editingState?.field === field;
+
   const handleDeleteEntry = (entryIndex: number, e: React.MouseEvent) => {
     e.stopPropagation();
     onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
@@ -72,95 +64,47 @@ export const FlowCondition = ({
         <div className="space-y-1 flex-1">
           <div className="flex items-start justify-between">
             <div className="font-medium">
-              {editingState?.flowIndex === flowIndex &&
-              editingState?.subflowIndex === subflowIndex &&
-              editingState?.field === "name" ? (
-                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                  <Input
-                    value={editingState.value}
-                    onChange={(e) => onEditingChange(e.target.value)}
-                    className="w-[200px]"
-                    onClick={(e) => e.stopPropagation()}
-                  />
-                  <Button variant="ghost" size="sm" onClick={(e) => {
-                    e.stopPropagation();
-                    onSaveEdit();
-                  }}>
-                    <Save className="h-4 w-4" />
-                  </Button>
-                  <Button variant="ghost" size="sm" onClick={(e) => {
-                    e.stopPropagation();
-                    onCancelEdit();
-                  }}>
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              ) : (
-                name
-              )}
+              <EditableField
+                isEditing={isEditing("name")}
+                value={name}
+                editedValue={editingState?.value || ""}
+                width="w-[200px]"
+                onEdit={() => onEdit(flowIndex, subflowIndex, "name", name)}
+                onSave={onSaveEdit}
+                onCancel={onCancelEdit}
+                onChange={onEditingChange}
+              />
             </div>
-            <div className="flex items-center gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onAddEntry(flowIndex, subflowIndex);
-                }}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onEdit(flowIndex, subflowIndex, "name", name);
-                }}
-              >
-                <Edit2 className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onDelete(flowIndex, subflowIndex);
-                }}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </div>
+            <FlowActions
+              onAdd={(e) => {
+                e.stopPropagation();
+                onAddEntry(flowIndex, subflowIndex);
+              }}
+              onEdit={(e) => {
+                e.stopPropagation();
+                onEdit(flowIndex, subflowIndex, "name", name);
+              }}
+              onDelete={(e) => {
+                e.stopPropagation();
+                onDelete(flowIndex, subflowIndex);
+              }}
+            />
           </div>
           <div className="space-y-2 mt-2">
             <div className="flex items-center justify-between text-gray-600 border-b pb-2">
               <div>
-                {editingState?.flowIndex === flowIndex &&
-                editingState?.subflowIndex === subflowIndex &&
-                editingState?.field === "coverage" ? (
-                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Textarea
-                      value={editingState.value}
-                      onChange={(e) => onEditingChange(e.target.value)}
-                      className="w-[400px]"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <Button variant="ghost" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      onSaveEdit();
-                    }}>
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      onCancelEdit();
-                    }}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <>Coverage: {coverage}</>
-                )}
+                <EditableField
+                  isEditing={isEditing("coverage")}
+                  value={coverage}
+                  editedValue={editingState?.value || ""}
+                  label="Coverage"
+                  isTextArea
+                  width="w-[400px]"
+                  onEdit={() => onEdit(flowIndex, subflowIndex, "coverage", coverage)}
+                  onSave={onSaveEdit}
+                  onCancel={onCancelEdit}
+                  onChange={onEditingChange}
+                />
               </div>
               <div className="flex items-center gap-1">
                 <Button
@@ -177,32 +121,18 @@ export const FlowCondition = ({
             </div>
             <div className="flex items-center justify-between text-gray-600">
               <div>
-                {editingState?.flowIndex === flowIndex &&
-                editingState?.subflowIndex === subflowIndex &&
-                editingState?.field === "expectedResults" ? (
-                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
-                    <Textarea
-                      value={editingState.value}
-                      onChange={(e) => onEditingChange(e.target.value)}
-                      className="w-[400px]"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                    <Button variant="ghost" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      onSaveEdit();
-                    }}>
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button variant="ghost" size="sm" onClick={(e) => {
-                      e.stopPropagation();
-                      onCancelEdit();
-                    }}>
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                ) : (
-                  <>Expected Results: {expectedResults}</>
-                )}
+                <EditableField
+                  isEditing={isEditing("expectedResults")}
+                  value={expectedResults}
+                  editedValue={editingState?.value || ""}
+                  label="Expected Results"
+                  isTextArea
+                  width="w-[400px]"
+                  onEdit={() => onEdit(flowIndex, subflowIndex, "expectedResults", expectedResults)}
+                  onSave={onSaveEdit}
+                  onCancel={onCancelEdit}
+                  onChange={onEditingChange}
+                />
               </div>
               <div className="flex items-center gap-1">
                 <Button
@@ -217,25 +147,10 @@ export const FlowCondition = ({
                 </Button>
               </div>
             </div>
-            {entries.length > 0 && (
-              <div className="mt-4">
-                <h4 className="text-sm font-medium mb-2">Entries:</h4>
-                <div className="space-y-2">
-                  {entries.map((entry, entryIndex) => (
-                    <div key={entryIndex} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                      <span>{entry.description}</span>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={(e) => handleDeleteEntry(entryIndex, e)}
-                      >
-                        <Trash2 className="h-3 w-3 text-red-500" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <FlowEntries
+              entries={entries}
+              onDeleteEntry={handleDeleteEntry}
+            />
           </div>
         </div>
       </div>

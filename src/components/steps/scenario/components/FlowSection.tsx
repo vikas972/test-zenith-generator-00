@@ -17,6 +17,7 @@ interface FlowSectionProps {
   onEditCondition: (flowIndex: number, subflowIndex: number, field: string, value: string) => void;
   onDeleteCondition: (flowIndex: number, subflowIndex: number) => void;
   onAddEntry: (flowIndex: number, subflowIndex: number) => void;
+  onDeleteEntry: (flowIndex: number, subflowIndex: number, entryIndex: number) => void;
   onSaveEdit: () => void;
   onCancelEdit: () => void;
   onEditingChange: (value: string) => void;
@@ -30,6 +31,7 @@ export const FlowSection = ({
   onEditCondition,
   onDeleteCondition,
   onAddEntry,
+  onDeleteEntry,
   onSaveEdit,
   onCancelEdit,
   onEditingChange,
@@ -62,10 +64,12 @@ export const FlowSection = ({
             name={subflow.name}
             coverage={subflow.coverage}
             expectedResults={subflow.expectedResults}
+            entries={subflow.entries}
             editingState={editingState}
             onEdit={onEditCondition}
             onDelete={onDeleteCondition}
             onAddEntry={onAddEntry}
+            onDeleteEntry={onDeleteEntry}
             onSaveEdit={onSaveEdit}
             onCancelEdit={onCancelEdit}
             onEditingChange={onEditingChange}

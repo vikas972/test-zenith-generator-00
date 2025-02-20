@@ -15,6 +15,7 @@ export interface TestScenarioFlow {
     name: string;
     coverage: string;
     expectedResults: string;
+    entries?: Array<{ description: string }>;
   }[];
 }
 
