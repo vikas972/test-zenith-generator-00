@@ -2,73 +2,101 @@
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
-import { RequirementsList } from "./requirement/components/RequirementsList";
-import { useRequirements } from "./requirement/hooks/useRequirements";
-import { RequirementsSection } from "./requirement/components/RequirementsSection";
-import { useRequirementsLayout } from "./requirement/hooks/useRequirementsLayout";
 import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from "lucide-react";
+import { type TestScenario } from "./scenario/types";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
 }
 
-interface TestScenario {
-  id: string;
-  title: string;
-  priority: "High" | "Medium" | "Low";
-  requirementIds: string[];
-  conditions: {
-    id: string;
-    title: string;
-    requirementRef: string;
-    variations: {
-      id: string;
-      description: string;
-      requirementRef: string;
-    }[];
-  }[];
-}
-
 const initialScenarios: TestScenario[] = [
   {
     id: "TS-001",
-    title: "User Authentication Scenarios",
-    priority: "High",
-    requirementIds: ["REQ-001", "REQ-002", "REQ-003"],
+    title: "Standard Login",
+    requirementId: "REQ-001",
     conditions: [
       {
         id: "COND-001",
-        title: "Standard Login",
-        requirementRef: "REQ-001.1",
-        variations: [
-          {
-            id: "VAR-001",
-            description: "Valid credentials login",
-            requirementRef: "REQ-001.1"
-          },
-          {
-            id: "VAR-002",
-            description: "Remember me functionality",
-            requirementRef: "REQ-001.3"
-          }
-        ]
+        description: "Valid credentials login",
+        requirementRef: "REQ-001.1"
       },
       {
         id: "COND-002",
-        title: "Failed Login Attempts",
-        requirementRef: "REQ-001.2",
-        variations: [
-          {
-            id: "VAR-003",
-            description: "Invalid username/password",
-            requirementRef: "REQ-001.2"
-          },
-          {
-            id: "VAR-004",
-            description: "Account lockout after 3 attempts",
-            requirementRef: "REQ-002.2"
-          }
+        description: "Remember me functionality",
+        requirementRef: "REQ-001.2"
+      },
+      {
+        id: "COND-003",
+        description: "Password validation rules",
+        requirementRef: "REQ-001.3"
+      }
+    ],
+    testCases: [
+      {
+        id: "TC-001",
+        title: "Valid Login with Remember Me",
+        scenarioId: "TS-001",
+        requirementId: "REQ-001",
+        testData: [
+          { key: "Username", value: "john.doe@example.com" },
+          { key: "Password", value: "Valid@123" },
+          { key: "Remember Me", value: "Yes" }
+        ],
+        expectedResults: [
+          "Login successful",
+          "Session cookie created",
+          "Remember me enabled"
+        ]
+      },
+      {
+        id: "TC-002",
+        title: "Valid Login without Remember Me",
+        scenarioId: "TS-001",
+        requirementId: "REQ-001",
+        testData: [
+          { key: "Username", value: "jane.doe@example.com" },
+          { key: "Password", value: "Valid@456" },
+          { key: "Remember Me", value: "No" }
+        ],
+        expectedResults: [
+          "Login successful",
+          "Session cookie created"
+        ]
+      }
+    ]
+  },
+  {
+    id: "TS-002",
+    title: "Failed Login",
+    requirementId: "REQ-001",
+    conditions: [
+      {
+        id: "COND-004",
+        description: "Invalid username/password",
+        requirementRef: "REQ-001.4"
+      },
+      {
+        id: "COND-005",
+        description: "Account lockout rules",
+        requirementRef: "REQ-001.5"
+      }
+    ],
+    testCases: [
+      {
+        id: "TC-003",
+        title: "Invalid Username",
+        scenarioId: "TS-002",
+        requirementId: "REQ-001",
+        testData: [
+          { key: "Username", value: "invalid@example.com" },
+          { key: "Password", value: "Valid@123" }
+        ],
+        expectedResults: [
+          "Login failed",
+          "Error message displayed: Invalid username"
         ]
       }
     ]
@@ -78,112 +106,185 @@ const initialScenarios: TestScenario[] = [
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
   const { toast } = useToast();
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
-  const [selectedRequirements, setSelectedRequirements] = useState<string[]>([]);
+  const [expandedScenarios, setExpandedScenarios] = useState<string[]>([]);
   const [scenarios, setScenarios] = useState<TestScenario[]>(initialScenarios);
-
-  const {
-    isRequirementsMaximized,
-    isSourceMaximized,
-    toggleRequirementsMaximize,
-    toggleSourceMaximize,
-  } = useRequirementsLayout();
 
   const handleScenarioClick = (scenarioId: string) => {
     setSelectedScenario(scenarioId);
-    const scenario = scenarios.find(s => s.id === scenarioId);
-    if (scenario) {
-      setSelectedRequirements(scenario.requirementIds);
-    }
+    setExpandedScenarios(prev => 
+      prev.includes(scenarioId) 
+        ? prev.filter(id => id !== scenarioId)
+        : [...prev, scenarioId]
+    );
   };
 
-  const handleRequirementClick = (requirementId: string) => {
-    // Future implementation for requirement click handling
+  const handleAddScenario = () => {
+    toast.success("New scenario added");
+  };
+
+  const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
+    e.stopPropagation();
+    toast.success("Edit scenario");
+  };
+
+  const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
+    e.stopPropagation();
+    toast.success("Delete scenario");
   };
 
   return (
     <div className="flex gap-4 h-full">
       {/* Left Panel - Test Scenarios */}
-      <div className={cn(
-        "flex flex-col transition-all duration-300",
-        isRequirementsMaximized ? "w-full" : "w-2/3"
-      )}>
-        {scenarios.map((scenario) => (
-          <Card
-            key={scenario.id}
-            className={cn(
-              "mb-4 p-4",
-              selectedScenario === scenario.id && "border-primary"
-            )}
-            onClick={() => handleScenarioClick(scenario.id)}
-          >
-            <div className="flex justify-between items-start mb-4">
-              <div>
-                <h3 className="text-lg font-semibold">{scenario.title}</h3>
-                <div className="text-sm text-gray-500">ID: {scenario.id}</div>
-                <div className="text-sm text-gray-500">
-                  Priority: <span className="font-medium">{scenario.priority}</span>
-                </div>
-                <div className="flex gap-2 mt-2">
-                  {scenario.requirementIds.map((reqId) => (
-                    <button
-                      key={reqId}
-                      className="text-xs bg-primary/10 text-primary px-2 py-1 rounded hover:bg-primary/20"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleRequirementClick(reqId);
-                      }}
-                    >
-                      {reqId}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
+      <div className="w-2/3 flex flex-col">
+        <div className="mb-4 flex justify-between items-center">
+          <h2 className="text-lg font-semibold">Test Scenarios</h2>
+          <Button onClick={handleAddScenario}>
+            <Plus className="h-4 w-4 mr-2" />
+            Add Scenario
+          </Button>
+        </div>
 
-            {scenario.conditions.map((condition) => (
-              <div key={condition.id} className="ml-4 mb-4">
-                <h4 className="font-medium mb-2 flex items-center gap-2">
-                  {condition.title}
-                  <span className="text-xs text-gray-500">[{condition.requirementRef}]</span>
-                </h4>
-                <div className="space-y-2">
-                  {condition.variations.map((variation) => (
-                    <div
-                      key={variation.id}
-                      className="ml-4 flex items-start gap-2 text-sm"
-                    >
-                      <span className="text-gray-400">-</span>
-                      <div>
-                        <span>{variation.description}</span>
-                        <span className="text-xs text-gray-500 ml-2">
-                          [{variation.requirementRef}]
-                        </span>
+        <div className="space-y-4">
+          {scenarios.map((scenario) => (
+            <Card
+              key={scenario.id}
+              className={cn(
+                "cursor-pointer transition-colors",
+                selectedScenario === scenario.id && "border-primary"
+              )}
+              onClick={() => handleScenarioClick(scenario.id)}
+            >
+              <div className="p-4">
+                {/* Header */}
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2">
+                    {expandedScenarios.includes(scenario.id) ? (
+                      <ChevronDown className="h-4 w-4" />
+                    ) : (
+                      <ChevronRight className="h-4 w-4" />
+                    )}
+                    <div>
+                      <div className="font-medium">{scenario.title}</div>
+                      <div className="text-sm text-gray-500">
+                        ID: {scenario.id} | Requirement: 
+                        <button 
+                          className="text-primary hover:underline ml-1"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            // Handle requirement click
+                          }}
+                        >
+                          {scenario.requirementId}
+                        </button>
                       </div>
                     </div>
-                  ))}
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleEditScenario(e, scenario.id)}
+                    >
+                      <Edit2 className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={(e) => handleDeleteScenario(e, scenario.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                  </div>
                 </div>
+
+                {/* Expanded Content */}
+                {expandedScenarios.includes(scenario.id) && (
+                  <div className="mt-4 space-y-4">
+                    {/* Conditions */}
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Conditions:</h4>
+                      {scenario.conditions.map((condition) => (
+                        <div
+                          key={condition.id}
+                          className="ml-4 flex items-start gap-2 text-sm"
+                        >
+                          <span className="text-gray-400">-</span>
+                          <div>
+                            <span>{condition.description}</span>
+                            <span className="text-xs text-gray-500 ml-2">
+                              [{condition.requirementRef}]
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Test Cases */}
+                    <div className="space-y-2">
+                      <h4 className="font-medium">Test Cases:</h4>
+                      {scenario.testCases.map((testCase) => (
+                        <div
+                          key={testCase.id}
+                          className="ml-4 p-2 border rounded bg-gray-50"
+                        >
+                          <div className="font-medium text-sm">{testCase.title}</div>
+                          <div className="text-xs text-gray-500">ID: {testCase.id}</div>
+                          
+                          {/* Test Data */}
+                          <div className="mt-2">
+                            <div className="text-xs font-medium">Test Data:</div>
+                            <div className="ml-2">
+                              {testCase.testData.map((data, index) => (
+                                <div key={index} className="text-xs">
+                                  {data.key}: {data.value}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Expected Results */}
+                          <div className="mt-2">
+                            <div className="text-xs font-medium">Expected Results:</div>
+                            <div className="ml-2">
+                              {testCase.expectedResults.map((result, index) => (
+                                <div key={index} className="text-xs">
+                                  - {result}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            ))}
-          </Card>
-        ))}
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Right Panel - Requirements Coverage */}
-      <div className={cn(
-        "border-l p-4 transition-all duration-300",
-        isRequirementsMaximized ? "hidden" : "w-1/3"
-      )}>
+      <div className="w-1/3 border-l p-4">
         <div className="prose prose-sm">
           <h3 className="text-lg font-semibold mb-4">Requirements Coverage</h3>
           <div className="space-y-2">
-            {selectedRequirements.map((reqId) => (
+            {scenarios.map(scenario => (
               <div
-                key={reqId}
-                className="p-2 border rounded bg-primary/5 border-primary"
+                key={scenario.id}
+                className={cn(
+                  "p-3 border rounded transition-colors",
+                  selectedScenario === scenario.id 
+                    ? "bg-primary/10 border-primary" 
+                    : "hover:bg-gray-50"
+                )}
               >
-                <div className="font-medium">{reqId}</div>
-                <div className="text-sm text-gray-600">
-                  User Authentication Requirement
+                <div className="flex items-center justify-between">
+                  <div className="font-medium">{scenario.requirementId}</div>
+                  <div className="text-sm text-gray-500">{scenario.testCases.length} Test Cases</div>
+                </div>
+                <div className="text-sm text-gray-600 mt-1">
+                  {scenario.title}
                 </div>
               </div>
             ))}

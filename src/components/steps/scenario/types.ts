@@ -1,21 +1,26 @@
 
-export interface TestScenarioVariation {
+export interface TestScenarioCondition {
   id: string;
   description: string;
   requirementRef: string;
 }
 
-export interface TestScenarioCondition {
+export interface TestCase {
   id: string;
   title: string;
-  requirementRef: string;
-  variations: TestScenarioVariation[];
+  scenarioId: string;
+  requirementId: string;
+  testData: {
+    key: string;
+    value: string;
+  }[];
+  expectedResults: string[];
 }
 
 export interface TestScenario {
   id: string;
   title: string;
-  priority: "High" | "Medium" | "Low";
-  requirementIds: string[];
+  requirementId: string;
   conditions: TestScenarioCondition[];
+  testCases: TestCase[];
 }
