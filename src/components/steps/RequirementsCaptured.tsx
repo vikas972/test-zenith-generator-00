@@ -170,12 +170,19 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
 
   const [isRequirementsMaximized, setIsRequirementsMaximized] = useState(false);
   const [isSourceMaximized, setIsSourceMaximized] = useState(false);
-  const [sourceContent, setSourceContent] = useState(
-    "The system shall provide secure user authentication mechanisms.\n\n" +
-    "Users must be able to reset their passwords through a secure process.\n\n" +
-    "The system must allow users to manage their profile details.\n\n" +
-    "The system must implement role-based access control for security."
-  );
+
+  const expandedSource = expandedRequirement 
+    ? requirements.find(req => req.id === expandedRequirement)?.source?.text 
+    : null;
+
+  const sourceContent = requirements
+    .map(req => {
+      if (req.id === expandedRequirement) {
+        return `<mark class="bg-yellow-200">${req.source.text}</mark>`;
+      }
+      return req.source.text;
+    })
+    .join("\n\n");
 
   const handleAddNewRequirement = () => {
     const newRequirement = createNewRequirement(requirements.length);
