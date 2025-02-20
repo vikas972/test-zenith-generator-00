@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -6,6 +7,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from "lucide-react";
 import { type TestScenario } from "./scenario/types";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -20,50 +27,23 @@ const initialScenarios: TestScenario[] = [
       {
         id: "COND-001",
         description: "Valid credentials login",
-        requirementRef: "REQ-001.1"
+        requirementRef: "REQ-001.1",
+        coverageType: "business_requirement",
+        requirementItemId: "BR-001"
       },
       {
         id: "COND-002",
         description: "Remember me functionality",
-        requirementRef: "REQ-001.2"
+        requirementRef: "REQ-001.2",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-001"
       },
       {
         id: "COND-003",
         description: "Password validation rules",
-        requirementRef: "REQ-001.3"
-      }
-    ],
-    testCases: [
-      {
-        id: "TC-001",
-        title: "Valid Login with Remember Me",
-        scenarioId: "TS-001",
-        requirementId: "REQ-001",
-        testData: [
-          { key: "Username", value: "john.doe@example.com" },
-          { key: "Password", value: "Valid@123" },
-          { key: "Remember Me", value: "Yes" }
-        ],
-        expectedResults: [
-          "Login successful",
-          "Session cookie created",
-          "Remember me enabled"
-        ]
-      },
-      {
-        id: "TC-002",
-        title: "Valid Login without Remember Me",
-        scenarioId: "TS-001",
-        requirementId: "REQ-001",
-        testData: [
-          { key: "Username", value: "jane.doe@example.com" },
-          { key: "Password", value: "Valid@456" },
-          { key: "Remember Me", value: "No" }
-        ],
-        expectedResults: [
-          "Login successful",
-          "Session cookie created"
-        ]
+        requirementRef: "REQ-001.3",
+        coverageType: "data_element",
+        requirementItemId: "DE-001"
       }
     ]
   },
@@ -75,28 +55,16 @@ const initialScenarios: TestScenario[] = [
       {
         id: "COND-004",
         description: "Invalid username/password",
-        requirementRef: "REQ-001.4"
+        requirementRef: "REQ-001.4",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-002"
       },
       {
         id: "COND-005",
         description: "Account lockout rules",
-        requirementRef: "REQ-001.5"
-      }
-    ],
-    testCases: [
-      {
-        id: "TC-003",
-        title: "Invalid Username",
-        scenarioId: "TS-002",
-        requirementId: "REQ-001",
-        testData: [
-          { key: "Username", value: "invalid@example.com" },
-          { key: "Password", value: "Valid@123" }
-        ],
-        expectedResults: [
-          "Login failed",
-          "Error message displayed: Invalid username"
-        ]
+        requirementRef: "REQ-001.5",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-003"
       }
     ]
   }
@@ -107,6 +75,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
   const [expandedScenarios, setExpandedScenarios] = useState<string[]>([]);
   const [scenarios, setScenarios] = useState<TestScenario[]>(initialScenarios);
+  const [showRequirementDialog, setShowRequirementDialog] = useState(false);
+  const [selectedRequirement, setSelectedRequirement] = useState<string | null>(null);
 
   const handleScenarioClick = (scenarioId: string) => {
     setSelectedScenario(scenarioId);
@@ -115,6 +85,11 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         ? prev.filter(id => id !== scenarioId)
         : [...prev, scenarioId]
     );
+  };
+
+  const handleRequirementClick = (requirementId: string) => {
+    setSelectedRequirement(requirementId);
+    setShowRequirementDialog(true);
   };
 
   const handleAddScenario = () => {
@@ -138,6 +113,19 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       title: "Success",
       description: "Delete scenario"
     });
+  };
+
+  const getCoverageTypeLabel = (type: TestScenarioCondition["coverageType"]) => {
+    switch (type) {
+      case "business_requirement":
+        return "Business Requirement";
+      case "business_rule":
+        return "Business Rule";
+      case "data_element":
+        return "Data Element";
+      default:
+        return "Unknown";
+    }
   };
 
   return (
@@ -179,7 +167,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                           className="text-primary hover:underline ml-1"
                           onClick={(e) => {
                             e.stopPropagation();
-                            // Handle requirement click
+                            handleRequirementClick(scenario.requirementId);
                           }}
                         >
                           {scenario.requirementId}
@@ -207,62 +195,38 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
                 {/* Expanded Content */}
                 {expandedScenarios.includes(scenario.id) && (
-                  <div className="mt-4 space-y-4">
-                    {/* Conditions */}
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Conditions:</h4>
-                      {scenario.conditions.map((condition) => (
-                        <div
-                          key={condition.id}
-                          className="ml-4 flex items-start gap-2 text-sm"
-                        >
-                          <span className="text-gray-400">-</span>
-                          <div>
-                            <span>{condition.description}</span>
-                            <span className="text-xs text-gray-500 ml-2">
-                              [{condition.requirementRef}]
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                  <div className="mt-4">
+                    <div className="space-y-4">
+                      {["business_requirement", "business_rule", "data_element"].map((type) => {
+                        const typeConditions = scenario.conditions.filter(
+                          c => c.coverageType === type
+                        );
+                        
+                        if (typeConditions.length === 0) return null;
 
-                    {/* Test Cases */}
-                    <div className="space-y-2">
-                      <h4 className="font-medium">Test Cases:</h4>
-                      {scenario.testCases.map((testCase) => (
-                        <div
-                          key={testCase.id}
-                          className="ml-4 p-2 border rounded bg-gray-50"
-                        >
-                          <div className="font-medium text-sm">{testCase.title}</div>
-                          <div className="text-xs text-gray-500">ID: {testCase.id}</div>
-                          
-                          {/* Test Data */}
-                          <div className="mt-2">
-                            <div className="text-xs font-medium">Test Data:</div>
-                            <div className="ml-2">
-                              {testCase.testData.map((data, index) => (
-                                <div key={index} className="text-xs">
-                                  {data.key}: {data.value}
+                        return (
+                          <div key={type} className="space-y-2">
+                            <h4 className="font-medium">{getCoverageTypeLabel(type as TestScenarioCondition["coverageType"])} Coverage:</h4>
+                            {typeConditions.map((condition) => (
+                              <div
+                                key={condition.id}
+                                className="ml-4 flex items-start gap-2 text-sm"
+                              >
+                                <span className="text-gray-400">-</span>
+                                <div>
+                                  <span>{condition.description}</span>
+                                  <span className="text-xs text-gray-500 ml-2">
+                                    [{condition.requirementRef}]
+                                  </span>
+                                  <span className="text-xs text-primary ml-2">
+                                    {condition.requirementItemId}
+                                  </span>
                                 </div>
-                              ))}
-                            </div>
+                              </div>
+                            ))}
                           </div>
-
-                          {/* Expected Results */}
-                          <div className="mt-2">
-                            <div className="text-xs font-medium">Expected Results:</div>
-                            <div className="ml-2">
-                              {testCase.expectedResults.map((result, index) => (
-                                <div key={index} className="text-xs">
-                                  - {result}
-                                </div>
-                              ))}
-                            </div>
-                          </div>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 )}
@@ -277,28 +241,71 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         <div className="prose prose-sm">
           <h3 className="text-lg font-semibold mb-4">Requirements Coverage</h3>
           <div className="space-y-2">
-            {scenarios.map(scenario => (
+            {scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
+              if (!acc[scenario.requirementId]) {
+                acc[scenario.requirementId] = [];
+              }
+              acc[scenario.requirementId].push(scenario);
+              return acc;
+            }, {}).map(([requirementId, relatedScenarios]) => (
               <div
-                key={scenario.id}
+                key={requirementId}
                 className={cn(
-                  "p-3 border rounded transition-colors",
-                  selectedScenario === scenario.id 
+                  "p-3 border rounded transition-colors cursor-pointer",
+                  selectedScenario && relatedScenarios.some(s => s.id === selectedScenario)
                     ? "bg-primary/10 border-primary" 
                     : "hover:bg-gray-50"
                 )}
+                onClick={() => handleRequirementClick(requirementId)}
               >
                 <div className="flex items-center justify-between">
-                  <div className="font-medium">{scenario.requirementId}</div>
-                  <div className="text-sm text-gray-500">{scenario.testCases.length} Test Cases</div>
+                  <div className="font-medium">{requirementId}</div>
+                  <div className="text-sm text-gray-500">{relatedScenarios.length} Scenarios</div>
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  {scenario.title}
+                  Coverage Summary:
+                  <ul className="mt-1 ml-4 list-disc text-xs">
+                    {Object.entries(
+                      relatedScenarios.flatMap(s => s.conditions)
+                        .reduce((acc: { [key: string]: number }, condition) => {
+                          acc[condition.coverageType] = (acc[condition.coverageType] || 0) + 1;
+                          return acc;
+                        }, {})
+                    ).map(([type, count]) => (
+                      <li key={type}>
+                        {getCoverageTypeLabel(type as TestScenarioCondition["coverageType"])}: {count}
+                      </li>
+                    ))}
+                  </ul>
                 </div>
               </div>
             ))}
           </div>
         </div>
       </div>
+
+      {/* Requirement Dialog */}
+      <Dialog open={showRequirementDialog} onOpenChange={setShowRequirementDialog}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>Requirement Details</DialogTitle>
+          </DialogHeader>
+          <div className="max-h-[70vh] overflow-y-auto">
+            {selectedRequirement && (
+              <div className="space-y-4">
+                <h3 className="text-lg font-semibold">
+                  {selectedRequirement}
+                </h3>
+                {/* Requirement details would be shown here */}
+                <div className="text-sm text-gray-600">
+                  This dialog will show the complete requirement details including all business requirements,
+                  business rules, and data elements associated with this requirement.
+                </div>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
