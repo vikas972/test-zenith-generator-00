@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { type TestScenarioFlow, type FlowType } from "./types";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, Edit2 } from "lucide-react";
 import { AddConditionDialog } from "./dialogs/AddConditionDialog";
 import { useToast } from "@/components/ui/use-toast";
 
@@ -48,6 +48,38 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     });
   };
 
+  const handleEditCondition = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
+    e.stopPropagation();
+    toast({
+      title: "Info",
+      description: "Edit condition functionality coming soon"
+    });
+  };
+
+  const handleAddEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
+    e.stopPropagation();
+    toast({
+      title: "Info",
+      description: "Add entry functionality coming soon"
+    });
+  };
+
+  const handleDeleteEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
+    e.stopPropagation();
+    toast({
+      title: "Info",
+      description: "Delete entry functionality coming soon"
+    });
+  };
+
+  const handleEditEntry = (e: React.MouseEvent, flowIndex: number, subflowIndex: number) => {
+    e.stopPropagation();
+    toast({
+      title: "Info",
+      description: "Edit entry functionality coming soon"
+    });
+  };
+
   const handleAddNewCondition = (condition: { 
     name: string; 
     coverage: string; 
@@ -66,16 +98,16 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
 
   return (
     <div className="mt-4 space-y-4">
-      {flows.map((flow, index) => (
-        <div key={index} className="space-y-2">
+      {flows.map((flow, flowIndex) => (
+        <div key={flowIndex} className="space-y-2">
           <div className="flex items-center justify-between">
             <h4 className="font-medium">
-              {index + 1}. {flow.type.charAt(0).toUpperCase() + flow.type.slice(1)} Flow
+              {flowIndex + 1}. {flow.type.charAt(0).toUpperCase() + flow.type.slice(1)} Flow
             </h4>
             <Button
               variant="ghost"
               size="sm"
-              onClick={() => handleAddCondition(flow, index)}
+              onClick={() => handleAddCondition(flow, flowIndex)}
             >
               <Plus className="h-4 w-4" />
               Add Condition
@@ -85,23 +117,77 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
             Description: {flow.description}
           </div>
           <div className="space-y-2 ml-6">
-            {flow.subflows.map((subflow, subIndex) => (
-              <div key={subIndex} className="text-sm">
+            {flow.subflows.map((subflow, subflowIndex) => (
+              <div key={subflowIndex} className="text-sm border rounded-md p-3">
                 <div className="flex items-start gap-2">
-                  <span className="text-gray-400">{getFlowTypeIcon(flow.type)}</span>
+                  <span className="text-gray-400 mt-1">{getFlowTypeIcon(flow.type)}</span>
                   <div className="space-y-1 flex-1">
                     <div className="flex items-start justify-between">
                       <div className="font-medium">{subflow.name}</div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleDeleteCondition(index, subIndex)}
-                      >
-                        <Trash2 className="h-4 w-4 text-red-500" />
-                      </Button>
+                      <div className="flex items-center gap-1">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleAddEntry(e, flowIndex, subflowIndex)}
+                        >
+                          <Plus className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={(e) => handleEditCondition(e, flowIndex, subflowIndex)}
+                        >
+                          <Edit2 className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleDeleteCondition(flowIndex, subflowIndex)}
+                        >
+                          <Trash2 className="h-4 w-4 text-red-500" />
+                        </Button>
+                      </div>
                     </div>
-                    <div className="text-gray-600">Coverage: {subflow.coverage}</div>
-                    <div className="text-gray-600">Expected Results: {subflow.expectedResults}</div>
+                    <div className="space-y-2 mt-2">
+                      <div className="flex items-center justify-between text-gray-600 border-b pb-2">
+                        <div>Coverage: {subflow.coverage}</div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleEditEntry(e, flowIndex, subflowIndex)}
+                          >
+                            <Edit2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteEntry(e, flowIndex, subflowIndex)}
+                          >
+                            <Trash2 className="h-3 w-3 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                      <div className="flex items-center justify-between text-gray-600">
+                        <div>Expected Results: {subflow.expectedResults}</div>
+                        <div className="flex items-center gap-1">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleEditEntry(e, flowIndex, subflowIndex)}
+                          >
+                            <Edit2 className="h-3 w-3" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={(e) => handleDeleteEntry(e, flowIndex, subflowIndex)}
+                          >
+                            <Trash2 className="h-3 w-3 text-red-500" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
