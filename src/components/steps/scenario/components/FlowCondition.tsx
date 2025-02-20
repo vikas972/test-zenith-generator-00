@@ -66,16 +66,23 @@ export const FlowCondition = ({
               {editingState?.flowIndex === flowIndex &&
               editingState?.subflowIndex === subflowIndex &&
               editingState?.field === "name" ? (
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                   <Input
                     value={editingState.value}
                     onChange={(e) => onEditingChange(e.target.value)}
                     className="w-[200px]"
+                    onClick={(e) => e.stopPropagation()}
                   />
-                  <Button variant="ghost" size="sm" onClick={onSaveEdit}>
+                  <Button variant="ghost" size="sm" onClick={(e) => {
+                    e.stopPropagation();
+                    onSaveEdit();
+                  }}>
                     <Save className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+                  <Button variant="ghost" size="sm" onClick={(e) => {
+                    e.stopPropagation();
+                    onCancelEdit();
+                  }}>
                     <X className="h-4 w-4" />
                   </Button>
                 </div>
@@ -107,7 +114,10 @@ export const FlowCondition = ({
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => onDelete(flowIndex, subflowIndex)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(flowIndex, subflowIndex);
+                }}
               >
                 <Trash2 className="h-4 w-4 text-red-500" />
               </Button>
@@ -119,16 +129,23 @@ export const FlowCondition = ({
                 {editingState?.flowIndex === flowIndex &&
                 editingState?.subflowIndex === subflowIndex &&
                 editingState?.field === "coverage" ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Textarea
                       value={editingState.value}
                       onChange={(e) => onEditingChange(e.target.value)}
                       className="w-[400px]"
+                      onClick={(e) => e.stopPropagation()}
                     />
-                    <Button variant="ghost" size="sm" onClick={onSaveEdit}>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      onSaveEdit();
+                    }}>
                       <Save className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      onCancelEdit();
+                    }}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
@@ -154,16 +171,23 @@ export const FlowCondition = ({
                 {editingState?.flowIndex === flowIndex &&
                 editingState?.subflowIndex === subflowIndex &&
                 editingState?.field === "expectedResults" ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                     <Textarea
                       value={editingState.value}
                       onChange={(e) => onEditingChange(e.target.value)}
                       className="w-[400px]"
+                      onClick={(e) => e.stopPropagation()}
                     />
-                    <Button variant="ghost" size="sm" onClick={onSaveEdit}>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      onSaveEdit();
+                    }}>
                       <Save className="h-4 w-4" />
                     </Button>
-                    <Button variant="ghost" size="sm" onClick={onCancelEdit}>
+                    <Button variant="ghost" size="sm" onClick={(e) => {
+                      e.stopPropagation();
+                      onCancelEdit();
+                    }}>
                       <X className="h-4 w-4" />
                     </Button>
                   </div>
