@@ -2,41 +2,39 @@
 import { useState } from "react";
 import { CardContent } from "@/components/ui/card";
 import { type Requirement } from "./types";
-import { FlowsSection } from "./sections/FlowsSection";
+import { BusinessRequirementsSection } from "./sections/BusinessRequirementsSection";
 import { BusinessRulesSection } from "./sections/BusinessRulesSection";
 import { DataElementsSection } from "./sections/DataElementsSection";
-import { AddFlowDialog } from "./dialogs/AddFlowDialog";
-import { AddBusinessRuleDialog } from "./dialogs/AddBusinessRuleDialog";
-import { AddDataElementDialog } from "./dialogs/AddDataElementDialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 interface RequirementContentProps {
   requirement: Requirement;
-  onUpdateFlows?: (flows: Requirement['flows']) => void;
+  onUpdateBusinessRequirements?: (requirements: Requirement['businessRequirements']) => void;
   onUpdateBusinessRules?: (rules: Requirement['businessRules']) => void;
   onUpdateDataElements?: (elements: Requirement['dataElements']) => void;
 }
 
 export const RequirementContent = ({ 
   requirement,
-  onUpdateFlows,
+  onUpdateBusinessRequirements,
   onUpdateBusinessRules,
   onUpdateDataElements
 }: RequirementContentProps) => {
-  const [isFlowDialogOpen, setIsFlowDialogOpen] = useState(false);
+  const [isBusinessReqDialogOpen, setIsBusinessReqDialogOpen] = useState(false);
   const [isBusinessRuleDialogOpen, setIsBusinessRuleDialogOpen] = useState(false);
   const [isDataElementDialogOpen, setIsDataElementDialogOpen] = useState(false);
-  const [newFlow, setNewFlow] = useState<{ description: string; type: "primary" | "alternative" | "exception" }>({ 
+  const [newBusinessReq, setNewBusinessReq] = useState({ description: "" });
+  const [newBusinessRule, setNewBusinessRule] = useState({ 
     description: "", 
-    type: "primary" 
-  });
-  const [newBusinessRule, setNewBusinessRule] = useState<{ description: string; category: "authentication" | "security" | "system" | "general" }>({ 
-    description: "", 
-    category: "general" 
+    category: "general" as const 
   });
   const [newDataElement, setNewDataElement] = useState({ name: "", type: "", required: false });
 
-  const handleAddFlow = () => {
-    setIsFlowDialogOpen(false);
+  const handleAddBusinessRequirement = () => {
+    setIsBusinessReqDialogOpen(false);
   };
 
   const handleAddBusinessRule = () => {
@@ -47,37 +45,47 @@ export const RequirementContent = ({
     setIsDataElementDialogOpen(false);
   };
 
-  const handleDeleteFlow = (flowId: string) => {
-    const updatedFlows = requirement.flows.filter(flow => flow.id !== flowId);
-    onUpdateFlows?.(updatedFlows);
+  const handleDeleteBusinessRequirement = (id: string) => {
+    const updated = requirement.businessRequirements.filter(req => req.id !== id);
+    onUpdateBusinessRequirements?.(updated);
   };
 
   const handleDeleteBusinessRule = (ruleId: string) => {
-    const updatedRules = requirement.businessRules.filter(rule => rule.id !== ruleId);
-    onUpdateBusinessRules?.(updatedRules);
+    const updated = requirement.businessRules.filter(rule => rule.id !== ruleId);
+    onUpdateBusinessRules?.(updated);
   };
 
   const handleDeleteDataElement = (elementId: string) => {
-    const updatedElements = requirement.dataElements.filter(element => element.id !== elementId);
-    onUpdateDataElements?.(updatedElements);
+    const updated = requirement.dataElements.filter(element => element.id !== elementId);
+    onUpdateDataElements?.(updated);
   };
 
   return (
     <CardContent>
       <div className="space-y-6">
-        <FlowsSection 
-          flows={requirement.flows} 
-          onAddClick={() => setIsFlowDialogOpen(true)}
-          onDelete={handleDeleteFlow}
+        <BusinessRequirementsSection
+          requirements={requirement.businessRequirements}
+          onAddClick={() => setIsBusinessReqDialogOpen(true)}
+          onDelete={handleDeleteBusinessRequirement}
         />
 
-        <AddFlowDialog
-          isOpen={isFlowDialogOpen}
-          onOpenChange={setIsFlowDialogOpen}
-          onAdd={handleAddFlow}
-          flow={newFlow}
-          onFlowChange={setNewFlow}
-        />
+        <Dialog open={isBusinessReqDialogOpen} onOpenChange={setIsBusinessReqDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Add New Business Requirement</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label>Description</Label>
+                <Input
+                  value={newBusinessReq.description}
+                  onChange={(e) => setNewBusinessReq({ description: e.target.value })}
+                />
+              </div>
+              <Button onClick={handleAddBusinessRequirement}>Add Requirement</Button>
+            </div>
+          </DialogContent>
+        </Dialog>
 
         <BusinessRulesSection 
           rules={requirement.businessRules} 
@@ -85,26 +93,10 @@ export const RequirementContent = ({
           onDelete={handleDeleteBusinessRule}
         />
 
-        <AddBusinessRuleDialog
-          isOpen={isBusinessRuleDialogOpen}
-          onOpenChange={setIsBusinessRuleDialogOpen}
-          onAdd={handleAddBusinessRule}
-          rule={newBusinessRule}
-          onRuleChange={setNewBusinessRule}
-        />
-
         <DataElementsSection
           elements={requirement.dataElements}
           onAddClick={() => setIsDataElementDialogOpen(true)}
           onDelete={handleDeleteDataElement}
-        />
-
-        <AddDataElementDialog
-          isOpen={isDataElementDialogOpen}
-          onOpenChange={setIsDataElementDialogOpen}
-          onAdd={handleAddDataElement}
-          element={newDataElement}
-          onElementChange={setNewDataElement}
         />
       </div>
     </CardContent>

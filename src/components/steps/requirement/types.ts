@@ -1,23 +1,13 @@
 
-export interface Flow {
+export interface BusinessRequirement {
   id: string;
   description: string;
-  type: "primary" | "alternative" | "exception";
-  steps?: {
-    id: string;
-    description: string;
-    expectedOutcome: string;
-  }[];
-  expectedOutcome?: string;
 }
 
 export interface BusinessRule {
   id: string;
   description: string;
   category: "authentication" | "security" | "system" | "general";
-  validationCriteria?: string;
-  parameters?: string;
-  dependencies?: string[];
 }
 
 export interface DataElement {
@@ -25,15 +15,12 @@ export interface DataElement {
   name: string;
   type: string;
   required: boolean;
-  format?: string;
-  validationRules?: string[];
-  dependencies?: string[];
-  constraints?: string[];
+  specifications?: string[];
 }
 
 export interface MissingInfo {
   id: string;
-  category: "flows" | "business_rules" | "data_elements" | "integration_points" | "expected_behaviors";
+  category: "business_requirements" | "business_rules" | "data_elements" | "integration_points" | "expected_behaviors";
   description: string;
 }
 
@@ -51,7 +38,7 @@ export interface Requirement {
   functionalArea: string;
   description: string;
   actors: string[];
-  flows: Flow[];
+  businessRequirements: BusinessRequirement[];
   businessRules: BusinessRule[];
   dataElements: DataElement[];
   integrationPoints: never[];

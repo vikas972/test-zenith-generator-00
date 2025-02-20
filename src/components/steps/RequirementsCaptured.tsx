@@ -19,31 +19,21 @@ const initialRequirements: Requirement[] = [
     id: "1",
     requirementId: "REQ-001",
     functionalArea: "User Authentication",
-    description: "The system shall provide secure authentication mechanisms",
+    description: "System shall provide secure user authentication mechanisms",
     actors: ["End User", "System"],
-    flows: [
-      { 
-        id: "f1", 
-        description: "User enters credentials",
-        type: "primary",
-        steps: [
-          {
-            id: "s1",
-            description: "User enters username and password",
-            expectedOutcome: "Credentials are submitted"
-          }
-        ]
-      }
+    businessRequirements: [
+      { id: "br1", description: "System shall authenticate users" },
+      { id: "br2", description: "System shall validate credentials" },
+      { id: "br3", description: "System shall manage sessions" }
     ],
     businessRules: [
-      { 
-        id: "br1", 
-        description: "Password must be at least 8 characters",
-        category: "authentication"
-      }
+      { id: "rule1", description: "Password must be at least 8 characters", category: "security" },
+      { id: "rule2", description: "Account locks after 3 failed attempts", category: "security" },
+      { id: "rule3", description: "Session expires after 30 minutes", category: "security" }
     ],
     dataElements: [
-      { id: "de1", name: "Username", type: "string", required: true }
+      { id: "de1", name: "Username", type: "string", required: true, specifications: ["Must be email format"] },
+      { id: "de2", name: "Password", type: "string", required: true, specifications: ["Min 8 characters", "1 special character"] }
     ],
     integrationPoints: [],
     expectedBehaviors: [],
@@ -64,29 +54,15 @@ const initialRequirements: Requirement[] = [
     functionalArea: "Password Reset",
     description: "Users should be able to reset their passwords securely",
     actors: ["End User", "System"],
-    flows: [
-      { 
-        id: "f2", 
-        description: "User requests password reset",
-        type: "primary",
-        steps: [
-          {
-            id: "s2",
-            description: "User clicks forgot password",
-            expectedOutcome: "Reset email is sent"
-          }
-        ]
-      }
+    businessRequirements: [
+      { id: "br4", description: "System shall allow users to request password reset" },
+      { id: "br5", description: "System shall send a reset link to the user's email" },
     ],
     businessRules: [
-      { 
-        id: "br2", 
-        description: "Reset link expires in 24 hours",
-        category: "security"
-      }
+      { id: "rule4", description: "Reset link expires in 24 hours", category: "security" },
     ],
     dataElements: [
-      { id: "de2", name: "Email", type: "string", required: true }
+      { id: "de3", name: "Email", type: "string", required: true, specifications: ["Must be a valid email format"] },
     ],
     integrationPoints: [],
     expectedBehaviors: [],
@@ -107,29 +83,14 @@ const initialRequirements: Requirement[] = [
     functionalArea: "Profile Management",
     description: "Users should be able to manage their profile information",
     actors: ["End User"],
-    flows: [
-      { 
-        id: "f3", 
-        description: "Update profile information",
-        type: "primary",
-        steps: [
-          {
-            id: "s3",
-            description: "User edits profile fields",
-            expectedOutcome: "Profile is updated"
-          }
-        ]
-      }
+    businessRequirements: [
+      { id: "br6", description: "System shall allow users to update their profile information" },
     ],
     businessRules: [
-      { 
-        id: "br3", 
-        description: "Email changes require verification",
-        category: "system"
-      }
+      { id: "rule5", description: "Email changes require verification", category: "system" },
     ],
     dataElements: [
-      { id: "de3", name: "DisplayName", type: "string", required: false }
+      { id: "de4", name: "DisplayName", type: "string", required: false },
     ],
     integrationPoints: [],
     expectedBehaviors: [],
