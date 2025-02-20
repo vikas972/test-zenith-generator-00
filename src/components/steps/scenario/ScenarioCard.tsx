@@ -94,12 +94,14 @@ export const ScenarioCard = ({
                     <Select
                       value={editedPriority}
                       onValueChange={(value: Priority) => setEditedPriority(value)}
-                      onOpenChange={(e) => e.stopPropagation()}
                     >
-                      <SelectTrigger className="w-[100px]" onClick={(e) => e.stopPropagation()}>
+                      <SelectTrigger 
+                        className="w-[100px]" 
+                        onClick={(e) => e.stopPropagation()}
+                      >
                         <SelectValue placeholder="Select priority" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent onClick={(e) => e.stopPropagation()}>
                         <SelectItem value="high">High</SelectItem>
                         <SelectItem value="medium">Medium</SelectItem>
                         <SelectItem value="low">Low</SelectItem>
