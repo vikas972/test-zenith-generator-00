@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -128,6 +127,16 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     }
   };
 
+  const requirementGroups = Object.entries(
+    scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
+      if (!acc[scenario.requirementId]) {
+        acc[scenario.requirementId] = [];
+      }
+      acc[scenario.requirementId].push(scenario);
+      return acc;
+    }, {})
+  );
+
   return (
     <div className="flex gap-4 h-full">
       {/* Left Panel - Test Scenarios */}
@@ -241,13 +250,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         <div className="prose prose-sm">
           <h3 className="text-lg font-semibold mb-4">Requirements Coverage</h3>
           <div className="space-y-2">
-            {scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
-              if (!acc[scenario.requirementId]) {
-                acc[scenario.requirementId] = [];
-              }
-              acc[scenario.requirementId].push(scenario);
-              return acc;
-            }, {}).map(([requirementId, relatedScenarios]) => (
+            {requirementGroups.map(([requirementId, relatedScenarios]) => (
               <div
                 key={requirementId}
                 className={cn(
@@ -296,7 +299,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 <h3 className="text-lg font-semibold">
                   {selectedRequirement}
                 </h3>
-                {/* Requirement details would be shown here */}
                 <div className="text-sm text-gray-600">
                   This dialog will show the complete requirement details including all business requirements,
                   business rules, and data elements associated with this requirement.
