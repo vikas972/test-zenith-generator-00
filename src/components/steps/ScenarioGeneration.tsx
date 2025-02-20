@@ -67,6 +67,83 @@ const initialScenarios: TestScenario[] = [
         requirementItemId: "BRU-003"
       }
     ]
+  },
+  {
+    id: "TS-003",
+    title: "Password Reset Flow",
+    requirementId: "REQ-002",
+    conditions: [
+      {
+        id: "COND-006",
+        description: "Reset password request",
+        requirementRef: "REQ-002.1",
+        coverageType: "business_requirement",
+        requirementItemId: "BR-003"
+      },
+      {
+        id: "COND-007",
+        description: "Email verification",
+        requirementRef: "REQ-002.2",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-004"
+      },
+      {
+        id: "COND-008",
+        description: "New password requirements",
+        requirementRef: "REQ-002.3",
+        coverageType: "data_element",
+        requirementItemId: "DE-002"
+      }
+    ]
+  },
+  {
+    id: "TS-004",
+    title: "Account Profile Update",
+    requirementId: "REQ-003",
+    conditions: [
+      {
+        id: "COND-009",
+        description: "Profile information update",
+        requirementRef: "REQ-003.1",
+        coverageType: "business_requirement",
+        requirementItemId: "BR-004"
+      },
+      {
+        id: "COND-010",
+        description: "Email change verification",
+        requirementRef: "REQ-003.2",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-005"
+      }
+    ]
+  },
+  {
+    id: "TS-005",
+    title: "Two-Factor Authentication",
+    requirementId: "REQ-004",
+    conditions: [
+      {
+        id: "COND-011",
+        description: "2FA setup process",
+        requirementRef: "REQ-004.1",
+        coverageType: "business_requirement",
+        requirementItemId: "BR-005"
+      },
+      {
+        id: "COND-012",
+        description: "Authentication code validation",
+        requirementRef: "REQ-004.2",
+        coverageType: "business_rule",
+        requirementItemId: "BRU-006"
+      },
+      {
+        id: "COND-013",
+        description: "Backup codes generation",
+        requirementRef: "REQ-004.3",
+        coverageType: "data_element",
+        requirementItemId: "DE-003"
+      }
+    ]
   }
 ];
 
