@@ -63,6 +63,14 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
+  const handleUpdateScenario = (updatedScenario: TestScenario) => {
+    setScenarios(prev =>
+      prev.map(scenario =>
+        scenario.id === updatedScenario.id ? updatedScenario : scenario
+      )
+    );
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
@@ -85,6 +93,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               onRequirementClick={handleRequirementClick}
               onEdit={handleEditScenario}
               onDelete={handleDeleteScenario}
+              onUpdateScenario={handleUpdateScenario}
             />
           ))}
         </div>

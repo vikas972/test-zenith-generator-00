@@ -3,7 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Edit2, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type TestScenario, type FlowType } from "./types";
+import { type TestScenario, type TestScenarioFlow, type FlowType } from "./types";
 import { ScenarioFlows } from "./ScenarioFlows";
 
 interface ScenarioCardProps {
@@ -14,6 +14,7 @@ interface ScenarioCardProps {
   onRequirementClick: (id: string) => void;
   onEdit: (e: React.MouseEvent, id: string) => void;
   onDelete: (e: React.MouseEvent, id: string) => void;
+  onUpdateScenario: (updatedScenario: TestScenario) => void;
 }
 
 export const ScenarioCard = ({
@@ -24,7 +25,15 @@ export const ScenarioCard = ({
   onRequirementClick,
   onEdit,
   onDelete,
+  onUpdateScenario,
 }: ScenarioCardProps) => {
+  const handleUpdateFlows = (updatedFlows: TestScenarioFlow[]) => {
+    onUpdateScenario({
+      ...scenario,
+      flows: updatedFlows,
+    });
+  };
+
   return (
     <Card
       className={cn(
@@ -77,7 +86,7 @@ export const ScenarioCard = ({
           </div>
         </div>
 
-        {isExpanded && <ScenarioFlows flows={scenario.flows} />}
+        {isExpanded && <ScenarioFlows flows={scenario.flows} onUpdateFlows={handleUpdateFlows} />}
       </div>
     </Card>
   );
