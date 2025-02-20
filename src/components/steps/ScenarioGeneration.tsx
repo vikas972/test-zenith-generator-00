@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -6,7 +5,7 @@ import { Card } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Plus, Edit2, Trash2 } from "lucide-react";
-import { type TestScenario, type TestScenarioCondition } from "./scenario/types";
+import { type TestScenario, type TestScenarioFlow, type FlowType } from "./scenario/types";
 import {
   Dialog,
   DialogContent,
@@ -21,131 +20,128 @@ interface ScenarioGenerationProps {
 const initialScenarios: TestScenario[] = [
   {
     id: "TS-001",
-    title: "Standard Login",
+    title: "User Authentication",
     requirementId: "REQ-001",
-    conditions: [
+    priority: "high",
+    flows: [
       {
-        id: "COND-001",
-        description: "Valid credentials login",
-        requirementRef: "REQ-001.1",
-        coverageType: "business_requirement",
-        requirementItemId: "BR-001"
+        type: "primary",
+        description: "Standard login authentication",
+        subflows: [
+          {
+            name: "Main Flow",
+            coverage: "Valid credentials authentication, Successful login process, Dashboard access verification",
+            expectedResults: "User successfully logs in"
+          }
+        ]
       },
       {
-        id: "COND-002",
-        description: "Remember me functionality",
-        requirementRef: "REQ-001.2",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-001"
+        type: "alternate",
+        description: "Valid business variations",
+        subflows: [
+          {
+            name: "Remember Me Option",
+            coverage: "Persistent login functionality",
+            expectedResults: "Session persists"
+          },
+          {
+            name: "Password Change",
+            coverage: "Password update process",
+            expectedResults: "Password successfully changed"
+          }
+        ]
       },
       {
-        id: "COND-003",
-        description: "Password validation rules",
-        requirementRef: "REQ-001.3",
-        coverageType: "data_element",
-        requirementItemId: "DE-001"
+        type: "negative",
+        description: "Business error conditions",
+        subflows: [
+          {
+            name: "Invalid Login",
+            coverage: "Wrong credentials handling",
+            expectedResults: "Access denied"
+          },
+          {
+            name: "Account Lockout",
+            coverage: "Multiple failed attempts",
+            expectedResults: "Account locked"
+          }
+        ]
+      },
+      {
+        type: "exception",
+        description: "System/technical errors",
+        subflows: [
+          {
+            name: "System Unavailable",
+            coverage: "Database connection failure",
+            expectedResults: "System error message"
+          },
+          {
+            name: "Network Issues",
+            coverage: "Connection timeout",
+            expectedResults: "Network error message"
+          }
+        ]
       }
     ]
   },
   {
     id: "TS-002",
-    title: "Failed Login",
-    requirementId: "REQ-001",
-    conditions: [
-      {
-        id: "COND-004",
-        description: "Invalid username/password",
-        requirementRef: "REQ-001.4",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-002"
-      },
-      {
-        id: "COND-005",
-        description: "Account lockout rules",
-        requirementRef: "REQ-001.5",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-003"
-      }
-    ]
-  },
-  {
-    id: "TS-003",
-    title: "Password Reset Flow",
+    title: "Password Reset",
     requirementId: "REQ-002",
-    conditions: [
+    priority: "high",
+    flows: [
       {
-        id: "COND-006",
-        description: "Reset password request",
-        requirementRef: "REQ-002.1",
-        coverageType: "business_requirement",
-        requirementItemId: "BR-003"
+        type: "primary",
+        description: "Standard password reset flow",
+        subflows: [
+          {
+            name: "Main Flow",
+            coverage: "Password reset request, Email verification, New password setup",
+            expectedResults: "Password successfully reset"
+          }
+        ]
       },
       {
-        id: "COND-007",
-        description: "Email verification",
-        requirementRef: "REQ-002.2",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-004"
+        type: "alternate",
+        description: "Alternative reset methods",
+        subflows: [
+          {
+            name: "Security Questions",
+            coverage: "Security question verification",
+            expectedResults: "Access granted via security questions"
+          }
+        ]
       },
       {
-        id: "COND-008",
-        description: "New password requirements",
-        requirementRef: "REQ-002.3",
-        coverageType: "data_element",
-        requirementItemId: "DE-002"
-      }
-    ]
-  },
-  {
-    id: "TS-004",
-    title: "Account Profile Update",
-    requirementId: "REQ-003",
-    conditions: [
-      {
-        id: "COND-009",
-        description: "Profile information update",
-        requirementRef: "REQ-003.1",
-        coverageType: "business_requirement",
-        requirementItemId: "BR-004"
-      },
-      {
-        id: "COND-010",
-        description: "Email change verification",
-        requirementRef: "REQ-003.2",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-005"
-      }
-    ]
-  },
-  {
-    id: "TS-005",
-    title: "Two-Factor Authentication",
-    requirementId: "REQ-004",
-    conditions: [
-      {
-        id: "COND-011",
-        description: "2FA setup process",
-        requirementRef: "REQ-004.1",
-        coverageType: "business_requirement",
-        requirementItemId: "BR-005"
-      },
-      {
-        id: "COND-012",
-        description: "Authentication code validation",
-        requirementRef: "REQ-004.2",
-        coverageType: "business_rule",
-        requirementItemId: "BRU-006"
-      },
-      {
-        id: "COND-013",
-        description: "Backup codes generation",
-        requirementRef: "REQ-004.3",
-        coverageType: "data_element",
-        requirementItemId: "DE-003"
+        type: "negative",
+        description: "Invalid reset attempts",
+        subflows: [
+          {
+            name: "Invalid Token",
+            coverage: "Expired/invalid reset token handling",
+            expectedResults: "Reset denied with proper message"
+          }
+        ]
       }
     ]
   }
 ];
+
+const getFlowTypeIcon = (type: FlowType) => {
+  switch (type) {
+    case "primary":
+      return "→";
+    case "alternate":
+      return "⤷";
+    case "negative":
+      return "⚠";
+    case "exception":
+      return "⚡";
+    default:
+      return "•";
+  }
+};
 
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
   const { toast } = useToast();
@@ -192,32 +188,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
-  const getCoverageTypeLabel = (type: TestScenarioCondition["coverageType"]) => {
-    switch (type) {
-      case "business_requirement":
-        return "Business Requirement";
-      case "business_rule":
-        return "Business Rule";
-      case "data_element":
-        return "Data Element";
-      default:
-        return "Unknown";
-    }
-  };
-
-  const requirementGroups = Object.entries(
-    scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
-      if (!acc[scenario.requirementId]) {
-        acc[scenario.requirementId] = [];
-      }
-      acc[scenario.requirementId].push(scenario);
-      return acc;
-    }, {})
-  );
-
   return (
     <div className="flex gap-4 h-full">
-      {/* Left Panel - Test Scenarios */}
       <div className="w-2/3 flex flex-col">
         <div className="mb-4 flex justify-between items-center">
           <h2 className="text-lg font-semibold">Test Scenarios</h2>
@@ -238,7 +210,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               onClick={() => handleScenarioClick(scenario.id)}
             >
               <div className="p-4">
-                {/* Header */}
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2">
                     {expandedScenarios.includes(scenario.id) ? (
@@ -247,11 +218,13 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                       <ChevronRight className="h-4 w-4" />
                     )}
                     <div>
-                      <div className="font-medium">{scenario.title}</div>
+                      <div className="font-medium">
+                        📋 {scenario.title}
+                      </div>
                       <div className="text-sm text-gray-500">
-                        ID: {scenario.id} | Requirement: 
+                        ID: {scenario.id} | Priority: {scenario.priority} | Requirement:{" "}
                         <button 
-                          className="text-primary hover:underline ml-1"
+                          className="text-primary hover:underline"
                           onClick={(e) => {
                             e.stopPropagation();
                             handleRequirementClick(scenario.requirementId);
@@ -280,41 +253,32 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   </div>
                 </div>
 
-                {/* Expanded Content */}
                 {expandedScenarios.includes(scenario.id) && (
-                  <div className="mt-4">
-                    <div className="space-y-4">
-                      {["business_requirement", "business_rule", "data_element"].map((type) => {
-                        const typeConditions = scenario.conditions.filter(
-                          c => c.coverageType === type
-                        );
-                        
-                        if (typeConditions.length === 0) return null;
-
-                        return (
-                          <div key={type} className="space-y-2">
-                            <h4 className="font-medium">{getCoverageTypeLabel(type as TestScenarioCondition["coverageType"])} Coverage:</h4>
-                            {typeConditions.map((condition) => (
-                              <div
-                                key={condition.id}
-                                className="ml-4 flex items-start gap-2 text-sm"
-                              >
-                                <span className="text-gray-400">-</span>
-                                <div>
-                                  <span>{condition.description}</span>
-                                  <span className="text-xs text-gray-500 ml-2">
-                                    [{condition.requirementRef}]
-                                  </span>
-                                  <span className="text-xs text-primary ml-2">
-                                    {condition.requirementItemId}
-                                  </span>
+                  <div className="mt-4 space-y-4">
+                    {scenario.flows.map((flow, index) => (
+                      <div key={index} className="space-y-2">
+                        <h4 className="font-medium">
+                          {index + 1}. {flow.type.charAt(0).toUpperCase() + flow.type.slice(1)} Flow
+                        </h4>
+                        <div className="text-sm text-gray-600 ml-4">
+                          Description: {flow.description}
+                        </div>
+                        <div className="space-y-2 ml-6">
+                          {flow.subflows.map((subflow, subIndex) => (
+                            <div key={subIndex} className="text-sm">
+                              <div className="flex items-start gap-2">
+                                <span className="text-gray-400">{getFlowTypeIcon(flow.type)}</span>
+                                <div className="space-y-1">
+                                  <div className="font-medium">{subflow.name}</div>
+                                  <div className="text-gray-600">Coverage: {subflow.coverage}</div>
+                                  <div className="text-gray-600">Expected Results: {subflow.expectedResults}</div>
                                 </div>
                               </div>
-                            ))}
-                          </div>
-                        );
-                      })}
-                    </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )}
               </div>
@@ -323,12 +287,19 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         </div>
       </div>
 
-      {/* Right Panel - Requirements Coverage */}
       <div className="w-1/3 border-l p-4">
         <div className="prose prose-sm">
           <h3 className="text-lg font-semibold mb-4">Requirements Coverage</h3>
           <div className="space-y-2">
-            {requirementGroups.map(([requirementId, relatedScenarios]) => (
+            {Object.entries(
+              scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
+                if (!acc[scenario.requirementId]) {
+                  acc[scenario.requirementId] = [];
+                }
+                acc[scenario.requirementId].push(scenario);
+                return acc;
+              }, {})
+            ).map(([requirementId, relatedScenarios]) => (
               <div
                 key={requirementId}
                 className={cn(
@@ -344,17 +315,17 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   <div className="text-sm text-gray-500">{relatedScenarios.length} Scenarios</div>
                 </div>
                 <div className="text-sm text-gray-600 mt-1">
-                  Coverage Summary:
+                  Flow Coverage:
                   <ul className="mt-1 ml-4 list-disc text-xs">
                     {Object.entries(
-                      relatedScenarios.flatMap(s => s.conditions)
-                        .reduce((acc: { [key: string]: number }, condition) => {
-                          acc[condition.coverageType] = (acc[condition.coverageType] || 0) + 1;
+                      relatedScenarios.flatMap(s => s.flows)
+                        .reduce((acc: { [key: string]: number }, flow) => {
+                          acc[flow.type] = (acc[flow.type] || 0) + flow.subflows.length;
                           return acc;
                         }, {})
                     ).map(([type, count]) => (
                       <li key={type}>
-                        {getCoverageTypeLabel(type as TestScenarioCondition["coverageType"])}: {count}
+                        {type.charAt(0).toUpperCase() + type.slice(1)} Flows: {count}
                       </li>
                     ))}
                   </ul>
@@ -365,7 +336,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         </div>
       </div>
 
-      {/* Requirement Dialog */}
       <Dialog open={showRequirementDialog} onOpenChange={setShowRequirementDialog}>
         <DialogContent className="max-w-3xl">
           <DialogHeader>

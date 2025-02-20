@@ -1,15 +1,27 @@
 
-export interface TestScenarioCondition {
-  id: string;
+export type FlowType = "primary" | "alternate" | "negative" | "exception";
+export type Priority = "high" | "medium" | "low";
+
+export interface TestFlow {
   description: string;
-  requirementRef: string;
-  coverageType: "business_requirement" | "business_rule" | "data_element";
-  requirementItemId: string;
+  coverage: string[];
+  expectedResults: string;
+}
+
+export interface TestScenarioFlow {
+  type: FlowType;
+  description: string;
+  subflows: {
+    name: string;
+    coverage: string;
+    expectedResults: string;
+  }[];
 }
 
 export interface TestScenario {
   id: string;
   title: string;
   requirementId: string;
-  conditions: TestScenarioCondition[];
+  priority: Priority;
+  flows: TestScenarioFlow[];
 }
