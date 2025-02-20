@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { type Requirement } from "./requirement/types";
 import { useToast } from "@/components/ui/use-toast";
@@ -119,17 +118,26 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   const handleAddScenario = () => {
-    toast.success("New scenario added");
+    toast({
+      title: "Success",
+      description: "New scenario added"
+    });
   };
 
   const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
-    toast.success("Edit scenario");
+    toast({
+      title: "Success",
+      description: "Edit scenario"
+    });
   };
 
   const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
-    toast.success("Delete scenario");
+    toast({
+      title: "Success",
+      description: "Delete scenario"
+    });
   };
 
   return (
