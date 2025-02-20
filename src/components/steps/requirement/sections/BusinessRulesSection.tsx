@@ -88,20 +88,6 @@ export const BusinessRulesSection = ({ rules, onAddClick, onDelete }: BusinessRu
                         </>
                       )}
                     </div>
-                    {!editingRuleId && (
-                      <>
-                        {rule.validationCriteria && (
-                          <div className="text-sm text-gray-600 ml-4">
-                            Validation: {rule.validationCriteria}
-                          </div>
-                        )}
-                        {rule.parameters && (
-                          <div className="text-sm text-gray-600 ml-4">
-                            Parameters: {rule.parameters}
-                          </div>
-                        )}
-                      </>
-                    )}
                   </div>
                 ))}
             </AccordionContent>

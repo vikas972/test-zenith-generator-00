@@ -17,7 +17,6 @@ export const DataElementsSection = ({ elements, onAddClick, onDelete }: DataElem
   const [editedElementName, setEditedElementName] = useState<string>("");
 
   const handleElementSave = (elementId: string) => {
-    // Here you would typically update the element in the parent component
     toast.success("Element saved successfully");
     setEditingElementId(null);
   };
@@ -82,24 +81,14 @@ export const DataElementsSection = ({ elements, onAddClick, onDelete }: DataElem
                 </>
               )}
             </div>
-            {!editingElementId && (
-              <>
-                {element.format && (
-                  <div className="text-sm text-gray-600 ml-4">
-                    Format: {element.format}
-                  </div>
-                )}
-                {element.validationRules && element.validationRules.length > 0 && (
-                  <div className="text-sm text-gray-600 ml-4">
-                    Validation Rules:
-                    <ul className="list-disc ml-4">
-                      {element.validationRules.map((rule, index) => (
-                        <li key={index}>{rule}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-              </>
+            {!editingElementId && element.specifications && element.specifications.length > 0 && (
+              <div className="mt-2 text-sm text-gray-600">
+                <ul className="list-disc ml-4">
+                  {element.specifications.map((spec, index) => (
+                    <li key={index}>{spec}</li>
+                  ))}
+                </ul>
+              </div>
             )}
           </div>
         ))}

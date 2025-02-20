@@ -36,12 +36,6 @@ export const RequirementCard = ({
   onSourceChange,
   onStatusChange,
 }: RequirementCardProps) => {
-  const handleUpdateFlows = (flows: Requirement['flows']) => {
-    const updatedFlows = requirement.flows.filter(flow => flows.some(f => f.id === flow.id));
-    onFunctionalAreaChange(requirement.functionalArea);
-    return updatedFlows;
-  };
-
   const handleUpdateBusinessRules = (rules: Requirement['businessRules']) => {
     const updatedRules = requirement.businessRules.filter(rule => rules.some(r => r.id === rule.id));
     onFunctionalAreaChange(requirement.functionalArea);
@@ -77,7 +71,6 @@ export const RequirementCard = ({
       {isExpanded && (
         <RequirementContent
           requirement={requirement}
-          onUpdateFlows={handleUpdateFlows}
           onUpdateBusinessRules={handleUpdateBusinessRules}
           onUpdateDataElements={handleUpdateDataElements}
         />

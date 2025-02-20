@@ -53,7 +53,7 @@ export const createNewRequirement = (requirementsLength: number): Requirement =>
   functionalArea: "New Requirement",
   description: "Enter requirement description",
   actors: [],
-  flows: [],
+  businessRequirements: [],
   businessRules: [],
   dataElements: [],
   integrationPoints: [],
