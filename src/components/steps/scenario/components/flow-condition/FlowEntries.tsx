@@ -35,7 +35,8 @@ export const FlowEntries = ({
     toast.success("Entry deleted successfully");
   };
 
-  const handleEntryEdit = (entryIndex: number, value: string) => {
+  const handleEntryEdit = (entryIndex: number, value: string, e?: React.MouseEvent) => {
+    e?.stopPropagation();
     if (onEdit) {
       onEdit(entryIndex, value);
     }
@@ -54,7 +55,7 @@ export const FlowEntries = ({
               <EditableField
                 isEditing={isEditing && editingEntryIndex === entryIndex}
                 value={entry.description}
-                editedValue={editedValue || ""}
+                editedValue={editedValue || entry.description}
                 width="w-full"
                 onEdit={() => handleEntryEdit(entryIndex, entry.description)}
                 onSave={onSaveEdit}
@@ -68,10 +69,7 @@ export const FlowEntries = ({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 flex-shrink-0"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleEntryEdit(entryIndex, entry.description);
-                  }}
+                  onClick={(e) => handleEntryEdit(entryIndex, entry.description, e)}
                 >
                   <Edit2 className="h-4 w-4 text-blue-500" />
                 </Button>
