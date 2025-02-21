@@ -1,9 +1,10 @@
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { ScenarioFlows } from "./ScenarioFlows";
-import { CheckCircle, XCircle, AlertCircle, PlusCircle, Pencil, Trash2, Save } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, PlusCircle, Pencil, Trash2, Save, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type TestScenario, type Priority, type ScenarioStatus } from "./types";
 import { useState } from "react";
