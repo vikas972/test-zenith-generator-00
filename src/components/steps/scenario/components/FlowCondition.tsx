@@ -52,8 +52,7 @@ export const FlowCondition = ({
     editingState?.subflowIndex === subflowIndex &&
     editingState?.field === field;
 
-  const handleDeleteEntry = (entryIndex: number, e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDeleteEntry = (entryIndex: number) => {
     onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
   };
 
