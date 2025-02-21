@@ -54,7 +54,7 @@ export const FlowEntries = ({
               <EditableField
                 isEditing={isEditing}
                 value={entry.description}
-                editedValue={editedValue || entry.description}
+                editedValue={editingEntryIndex === entryIndex ? editedValue : entry.description}
                 width="w-full"
                 onEdit={() => handleEntryEdit(entryIndex, entry.description)}
                 onSave={onSaveEdit}

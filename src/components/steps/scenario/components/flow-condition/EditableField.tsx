@@ -31,7 +31,7 @@ export const EditableField = ({
 }: EditableFieldProps) => {
   if (isEditing) {
     return (
-      <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
+      <div className="flex items-center gap-2">
         {isTextArea ? (
           <Textarea
             value={editedValue}
@@ -64,8 +64,8 @@ export const EditableField = ({
   }
 
   return (
-    <>
+    <div onClick={!isEditing ? onEdit : undefined} className="cursor-text">
       {label && `${label}: `}{value}
-    </>
+    </div>
   );
 };
