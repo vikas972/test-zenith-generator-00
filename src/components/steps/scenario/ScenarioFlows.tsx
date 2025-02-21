@@ -22,7 +22,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   } | null>(null);
 
   const handleAddCondition = (e: React.MouseEvent, flow: TestScenarioFlow, index: number) => {
-    e.stopPropagation(); // Prevent the tile from collapsing
+    e.stopPropagation();
     setActiveFlow({ type: flow.type, index });
     setShowAddDialog(true);
   };
@@ -82,9 +82,15 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   };
 
   const handleAddEntry = (flowIndex: number, subflowIndex: number) => {
+    const newFlows = [...flows];
+    if (!newFlows[flowIndex].subflows[subflowIndex].entries) {
+      newFlows[flowIndex].subflows[subflowIndex].entries = [];
+    }
+    newFlows[flowIndex].subflows[subflowIndex].entries?.push({ description: "New Entry" });
+    onUpdateFlows(newFlows);
     toast({
-      title: "Info",
-      description: "Add entry functionality coming soon"
+      title: "Success",
+      description: "New entry added successfully"
     });
   };
 
@@ -93,12 +99,12 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     if (newFlows[flowIndex].subflows[subflowIndex].entries) {
       newFlows[flowIndex].subflows[subflowIndex].entries = 
         newFlows[flowIndex].subflows[subflowIndex].entries?.filter((_, index) => index !== entryIndex);
+      onUpdateFlows(newFlows);
+      toast({
+        title: "Success",
+        description: "Entry deleted successfully"
+      });
     }
-    onUpdateFlows(newFlows);
-    toast({
-      title: "Success",
-      description: "Entry deleted successfully"
-    });
   };
 
   const handleAddNewCondition = (condition: { 
@@ -108,7 +114,10 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   }) => {
     if (activeFlow) {
       const newFlows = [...flows];
-      newFlows[activeFlow.index].subflows.push(condition);
+      newFlows[activeFlow.index].subflows.push({
+        ...condition,
+        entries: []  // Initialize empty entries array
+      });
       onUpdateFlows(newFlows);
       setShowAddDialog(false);
       toast({
