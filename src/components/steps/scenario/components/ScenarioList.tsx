@@ -1,6 +1,5 @@
-
-import { type TestScenario } from "../scenario/types";
-import { ScenarioCard } from "../scenario/ScenarioCard";
+import { type TestScenario } from "../types";
+import { ScenarioCard } from "../ScenarioCard";
 
 interface ScenarioListProps {
   scenarios: TestScenario[];

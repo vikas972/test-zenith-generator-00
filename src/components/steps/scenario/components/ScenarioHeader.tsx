@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Plus, Trash2, CheckSquare } from "lucide-react";
@@ -8,7 +7,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { type ScenarioStatus } from "../scenario/types";
+import { type ScenarioStatus } from "../types";
 
 interface ScenarioHeaderProps {
   selectedScenariosCount: number;
