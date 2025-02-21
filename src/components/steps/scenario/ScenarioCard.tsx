@@ -97,9 +97,7 @@ export const ScenarioCard = ({
                 >
                   {scenario.requirementId}
                 </Badge>
-                {scenario.status && (
-                  <Badge>{scenario.status}</Badge>
-                )}
+                <Badge variant="secondary">{scenario.status || 'in_progress'}</Badge>
               </div>
               <p className="text-sm text-gray-600">{scenario.title}</p>
             </div>
@@ -110,6 +108,7 @@ export const ScenarioCard = ({
               size="icon"
               className="h-8 w-8"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onEdit(e, scenario.id);
               }}
@@ -121,6 +120,7 @@ export const ScenarioCard = ({
               size="icon"
               className="h-8 w-8"
               onClick={(e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 onDelete(e, scenario.id);
               }}
@@ -171,6 +171,7 @@ export const ScenarioCard = ({
                             size="sm"
                             className="h-6 w-6 p-0 hover:text-green-600"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               handleAcceptSuggestion(suggestion.id);
                             }}
@@ -182,6 +183,7 @@ export const ScenarioCard = ({
                             size="sm"
                             className="h-6 w-6 p-0 hover:text-red-600"
                             onClick={(e) => {
+                              e.preventDefault();
                               e.stopPropagation();
                               handleRejectSuggestion(suggestion.id);
                             }}
