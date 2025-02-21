@@ -150,12 +150,6 @@ export const FlowCondition = ({
               <FlowEntries
                 entries={entries}
                 onDeleteEntry={handleDeleteEntry}
-                isEditing={isEditing}
-                onEdit={(field, value) => onEdit(flowIndex, subflowIndex, field, value)}
-                onSave={onSaveEdit}
-                onCancel={onCancelEdit}
-                onChange={onEditingChange}
-                editedValue={editingState?.value || ""}
               />
             )}
           </div>
