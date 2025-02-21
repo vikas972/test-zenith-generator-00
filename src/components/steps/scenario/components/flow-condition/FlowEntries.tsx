@@ -1,7 +1,6 @@
 
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
-import { toast } from "sonner";
 import { EditableField } from "./EditableField";
 
 interface FlowEntriesProps {
@@ -36,7 +35,7 @@ export const FlowEntries = ({
         {entries.map((entry, entryIndex) => (
           <div 
             key={entryIndex} 
-            className="flex items-center justify-between py-2 group"
+            className="flex items-center justify-between py-2"
           >
             <div className="flex-1 mr-2">
               <EditableField
@@ -54,7 +53,7 @@ export const FlowEntries = ({
               type="button"
               variant="ghost"
               size="icon"
-              className="h-8 w-8 flex-shrink-0"
+              className="h-8 w-8 flex-shrink-0 opacity-100"
               onClick={(e) => {
                 e.stopPropagation();
                 onDeleteEntry(entryIndex);

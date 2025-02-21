@@ -1,11 +1,13 @@
 
 import { Button } from "@/components/ui/button";
-import { Edit2 } from "lucide-react";
+import { Edit2, Plus } from "lucide-react";
 import { FlowType } from "../types";
 import { EditableField } from "./flow-condition/EditableField";
 import { FlowEntries } from "./flow-condition/FlowEntries";
 import { FlowActions } from "./flow-condition/FlowActions";
 import { getFlowTypeIcon } from "./flow-condition/utils";
+import { AddEntryDialog } from "../dialogs/AddEntryDialog";
+import { useState } from "react";
 
 interface FlowConditionProps {
   flowType: FlowType;
@@ -47,6 +49,8 @@ export const FlowCondition = ({
   onEditingChange,
   entries = [],
 }: FlowConditionProps) => {
+  const [showAddEntryDialog, setShowAddEntryDialog] = useState(false);
+  
   const isEditingThisCondition = editingState?.flowIndex === flowIndex && 
     editingState?.subflowIndex === subflowIndex;
 
@@ -64,6 +68,14 @@ export const FlowCondition = ({
   const handleMainEdit = (e: React.MouseEvent) => {
     e.stopPropagation();
     onEdit(flowIndex, subflowIndex, "name", name);
+  };
+
+  const handleAddEntry = () => {
+    setShowAddEntryDialog(true);
+  };
+
+  const handleAddEntrySubmit = (entry: { description: string }) => {
+    onAddEntry(flowIndex, subflowIndex);
   };
 
   return (
@@ -85,10 +97,7 @@ export const FlowCondition = ({
               />
             </div>
             <FlowActions
-              onAdd={(e) => {
-                e.stopPropagation();
-                onAddEntry(flowIndex, subflowIndex);
-              }}
+              onAdd={handleAddEntry}
               onEdit={handleMainEdit}
               onDelete={(e) => {
                 e.stopPropagation();
@@ -129,7 +138,7 @@ export const FlowCondition = ({
                 />
               </div>
             </div>
-            {entries && entries.length > 0 && (
+            {entries && (
               <FlowEntries
                 entries={entries}
                 onDeleteEntry={handleDeleteEntry}
@@ -146,7 +155,12 @@ export const FlowCondition = ({
           </div>
         </div>
       </div>
+
+      <AddEntryDialog
+        open={showAddEntryDialog}
+        onOpenChange={setShowAddEntryDialog}
+        onAdd={handleAddEntrySubmit}
+      />
     </div>
   );
 };
-
