@@ -2,13 +2,31 @@
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
+import { EditableField } from "./EditableField";
 
 interface FlowEntriesProps {
   entries: Array<{ description: string }>;
   onDeleteEntry: (entryIndex: number) => void;
+  isEditing?: boolean;
+  onEdit?: (entryIndex: number, value: string) => void;
+  editedValue?: string;
+  editingEntryIndex?: number;
+  onSaveEdit?: () => void;
+  onCancelEdit?: () => void;
+  onEditingChange?: (value: string) => void;
 }
 
-export const FlowEntries = ({ entries, onDeleteEntry }: FlowEntriesProps) => {
+export const FlowEntries = ({ 
+  entries, 
+  onDeleteEntry,
+  isEditing,
+  onEdit,
+  editedValue,
+  editingEntryIndex,
+  onSaveEdit,
+  onCancelEdit,
+  onEditingChange
+}: FlowEntriesProps) => {
   if (!entries.length) return null;
 
   const handleDeleteEntry = (entryIndex: number, e: React.MouseEvent) => {
@@ -27,7 +45,20 @@ export const FlowEntries = ({ entries, onDeleteEntry }: FlowEntriesProps) => {
             className="flex items-center justify-between py-2 group"
           >
             <div className="flex-1 mr-2">
-              {entry.description}
+              {isEditing ? (
+                <EditableField
+                  isEditing={editingEntryIndex === entryIndex}
+                  value={entry.description}
+                  editedValue={editedValue || ""}
+                  width="w-full"
+                  onEdit={() => onEdit?.(entryIndex, entry.description)}
+                  onSave={onSaveEdit}
+                  onCancel={onCancelEdit}
+                  onChange={onEditingChange}
+                />
+              ) : (
+                entry.description
+              )}
             </div>
             <Button
               variant="ghost"

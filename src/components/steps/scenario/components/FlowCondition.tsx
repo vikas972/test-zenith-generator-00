@@ -52,8 +52,15 @@ export const FlowCondition = ({
     editingState?.subflowIndex === subflowIndex &&
     editingState?.field === field;
 
+  const isEditingAnyField = editingState?.flowIndex === flowIndex && 
+    editingState?.subflowIndex === subflowIndex;
+
   const handleDeleteEntry = (entryIndex: number) => {
     onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
+  };
+
+  const handleEditEntry = (entryIndex: number, value: string) => {
+    onEdit(flowIndex, subflowIndex, `entry_${entryIndex}`, value);
   };
 
   return (
@@ -126,6 +133,14 @@ export const FlowCondition = ({
               <FlowEntries
                 entries={entries}
                 onDeleteEntry={handleDeleteEntry}
+                isEditing={isEditingAnyField}
+                onEdit={handleEditEntry}
+                editedValue={editingState?.value}
+                editingEntryIndex={editingState?.field?.startsWith('entry_') ? 
+                  parseInt(editingState.field.split('_')[1]) : undefined}
+                onSaveEdit={onSaveEdit}
+                onCancelEdit={onCancelEdit}
+                onEditingChange={onEditingChange}
               />
             )}
           </div>
