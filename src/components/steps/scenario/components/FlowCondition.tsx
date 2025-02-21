@@ -51,7 +51,7 @@ export const FlowCondition = ({
     editingState?.subflowIndex === subflowIndex;
 
   const isEditing = (field: string) =>
-    isEditingThisCondition && editingState?.field === field;
+    isEditingThisCondition && (editingState?.field === field || editingState?.field === "name");
 
   const handleDeleteEntry = (entryIndex: number) => {
     onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
@@ -100,7 +100,7 @@ export const FlowCondition = ({
             <div className="flex items-center justify-between text-gray-600 border-b pb-2">
               <div>
                 <EditableField
-                  isEditing={isEditing("coverage")}
+                  isEditing={isEditingThisCondition}
                   value={coverage}
                   editedValue={editingState?.value || ""}
                   label="Coverage"
@@ -116,7 +116,7 @@ export const FlowCondition = ({
             <div className="flex items-center justify-between text-gray-600">
               <div>
                 <EditableField
-                  isEditing={isEditing("expectedResults")}
+                  isEditing={isEditingThisCondition}
                   value={expectedResults}
                   editedValue={editingState?.value || ""}
                   label="Expected Results"
