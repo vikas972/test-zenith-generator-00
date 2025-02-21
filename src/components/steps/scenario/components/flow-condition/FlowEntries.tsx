@@ -35,6 +35,12 @@ export const FlowEntries = ({
     toast.success("Entry deleted successfully");
   };
 
+  const handleEntryEdit = (entryIndex: number, value: string) => {
+    if (onEdit) {
+      onEdit(entryIndex, value);
+    }
+  };
+
   return (
     <div className="space-y-2 mt-4">
       <h4 className="text-sm font-medium">Entries</h4>
@@ -50,7 +56,7 @@ export const FlowEntries = ({
                 value={entry.description}
                 editedValue={editedValue || ""}
                 width="w-full"
-                onEdit={() => onEdit?.(entryIndex, entry.description)}
+                onEdit={() => handleEntryEdit(entryIndex, entry.description)}
                 onSave={onSaveEdit}
                 onCancel={onCancelEdit}
                 onChange={onEditingChange}
@@ -62,7 +68,10 @@ export const FlowEntries = ({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8 flex-shrink-0"
-                  onClick={() => onEdit?.(entryIndex, entry.description)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleEntryEdit(entryIndex, entry.description);
+                  }}
                 >
                   <Edit2 className="h-4 w-4 text-blue-500" />
                 </Button>
