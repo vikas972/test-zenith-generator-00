@@ -173,17 +173,17 @@ export const ScenarioCard = ({
                   </div>
                 </div>
               ) : (
-                <>
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="bg-muted px-2 py-0.5 rounded-md text-sm font-semibold text-muted-foreground">
+                <div className="space-y-1">
+                  <div className="flex items-center gap-2">
+                    <div className="bg-muted rounded text-xs font-medium px-2 py-1">
                       {scenario.id}
-                    </span>
-                    <span className="font-medium">
+                    </div>
+                    <h4 className="text-sm font-medium leading-none">
                       {scenario.title}
-                    </span>
+                    </h4>
                   </div>
-                  <div className="text-sm text-muted-foreground flex items-center gap-2">
-                    <span className="font-medium">Priority:</span> 
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <span className="font-medium">Priority:</span>
                     <span className="capitalize">{scenario.priority}</span>
                     <span className="font-medium">Status:</span>
                     <Badge variant={getStatusVariant(scenario.status || "in_progress")}>
@@ -200,7 +200,7 @@ export const ScenarioCard = ({
                       {scenario.requirementId}
                     </button>
                   </div>
-                </>
+                </div>
               )}
             </div>
           </div>
