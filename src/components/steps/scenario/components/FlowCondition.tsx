@@ -129,7 +129,7 @@ export const FlowCondition = ({
                   width="w-[400px]"
                   onEdit={() => onEdit(flowIndex, subflowIndex, "expectedResults", expectedResults)}
                   onSave={onSaveEdit}
-                  onCancel={onCancelEdit}
+                  onCancelEdit={onCancelEdit}
                   onChange={onEditingChange}
                 />
               </div>
