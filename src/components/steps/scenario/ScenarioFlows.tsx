@@ -52,10 +52,22 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
       const newFlows = [...flows];
       const { flowIndex, subflowIndex, field, value } = editingState;
       
-      newFlows[flowIndex].subflows[subflowIndex] = {
-        ...newFlows[flowIndex].subflows[subflowIndex],
-        [field]: value
-      };
+      // Handle entry field editing differently
+      if (field.startsWith('entry_')) {
+        const entryIndex = parseInt(field.split('_')[1], 10);
+        if (newFlows[flowIndex].subflows[subflowIndex].entries) {
+          newFlows[flowIndex].subflows[subflowIndex].entries = 
+            newFlows[flowIndex].subflows[subflowIndex].entries?.map((entry, index) => 
+              index === entryIndex ? { description: value } : entry
+            );
+        }
+      } else {
+        // Handle other fields
+        newFlows[flowIndex].subflows[subflowIndex] = {
+          ...newFlows[flowIndex].subflows[subflowIndex],
+          [field]: value
+        };
+      }
       
       onUpdateFlows(newFlows);
       setEditingState(null);
@@ -78,9 +90,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   };
 
   const handleDeleteEntry = (flowIndex: number, subflowIndex: number, entryIndex: number) => {
-    // Clone the flows array
     const newFlows = [...flows];
-    // Remove the entry from the subflow's entries array
     if (newFlows[flowIndex].subflows[subflowIndex].entries) {
       newFlows[flowIndex].subflows[subflowIndex].entries = 
         newFlows[flowIndex].subflows[subflowIndex].entries?.filter((_, index) => index !== entryIndex);
