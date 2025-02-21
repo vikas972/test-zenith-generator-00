@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,6 +13,7 @@ interface AddScenarioDialogProps {
   onOpenChange: (open: boolean) => void;
   onSave: (scenario: Omit<TestScenario, "id">) => void;
   requirementId: string;
+  editingScenario?: TestScenario | null;
 }
 
 export const AddScenarioDialog = ({
@@ -20,11 +21,26 @@ export const AddScenarioDialog = ({
   onOpenChange,
   onSave,
   requirementId,
+  editingScenario,
 }: AddScenarioDialogProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [status, setStatus] = useState<ScenarioStatus>("in_progress");
+
+  useEffect(() => {
+    if (editingScenario) {
+      setTitle(editingScenario.title);
+      setDescription(editingScenario.description);
+      setPriority(editingScenario.priority);
+      setStatus(editingScenario.status || "in_progress");
+    } else {
+      setTitle("");
+      setDescription("");
+      setPriority("medium");
+      setStatus("in_progress");
+    }
+  }, [editingScenario]);
 
   const handleSave = () => {
     onSave({
@@ -32,8 +48,8 @@ export const AddScenarioDialog = ({
       description,
       priority,
       status,
-      requirementId,
-      flows: []
+      requirementId: editingScenario?.requirementId || requirementId,
+      flows: editingScenario?.flows || []
     });
     setTitle("");
     setDescription("");
@@ -46,7 +62,7 @@ export const AddScenarioDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Add New Test Scenario</DialogTitle>
+          <DialogTitle>{editingScenario ? "Edit Test Scenario" : "Add New Test Scenario"}</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid gap-2">
@@ -99,7 +115,7 @@ export const AddScenarioDialog = ({
             Cancel
           </Button>
           <Button onClick={handleSave} disabled={!title.trim()}>
-            Save
+            {editingScenario ? "Save Changes" : "Save"}
           </Button>
         </DialogFooter>
       </DialogContent>

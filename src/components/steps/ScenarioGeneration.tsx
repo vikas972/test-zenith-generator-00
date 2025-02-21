@@ -22,6 +22,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [selectedRequirement, setSelectedRequirement] = useState<string | null>(null);
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
   const [showAddDialog, setShowAddDialog] = useState(false);
+  const [editingScenario, setEditingScenario] = useState<TestScenario | null>(null);
 
   const handleScenarioClick = (scenarioId: string) => {
     setSelectedScenario(scenarioId);
@@ -38,29 +39,49 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   const handleAddScenario = () => {
+    setEditingScenario(null);
     setShowAddDialog(true);
   };
 
   const handleSaveNewScenario = (newScenario: Omit<TestScenario, "id">) => {
-    const id = `TS-${String(scenarios.length + 1).padStart(3, '0')}`;
-    const scenarioToAdd: TestScenario = {
-      id,
-      ...newScenario
-    };
-    
-    setScenarios(prev => [...prev, scenarioToAdd]);
-    toast({
-      title: "Success",
-      description: "New scenario added"
-    });
+    if (editingScenario) {
+      // Handling edit case
+      const updatedScenario = {
+        ...editingScenario,
+        ...newScenario
+      };
+      setScenarios(prev => prev.map(s => 
+        s.id === editingScenario.id ? updatedScenario : s
+      ));
+      toast({
+        title: "Success",
+        description: "Scenario updated successfully"
+      });
+    } else {
+      // Handling add case
+      const id = `TS-${String(scenarios.length + 1).padStart(3, '0')}`;
+      const scenarioToAdd: TestScenario = {
+        id,
+        ...newScenario
+      };
+      
+      setScenarios(prev => [...prev, scenarioToAdd]);
+      toast({
+        title: "Success",
+        description: "New scenario added"
+      });
+    }
+    setShowAddDialog(false);
+    setEditingScenario(null);
   };
 
   const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
-    toast({
-      title: "Success",
-      description: "Edit scenario"
-    });
+    const scenario = scenarios.find(s => s.id === scenarioId);
+    if (scenario) {
+      setEditingScenario(scenario);
+      setShowAddDialog(true);
+    }
   };
 
   const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
@@ -178,6 +199,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         onOpenChange={setShowAddDialog}
         onSave={handleSaveNewScenario}
         requirementId={selectedRequirement || "REQ-001"}
+        editingScenario={editingScenario}
       />
     </div>
   );
