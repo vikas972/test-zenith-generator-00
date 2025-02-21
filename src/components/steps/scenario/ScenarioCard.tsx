@@ -1,22 +1,20 @@
 
-import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { ChevronDown, ChevronRight, Edit2, Trash2, Save, X } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { type TestScenario, type TestScenarioFlow, type Priority, type ScenarioStatus } from "./types";
-import { ScenarioFlows } from "./ScenarioFlows";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Card } from "@/components/ui/card";
+import { ScenarioFlows } from "./ScenarioFlows";
+import { CheckCircle, XCircle, AlertCircle, PlusCircle } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { type TestScenario } from "./types";
+import { useState } from "react";
 
 interface ScenarioCardProps {
   scenario: TestScenario;
   isSelected: boolean;
   isExpanded: boolean;
   onScenarioClick: (id: string) => void;
-  onRequirementClick: (id: string) => void;
+  onRequirementClick: (requirementId: string) => void;
   onEdit: (e: React.MouseEvent, id: string) => void;
   onDelete: (e: React.MouseEvent, id: string) => void;
   onUpdateScenario: (updatedScenario: TestScenario) => void;
@@ -36,197 +34,146 @@ export const ScenarioCard = ({
   isChecked,
   onToggleSelect,
 }: ScenarioCardProps) => {
-  const [isEditing, setIsEditing] = useState(false);
-  const [editedTitle, setEditedTitle] = useState(scenario.title);
-  const [editedPriority, setEditedPriority] = useState<Priority>(scenario.priority);
-  const [editedStatus, setEditedStatus] = useState<ScenarioStatus>(scenario.status || "in_progress");
-
-  const handleUpdateFlows = (updatedFlows: TestScenarioFlow[]) => {
-    onUpdateScenario({
-      ...scenario,
-      flows: updatedFlows,
-    });
-  };
-
-  const handleEditClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setIsEditing(true);
-  };
-
-  const handleSave = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    onUpdateScenario({
-      ...scenario,
-      title: editedTitle,
-      priority: editedPriority,
-      status: editedStatus,
-    });
-    setIsEditing(false);
-  };
-
-  const handleCancel = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    setEditedTitle(scenario.title);
-    setEditedPriority(scenario.priority);
-    setEditedStatus(scenario.status || "in_progress");
-    setIsEditing(false);
-  };
-
-  const handleStatusChange = (value: ScenarioStatus) => {
-    setEditedStatus(value);
-  };
-
-  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
-    switch (status) {
-      case "completed":
-        return "default";
-      case "in_progress":
-        return "secondary";
-      case "needs_review":
-        return "outline";
-      default:
-        return "outline";
+  const [suggestions] = useState([
+    {
+      id: 1,
+      description: "Add validation for empty input fields",
+      type: "validation"
+    },
+    {
+      id: 2,
+      description: "Include error handling for network timeout",
+      type: "error_handling"
     }
+  ]);
+
+  const [acceptedSuggestions, setAcceptedSuggestions] = useState<number[]>([]);
+  const [rejectedSuggestions, setRejectedSuggestions] = useState<number[]>([]);
+
+  const handleAcceptSuggestion = (suggestionId: number) => {
+    setAcceptedSuggestions(prev => [...prev, suggestionId]);
+  };
+
+  const handleRejectSuggestion = (suggestionId: number) => {
+    setRejectedSuggestions(prev => [...prev, suggestionId]);
   };
 
   return (
     <Card
       className={cn(
-        "cursor-pointer transition-colors",
-        isSelected && "border-primary"
+        "transition-all",
+        isSelected && "ring-2 ring-primary",
+        isExpanded && "mb-4"
       )}
-      onClick={() => onScenarioClick(scenario.id)}
     >
-      <div className="p-4">
-        <div className="flex items-start justify-between mb-2">
-          <div className="flex items-center gap-2">
+      <div
+        className="p-4 cursor-pointer hover:bg-gray-50"
+        onClick={() => onScenarioClick(scenario.id)}
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
             <Checkbox
               checked={isChecked}
-              onCheckedChange={(checked) => {
-                onToggleSelect(scenario.id, checked as boolean);
-              }}
+              onCheckedChange={(checked) => onToggleSelect(scenario.id, checked as boolean)}
               onClick={(e) => e.stopPropagation()}
             />
-            {isExpanded ? (
-              <ChevronDown className="h-4 w-4" />
-            ) : (
-              <ChevronRight className="h-4 w-4" />
-            )}
             <div>
-              {isEditing ? (
-                <div className="flex flex-col gap-2" onClick={(e) => e.stopPropagation()}>
-                  <div className="flex items-center gap-2">
-                    <Input
-                      value={editedTitle}
-                      onChange={(e) => setEditedTitle(e.target.value)}
-                      className="w-[300px]"
-                      onClick={(e) => e.stopPropagation()}
-                    />
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Select
-                      value={editedPriority}
-                      onValueChange={(value: Priority) => setEditedPriority(value)}
-                    >
-                      <SelectTrigger 
-                        className="w-[100px]" 
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <SelectValue placeholder="Select priority" />
-                      </SelectTrigger>
-                      <SelectContent onClick={(e) => e.stopPropagation()}>
-                        <SelectItem value="high">High</SelectItem>
-                        <SelectItem value="medium">Medium</SelectItem>
-                        <SelectItem value="low">Low</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Select
-                      value={editedStatus}
-                      onValueChange={handleStatusChange}
-                    >
-                      <SelectTrigger 
-                        className="w-[120px]" 
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        <SelectValue placeholder="Select status" />
-                      </SelectTrigger>
-                      <SelectContent onClick={(e) => e.stopPropagation()}>
-                        <SelectItem value="completed">Completed</SelectItem>
-                        <SelectItem value="needs_review">Needs Review</SelectItem>
-                        <SelectItem value="in_progress">In Progress</SelectItem>
-                      </SelectContent>
-                    </Select>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleSave}
-                    >
-                      <Save className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={handleCancel}
-                    >
-                      <X className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              ) : (
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <div className="bg-muted rounded text-xs font-medium px-2 py-1">
-                      {scenario.id}
-                    </div>
-                    <h4 className="text-sm font-medium leading-none">
-                      {scenario.title}
-                    </h4>
-                  </div>
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <span className="font-medium">Priority:</span>
-                    <span className="capitalize">{scenario.priority}</span>
-                    <span className="font-medium">Status:</span>
-                    <Badge variant={getStatusVariant(scenario.status || "in_progress")}>
-                      {(scenario.status || "in_progress").replace("_", " ")}
-                    </Badge>
-                    <span className="font-medium">Requirement:</span>
-                    <button 
-                      className="text-primary hover:underline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRequirementClick(scenario.requirementId);
-                      }}
-                    >
-                      {scenario.requirementId}
-                    </button>
-                  </div>
-                </div>
-              )}
+              <div className="flex items-center gap-2 mb-1">
+                <span className="font-medium">{scenario.id}</span>
+                <Badge
+                  variant="outline"
+                  className="cursor-pointer hover:bg-primary/5"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onRequirementClick(scenario.requirementId);
+                  }}
+                >
+                  {scenario.requirementId}
+                </Badge>
+                <Badge>{scenario.status}</Badge>
+              </div>
+              <p className="text-sm text-gray-600">{scenario.description}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
-            {!isEditing && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleEditClick}
-                >
-                  <Edit2 className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => onDelete(e, scenario.id)}
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-              </>
-            )}
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => onEdit(e, scenario.id)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={(e) => onDelete(e, scenario.id)}
+            >
+              Delete
+            </Button>
           </div>
         </div>
 
-        {isExpanded && <ScenarioFlows flows={scenario.flows} onUpdateFlows={handleUpdateFlows} />}
+        {suggestions.length > 0 && !isExpanded && (
+          <div className="mt-2 flex items-center gap-1 text-amber-600">
+            <AlertCircle className="h-4 w-4" />
+            <span className="text-xs">
+              {suggestions.length} coverage suggestions available
+            </span>
+          </div>
+        )}
+
+        {isExpanded && (
+          <>
+            <ScenarioFlows
+              flows={scenario.flows}
+              scenarioId={scenario.id}
+              onUpdateScenario={onUpdateScenario}
+            />
+
+            {suggestions
+              .filter(s => !acceptedSuggestions.includes(s.id) && !rejectedSuggestions.includes(s.id))
+              .length > 0 && (
+              <div className="mt-4 p-3 bg-amber-50 rounded border border-amber-200">
+                <div className="flex items-center gap-2 mb-2">
+                  <PlusCircle className="h-4 w-4 text-amber-600" />
+                  <span className="text-sm font-medium text-amber-700">
+                    Coverage Suggestions
+                  </span>
+                </div>
+                <div className="space-y-2">
+                  {suggestions
+                    .filter(s => !acceptedSuggestions.includes(s.id) && !rejectedSuggestions.includes(s.id))
+                    .map(suggestion => (
+                      <div
+                        key={suggestion.id}
+                        className="flex items-start justify-between gap-4 text-sm"
+                      >
+                        <span className="text-amber-700">{suggestion.description}</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 hover:text-green-600"
+                            onClick={() => handleAcceptSuggestion(suggestion.id)}
+                          >
+                            <CheckCircle className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-6 w-6 p-0 hover:text-red-600"
+                            onClick={() => handleRejectSuggestion(suggestion.id)}
+                          >
+                            <XCircle className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )}
+          </>
+        )}
       </div>
     </Card>
   );

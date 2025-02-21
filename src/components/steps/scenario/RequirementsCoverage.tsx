@@ -1,12 +1,18 @@
 
 import { cn } from "@/lib/utils";
 import { type TestScenario } from "./types";
-import { Percent } from "lucide-react";
+import { AlertCircle, CheckCircle, PieChart } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface RequirementsCoverageProps {
   scenarios: TestScenario[];
   selectedScenario: string | null;
   onRequirementClick: (id: string) => void;
+}
+
+interface MissingCoverage {
+  type: string;
+  description: string;
 }
 
 export const RequirementsCoverage = ({
@@ -15,7 +21,6 @@ export const RequirementsCoverage = ({
   onRequirementClick,
 }: RequirementsCoverageProps) => {
   const calculateCoverage = (relatedScenarios: TestScenario[]) => {
-    // This is a simple calculation - you can adjust the weights based on your needs
     const totalFlows = relatedScenarios.reduce((acc, scenario) => acc + scenario.flows.length, 0);
     const totalSubflows = relatedScenarios.reduce((acc, scenario) => 
       acc + scenario.flows.reduce((flowAcc, flow) => flowAcc + flow.subflows.length, 0), 0);
@@ -23,6 +28,32 @@ export const RequirementsCoverage = ({
     // Calculate coverage based on number of flows and subflows
     const coverage = Math.min(100, Math.round((totalFlows * 20 + totalSubflows * 10) / 3));
     return coverage;
+  };
+
+  const getMissingCoverageItems = (coverage: number): MissingCoverage[] => {
+    if (coverage === 100) return [];
+    
+    // This is an example - in a real app, you'd analyze the actual coverage gaps
+    const missingItems: MissingCoverage[] = [];
+    if (coverage < 100) {
+      missingItems.push({
+        type: "flow",
+        description: "Add error handling flows for invalid inputs"
+      });
+    }
+    if (coverage < 80) {
+      missingItems.push({
+        type: "validation",
+        description: "Add validation scenarios for boundary conditions"
+      });
+    }
+    if (coverage < 60) {
+      missingItems.push({
+        type: "edge_case",
+        description: "Consider edge cases for concurrent user actions"
+      });
+    }
+    return missingItems;
   };
 
   return (
@@ -40,6 +71,7 @@ export const RequirementsCoverage = ({
             }, {})
           ).map(([requirementId, relatedScenarios]) => {
             const coverage = calculateCoverage(relatedScenarios);
+            const missingItems = getMissingCoverageItems(coverage);
             
             return (
               <div
@@ -54,10 +86,22 @@ export const RequirementsCoverage = ({
               >
                 <div className="flex items-center justify-between mb-2">
                   <div className="font-medium">{requirementId}</div>
-                  <div className="flex items-center gap-2">
-                    <Percent className="h-4 w-4 text-gray-500" />
-                    <span className="text-sm font-semibold text-gray-700">{coverage}%</span>
-                  </div>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>
+                        <div className="flex items-center gap-2">
+                          <PieChart className={cn(
+                            "h-4 w-4",
+                            coverage === 100 ? "text-green-500" : "text-amber-500"
+                          )} />
+                          <span className="text-sm font-semibold text-gray-700">{coverage}%</span>
+                        </div>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Requirement Coverage</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
                 <div className="text-sm text-gray-600">
                   <div className="flex justify-between items-center mb-1">
@@ -80,6 +124,22 @@ export const RequirementsCoverage = ({
                       ))}
                     </ul>
                   </div>
+                  {missingItems.length > 0 && (
+                    <div className="mt-2 p-2 bg-amber-50 rounded border border-amber-200">
+                      <div className="flex items-center gap-1 text-amber-600 mb-1">
+                        <AlertCircle className="h-4 w-4" />
+                        <span className="text-xs font-medium">Missing Coverage</span>
+                      </div>
+                      <ul className="space-y-1">
+                        {missingItems.map((item, index) => (
+                          <li key={index} className="flex items-start gap-2 text-xs text-amber-700">
+                            <span>•</span>
+                            <span>{item.description}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                 </div>
               </div>
             );
