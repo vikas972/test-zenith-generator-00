@@ -53,7 +53,7 @@ export const FlowEntries = ({
               type="button"
               variant="ghost"
               size="icon"
-              className="h-8 w-8 flex-shrink-0 opacity-100"
+              className="h-8 w-8"
               onClick={(e) => {
                 e.stopPropagation();
                 onDeleteEntry(entryIndex);
