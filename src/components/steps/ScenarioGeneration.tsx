@@ -139,6 +139,31 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
+  const getRequirementDetails = (requirementId: string) => {
+    return {
+      id: requirementId,
+      functionalArea: "User Authentication",
+      description: "System shall provide secure user authentication mechanisms",
+      actors: ["End User", "System"],
+      businessRequirements: [
+        { id: "br1", description: "System shall authenticate users" },
+        { id: "br2", description: "System shall validate credentials" },
+        { id: "br3", description: "System shall manage sessions" }
+      ],
+      businessRules: [
+        { id: "rule1", description: "Password must be at least 8 characters", category: "security" },
+        { id: "rule2", description: "Account locks after 3 failed attempts", category: "security" },
+        { id: "rule3", description: "Session expires after 30 minutes", category: "security" }
+      ],
+      dataElements: [
+        { id: "de1", name: "Username", type: "string", required: true, specifications: ["Must be email format"] },
+        { id: "de2", name: "Password", type: "string", required: true, specifications: ["Min 8 characters", "1 special character"] }
+      ],
+      status: "needs_review" as const,
+      confidence: 0.85,
+    };
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
@@ -179,12 +204,90 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           <div className="max-h-[70vh] overflow-y-auto">
             {selectedRequirement && (
               <div className="space-y-4">
-                <h3 className="text-lg font-semibold">
-                  {selectedRequirement}
-                </h3>
-                <div className="text-sm text-gray-600">
-                  This dialog will show the complete requirement details including all business requirements,
-                  business rules, and data elements associated with this requirement.
+                <div className="flex justify-between items-start">
+                  <h3 className="text-lg font-semibold">
+                    {selectedRequirement}
+                  </h3>
+                  <div className="text-sm text-muted-foreground">
+                    Confidence: {Math.round(getRequirementDetails(selectedRequirement).confidence * 100)}%
+                  </div>
+                </div>
+
+                <div className="space-y-6">
+                  {/* Functional Area */}
+                  <div>
+                    <h4 className="font-medium mb-2">Functional Area</h4>
+                    <p className="text-sm text-gray-600">
+                      {getRequirementDetails(selectedRequirement).functionalArea}
+                    </p>
+                  </div>
+
+                  {/* Description */}
+                  <div>
+                    <h4 className="font-medium mb-2">Description</h4>
+                    <p className="text-sm text-gray-600">
+                      {getRequirementDetails(selectedRequirement).description}
+                    </p>
+                  </div>
+
+                  {/* Actors */}
+                  <div>
+                    <h4 className="font-medium mb-2">Actors</h4>
+                    <div className="flex gap-2">
+                      {getRequirementDetails(selectedRequirement).actors.map((actor, index) => (
+                        <span key={index} className="px-2 py-1 bg-gray-100 rounded text-sm">
+                          {actor}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Business Requirements */}
+                  <div>
+                    <h4 className="font-medium mb-2">Business Requirements</h4>
+                    <ul className="space-y-2">
+                      {getRequirementDetails(selectedRequirement).businessRequirements.map((req) => (
+                        <li key={req.id} className="text-sm text-gray-600">
+                          {req.description}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Business Rules */}
+                  <div>
+                    <h4 className="font-medium mb-2">Business Rules</h4>
+                    <ul className="space-y-2">
+                      {getRequirementDetails(selectedRequirement).businessRules.map((rule) => (
+                        <li key={rule.id} className="text-sm">
+                          <span className="text-gray-600">{rule.description}</span>
+                          <span className="ml-2 px-2 py-0.5 bg-gray-100 rounded text-xs">
+                            {rule.category}
+                          </span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+
+                  {/* Data Elements */}
+                  <div>
+                    <h4 className="font-medium mb-2">Data Elements</h4>
+                    <div className="space-y-3">
+                      {getRequirementDetails(selectedRequirement).dataElements.map((element) => (
+                        <div key={element.id} className="p-3 border rounded">
+                          <div className="flex justify-between mb-1">
+                            <span className="font-medium">{element.name}</span>
+                            <span className="text-sm text-gray-500">{element.type}</span>
+                          </div>
+                          <div className="text-sm text-gray-600">
+                            {element.specifications.map((spec, index) => (
+                              <div key={index}>{spec}</div>
+                            ))}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -201,3 +304,5 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     </div>
   );
 };
+
+export default Index;
