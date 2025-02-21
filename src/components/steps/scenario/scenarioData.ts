@@ -5,6 +5,7 @@ export const initialScenarios: TestScenario[] = [
   {
     id: "TS-001",
     title: "User Authentication",
+    description: "Verify all aspects of user authentication system including standard login, alternative paths, and error conditions",
     requirementId: "REQ-001",
     priority: "high",
     flows: [
@@ -72,6 +73,7 @@ export const initialScenarios: TestScenario[] = [
   {
     id: "TS-002",
     title: "Password Reset",
+    description: "Validate password reset functionality including email verification and security measures",
     requirementId: "REQ-002",
     priority: "high",
     flows: [

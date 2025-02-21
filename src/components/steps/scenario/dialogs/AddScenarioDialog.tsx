@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { type TestScenario, type Priority, type ScenarioStatus } from "../types";
 
 interface AddScenarioDialogProps {
@@ -21,18 +22,21 @@ export const AddScenarioDialog = ({
   requirementId,
 }: AddScenarioDialogProps) => {
   const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
   const [priority, setPriority] = useState<Priority>("medium");
   const [status, setStatus] = useState<ScenarioStatus>("in_progress");
 
   const handleSave = () => {
     onSave({
       title,
+      description,
       priority,
       status,
       requirementId,
       flows: []
     });
     setTitle("");
+    setDescription("");
     setPriority("medium");
     setStatus("in_progress");
     onOpenChange(false);
@@ -52,6 +56,15 @@ export const AddScenarioDialog = ({
               value={title}
               onChange={(e) => setTitle(e.target.value)}
               placeholder="Enter scenario title"
+            />
+          </div>
+          <div className="grid gap-2">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              placeholder="Enter scenario description"
             />
           </div>
           <div className="grid gap-2">
