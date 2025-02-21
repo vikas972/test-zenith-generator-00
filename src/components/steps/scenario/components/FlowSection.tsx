@@ -13,7 +13,7 @@ interface FlowSectionProps {
     field: string | null;
     value: string;
   } | null;
-  onAddCondition: (flow: TestScenarioFlow, index: number) => void;
+  onAddCondition: (e: React.MouseEvent, flow: TestScenarioFlow, index: number) => void;
   onEditCondition: (flowIndex: number, subflowIndex: number, field: string, value: string) => void;
   onDeleteCondition: (flowIndex: number, subflowIndex: number) => void;
   onAddEntry: (flowIndex: number, subflowIndex: number) => void;
@@ -45,7 +45,7 @@ export const FlowSection = ({
         <Button
           variant="ghost"
           size="sm"
-          onClick={() => onAddCondition(flow, flowIndex)}
+          onClick={(e) => onAddCondition(e, flow, flowIndex)}
         >
           <Plus className="h-4 w-4" />
           Add Condition

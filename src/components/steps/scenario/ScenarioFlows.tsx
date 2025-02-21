@@ -21,7 +21,8 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
     value: string;
   } | null>(null);
 
-  const handleAddCondition = (flow: TestScenarioFlow, index: number) => {
+  const handleAddCondition = (e: React.MouseEvent, flow: TestScenarioFlow, index: number) => {
+    e.stopPropagation(); // Prevent the tile from collapsing
     setActiveFlow({ type: flow.type, index });
     setShowAddDialog(true);
   };

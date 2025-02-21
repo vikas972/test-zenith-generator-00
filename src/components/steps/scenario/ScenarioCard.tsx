@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { ScenarioFlows } from "./ScenarioFlows";
-import { CheckCircle, XCircle, AlertCircle, PlusCircle } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, PlusCircle, Pencil, Trash2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { type TestScenario } from "./types";
 import { useState } from "react";
@@ -97,7 +97,9 @@ export const ScenarioCard = ({
                 >
                   {scenario.requirementId}
                 </Badge>
-                <Badge>{scenario.status}</Badge>
+                {scenario.status && (
+                  <Badge>{scenario.status}</Badge>
+                )}
               </div>
               <p className="text-sm text-gray-600">{scenario.title}</p>
             </div>
@@ -105,17 +107,25 @@ export const ScenarioCard = ({
           <div className="flex items-center gap-2">
             <Button
               variant="ghost"
-              size="sm"
-              onClick={(e) => onEdit(e, scenario.id)}
+              size="icon"
+              className="h-8 w-8"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(e, scenario.id);
+              }}
             >
-              Edit
+              <Pencil className="h-4 w-4" />
             </Button>
             <Button
               variant="ghost"
-              size="sm"
-              onClick={(e) => onDelete(e, scenario.id)}
+              size="icon"
+              className="h-8 w-8"
+              onClick={(e) => {
+                e.stopPropagation();
+                onDelete(e, scenario.id);
+              }}
             >
-              Delete
+              <Trash2 className="h-4 w-4 text-red-500" />
             </Button>
           </div>
         </div>
@@ -160,7 +170,10 @@ export const ScenarioCard = ({
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0 hover:text-green-600"
-                            onClick={() => handleAcceptSuggestion(suggestion.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleAcceptSuggestion(suggestion.id);
+                            }}
                           >
                             <CheckCircle className="h-4 w-4" />
                           </Button>
@@ -168,7 +181,10 @@ export const ScenarioCard = ({
                             variant="ghost"
                             size="sm"
                             className="h-6 w-6 p-0 hover:text-red-600"
-                            onClick={() => handleRejectSuggestion(suggestion.id)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleRejectSuggestion(suggestion.id);
+                            }}
                           >
                             <XCircle className="h-4 w-4" />
                           </Button>
