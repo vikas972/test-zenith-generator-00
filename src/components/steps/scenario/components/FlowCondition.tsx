@@ -146,10 +146,34 @@ export const FlowCondition = ({
                 </Button>
               </div>
             </div>
-            <FlowEntries
-              entries={entries}
-              onDeleteEntry={handleDeleteEntry}
-            />
+            {entries.length > 0 && (
+              <div className="mt-4 space-y-2">
+                <h4 className="text-sm font-medium">Entries:</h4>
+                <div className="divide-y">
+                  {entries.map((entry, entryIndex) => (
+                    <div
+                      key={entryIndex}
+                      className="flex items-start gap-2 py-2 group"
+                    >
+                      <EditableField
+                        isEditing={isEditing(`entry-${entryIndex}`)}
+                        value={entry.description}
+                        editedValue={editingState?.value || ""}
+                        width="w-full"
+                        onEdit={() => onEdit(flowIndex, subflowIndex, `entry-${entryIndex}`, entry.description)}
+                        onSave={onSaveEdit}
+                        onCancel={onCancelEdit}
+                        onChange={onEditingChange}
+                      />
+                      <FlowEntries
+                        entries={entries}
+                        onDeleteEntry={handleDeleteEntry}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
