@@ -8,6 +8,8 @@ import { type TestScenario, type TestScenarioFlow, type Priority } from "./types
 import { ScenarioFlows } from "./ScenarioFlows";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Badge } from "@/components/ui/badge";
 
 interface ScenarioCardProps {
   scenario: TestScenario;
@@ -18,6 +20,8 @@ interface ScenarioCardProps {
   onEdit: (e: React.MouseEvent, id: string) => void;
   onDelete: (e: React.MouseEvent, id: string) => void;
   onUpdateScenario: (updatedScenario: TestScenario) => void;
+  isChecked: boolean;
+  onToggleSelect: (id: string, checked: boolean) => void;
 }
 
 export const ScenarioCard = ({
@@ -29,10 +33,13 @@ export const ScenarioCard = ({
   onEdit,
   onDelete,
   onUpdateScenario,
+  isChecked,
+  onToggleSelect,
 }: ScenarioCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(scenario.title);
   const [editedPriority, setEditedPriority] = useState<Priority>(scenario.priority);
+  const [editedStatus, setEditedStatus] = useState(scenario.status || "draft");
 
   const handleUpdateFlows = (updatedFlows: TestScenarioFlow[]) => {
     onUpdateScenario({
@@ -52,6 +59,7 @@ export const ScenarioCard = ({
       ...scenario,
       title: editedTitle,
       priority: editedPriority,
+      status: editedStatus,
     });
     setIsEditing(false);
   };
@@ -60,7 +68,21 @@ export const ScenarioCard = ({
     e.stopPropagation();
     setEditedTitle(scenario.title);
     setEditedPriority(scenario.priority);
+    setEditedStatus(scenario.status || "draft");
     setIsEditing(false);
+  };
+
+  const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
+    switch (status) {
+      case "approved":
+        return "default";
+      case "in_review":
+        return "secondary";
+      case "rejected":
+        return "destructive";
+      default:
+        return "outline";
+    }
   };
 
   return (
@@ -74,6 +96,13 @@ export const ScenarioCard = ({
       <div className="p-4">
         <div className="flex items-start justify-between mb-2">
           <div className="flex items-center gap-2">
+            <Checkbox
+              checked={isChecked}
+              onCheckedChange={(checked) => {
+                onToggleSelect(scenario.id, checked as boolean);
+              }}
+              onClick={(e) => e.stopPropagation()}
+            />
             {isExpanded ? (
               <ChevronDown className="h-4 w-4" />
             ) : (
@@ -107,6 +136,23 @@ export const ScenarioCard = ({
                         <SelectItem value="low">Low</SelectItem>
                       </SelectContent>
                     </Select>
+                    <Select
+                      value={editedStatus}
+                      onValueChange={setEditedStatus}
+                    >
+                      <SelectTrigger 
+                        className="w-[120px]" 
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <SelectValue placeholder="Select status" />
+                      </SelectTrigger>
+                      <SelectContent onClick={(e) => e.stopPropagation()}>
+                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem value="in_review">In Review</SelectItem>
+                        <SelectItem value="approved">Approved</SelectItem>
+                        <SelectItem value="rejected">Rejected</SelectItem>
+                      </SelectContent>
+                    </Select>
                     <Button
                       variant="ghost"
                       size="sm"
@@ -128,17 +174,24 @@ export const ScenarioCard = ({
                   <div className="font-medium">
                     📋 {scenario.title}
                   </div>
-                  <div className="text-sm text-gray-500">
-                    ID: {scenario.id} | Priority: {scenario.priority} | Requirement:{" "}
-                    <button 
-                      className="text-primary hover:underline"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        onRequirementClick(scenario.requirementId);
-                      }}
-                    >
-                      {scenario.requirementId}
-                    </button>
+                  <div className="text-sm text-gray-500 flex items-center gap-2">
+                    <span>ID: {scenario.id}</span>
+                    <span>Priority: {scenario.priority}</span>
+                    <Badge variant={getStatusVariant(scenario.status || "draft")}>
+                      {(scenario.status || "draft").replace("_", " ")}
+                    </Badge>
+                    <span>
+                      Requirement:{" "}
+                      <button 
+                        className="text-primary hover:underline"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onRequirementClick(scenario.requirementId);
+                        }}
+                      >
+                        {scenario.requirementId}
+                      </button>
+                    </span>
                   </div>
                 </>
               )}

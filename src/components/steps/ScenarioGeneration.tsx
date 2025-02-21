@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Trash2 } from "lucide-react";
 import { type TestScenario } from "./scenario/types";
 import { ScenarioCard } from "./scenario/ScenarioCard";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
@@ -13,6 +13,14 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { initialScenarios } from "./scenario/scenarioData";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -25,6 +33,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [scenarios, setScenarios] = useState<TestScenario[]>(initialScenarios);
   const [showRequirementDialog, setShowRequirementDialog] = useState(false);
   const [selectedRequirement, setSelectedRequirement] = useState<string | null>(null);
+  const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
 
   const handleScenarioClick = (scenarioId: string) => {
     setSelectedScenario(scenarioId);
@@ -57,9 +66,11 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
   const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
+    setScenarios(prev => prev.filter(scenario => scenario.id !== scenarioId));
+    setSelectedScenarios(prev => prev.filter(id => id !== scenarioId));
     toast({
       title: "Success",
-      description: "Delete scenario"
+      description: "Scenario deleted"
     });
   };
 
@@ -71,15 +82,101 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     );
   };
 
+  const handleSelectScenario = (scenarioId: string, checked: boolean) => {
+    setSelectedScenarios(prev =>
+      checked
+        ? [...prev, scenarioId]
+        : prev.filter(id => id !== scenarioId)
+    );
+  };
+
+  const handleSelectAll = (checked: boolean) => {
+    setSelectedScenarios(checked ? scenarios.map(s => s.id) : []);
+  };
+
+  const handleBulkDelete = () => {
+    if (selectedScenarios.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one scenario to delete",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setScenarios(prev => prev.filter(scenario => !selectedScenarios.includes(scenario.id)));
+    setSelectedScenarios([]);
+    toast({
+      title: "Success",
+      description: `Deleted ${selectedScenarios.length} scenarios`
+    });
+  };
+
+  const handleBulkStatusChange = (newStatus: string) => {
+    if (selectedScenarios.length === 0) {
+      toast({
+        title: "Error",
+        description: "Please select at least one scenario",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setScenarios(prev =>
+      prev.map(scenario =>
+        selectedScenarios.includes(scenario.id)
+          ? { ...scenario, status: newStatus }
+          : scenario
+      )
+    );
+
+    toast({
+      title: "Success",
+      description: `Updated status for ${selectedScenarios.length} scenarios`
+    });
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
-        <div className="mb-4 flex justify-between items-center">
-          <h2 className="text-lg font-semibold">Test Scenarios</h2>
-          <Button onClick={handleAddScenario}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Scenario
-          </Button>
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Checkbox
+              checked={selectedScenarios.length === scenarios.length}
+              onClick={(e) => e.stopPropagation()}
+              onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
+            />
+            <h2 className="text-lg font-semibold">Test Scenarios</h2>
+          </div>
+          <div className="flex items-center gap-2">
+            {selectedScenarios.length > 0 && (
+              <>
+                <Select onValueChange={handleBulkStatusChange}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Change status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="draft">Draft</SelectItem>
+                    <SelectItem value="in_review">In Review</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+                <Button 
+                  variant="destructive" 
+                  size="sm"
+                  onClick={handleBulkDelete}
+                >
+                  <Trash2 className="h-4 w-4 mr-2" />
+                  Delete Selected
+                </Button>
+              </>
+            )}
+            <Button onClick={handleAddScenario}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Scenario
+            </Button>
+          </div>
         </div>
 
         <div className="space-y-4">
@@ -94,6 +191,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
               onEdit={handleEditScenario}
               onDelete={handleDeleteScenario}
               onUpdateScenario={handleUpdateScenario}
+              isChecked={selectedScenarios.includes(scenario.id)}
+              onToggleSelect={handleSelectScenario}
             />
           ))}
         </div>
