@@ -1,11 +1,11 @@
 
 import { useState } from "react";
-import { type TestScenarioFlow, type FlowType } from "./types";
+import { type TestScenarioFlow, type FlowType, type TestScenario } from "./types";
 import { AddConditionDialog } from "./dialogs/AddConditionDialog";
 import { useToast } from "@/components/ui/use-toast";
 import { FlowSection } from "./components/FlowSection";
 
-interface ScenarioFlowsProps {
+export interface ScenarioFlowsProps {
   flows: TestScenarioFlow[];
   onUpdateFlows: (flows: TestScenarioFlow[]) => void;
 }
@@ -52,7 +52,6 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
       const newFlows = [...flows];
       const { flowIndex, subflowIndex, field, value } = editingState;
       
-      // Handle entry field editing differently
       if (field.startsWith('entry_')) {
         const entryIndex = parseInt(field.split('_')[1], 10);
         if (newFlows[flowIndex].subflows[subflowIndex].entries) {
@@ -62,7 +61,6 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
             );
         }
       } else {
-        // Handle other fields
         newFlows[flowIndex].subflows[subflowIndex] = {
           ...newFlows[flowIndex].subflows[subflowIndex],
           [field]: value

@@ -58,6 +58,13 @@ export const ScenarioCard = ({
     setRejectedSuggestions(prev => [...prev, suggestionId]);
   };
 
+  const handleUpdateFlows = (newFlows: TestScenario["flows"]) => {
+    onUpdateScenario({
+      ...scenario,
+      flows: newFlows,
+    });
+  };
+
   return (
     <Card
       className={cn(
@@ -92,7 +99,7 @@ export const ScenarioCard = ({
                 </Badge>
                 <Badge>{scenario.status}</Badge>
               </div>
-              <p className="text-sm text-gray-600">{scenario.description}</p>
+              <p className="text-sm text-gray-600">{scenario.title}</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -126,8 +133,7 @@ export const ScenarioCard = ({
           <>
             <ScenarioFlows
               flows={scenario.flows}
-              scenarioId={scenario.id}
-              onUpdateScenario={onUpdateScenario}
+              onUpdateFlows={handleUpdateFlows}
             />
 
             {suggestions
