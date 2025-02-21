@@ -48,7 +48,7 @@ export const FlowEntries = ({
         {entries.map((entry, entryIndex) => (
           <div 
             key={entryIndex} 
-            className="flex items-center justify-between py-2"
+            className="flex items-center justify-between py-2 group"
           >
             <div className="flex-1 mr-2">
               <EditableField
@@ -62,16 +62,15 @@ export const FlowEntries = ({
                 onChange={onEditingChange}
               />
             </div>
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8 flex-shrink-0"
-                onClick={(e) => handleDeleteEntry(entryIndex, e)}
-              >
-                <Trash2 className="h-4 w-4 text-red-500" />
-              </Button>
-            </div>
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8 flex-shrink-0"
+              onClick={(e) => handleDeleteEntry(entryIndex, e)}
+            >
+              <Trash2 className="h-4 w-4 text-red-500" />
+            </Button>
           </div>
         ))}
       </div>
