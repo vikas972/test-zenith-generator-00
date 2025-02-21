@@ -129,7 +129,7 @@ export const FlowCondition = ({
                 />
               </div>
             </div>
-            {entries.length > 0 && (
+            {entries && entries.length > 0 && (
               <FlowEntries
                 entries={entries}
                 onDeleteEntry={handleDeleteEntry}
@@ -149,3 +149,4 @@ export const FlowCondition = ({
     </div>
   );
 };
+
