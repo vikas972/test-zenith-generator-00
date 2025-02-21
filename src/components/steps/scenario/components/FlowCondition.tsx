@@ -57,7 +57,7 @@ export const FlowCondition = ({
   };
 
   return (
-    <div className="text-sm border rounded-md p-3">
+    <div className="text-sm border rounded-md p-3 bg-blue-50">
       <div className="flex items-start gap-2">
         <span className="text-gray-400 mt-1">{getFlowTypeIcon(flowType)}</span>
         <div className="space-y-1 flex-1">
