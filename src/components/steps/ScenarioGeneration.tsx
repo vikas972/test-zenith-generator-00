@@ -1,9 +1,6 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { Button } from "@/components/ui/button";
-import { Plus, Trash2, CheckSquare } from "lucide-react";
 import { type TestScenario, type ScenarioStatus } from "./scenario/types";
-import { ScenarioCard } from "./scenario/ScenarioCard";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
 import {
   Dialog,
@@ -12,14 +9,9 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { initialScenarios } from "./scenario/scenarioData";
-import { Checkbox } from "@/components/ui/checkbox";
 import { AddScenarioDialog } from "./scenario/dialogs/AddScenarioDialog";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { ScenarioHeader } from "./scenario/components/ScenarioHeader";
+import { ScenarioList } from "./scenario/components/ScenarioList";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -150,73 +142,27 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
-        <div className="mb-4 flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Checkbox
-              checked={selectedScenarios.length === scenarios.length}
-              onClick={(e) => e.stopPropagation()}
-              onCheckedChange={(checked) => handleSelectAll(checked as boolean)}
-            />
-            <h2 className="text-lg font-semibold">Test Scenarios</h2>
-          </div>
-          <div className="flex items-center gap-2">
-            <Button 
-              className="bg-blue-500 hover:bg-blue-600"
-              onClick={handleAddScenario}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Scenario
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  className="bg-blue-500 hover:bg-blue-600"
-                  disabled={selectedScenarios.length === 0}
-                >
-                  <CheckSquare className="h-4 w-4 mr-2" />
-                  Change Status
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end">
-                <DropdownMenuItem onSelect={() => handleBulkStatusChange("completed")}>
-                  Mark as Completed
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => handleBulkStatusChange("needs_review")}>
-                  Mark as Needs Review
-                </DropdownMenuItem>
-                <DropdownMenuItem onSelect={() => handleBulkStatusChange("in_progress")}>
-                  Mark as In Progress
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-            <Button 
-              onClick={handleBulkDelete}
-              disabled={selectedScenarios.length === 0}
-              variant="destructive"
-            >
-              <Trash2 className="h-4 w-4 mr-2" />
-              Delete Selected
-            </Button>
-          </div>
-        </div>
+        <ScenarioHeader
+          selectedScenariosCount={selectedScenarios.length}
+          totalScenariosCount={scenarios.length}
+          onSelectAll={handleSelectAll}
+          onAddScenario={handleAddScenario}
+          onBulkStatusChange={handleBulkStatusChange}
+          onBulkDelete={handleBulkDelete}
+        />
 
-        <div className="space-y-4">
-          {scenarios.map((scenario) => (
-            <ScenarioCard
-              key={scenario.id}
-              scenario={scenario}
-              isSelected={selectedScenario === scenario.id}
-              isExpanded={expandedScenarios.includes(scenario.id)}
-              onScenarioClick={handleScenarioClick}
-              onRequirementClick={handleRequirementClick}
-              onEdit={handleEditScenario}
-              onDelete={handleDeleteScenario}
-              onUpdateScenario={handleUpdateScenario}
-              isChecked={selectedScenarios.includes(scenario.id)}
-              onToggleSelect={handleSelectScenario}
-            />
-          ))}
-        </div>
+        <ScenarioList
+          scenarios={scenarios}
+          selectedScenario={selectedScenario}
+          expandedScenarios={expandedScenarios}
+          selectedScenarios={selectedScenarios}
+          onScenarioClick={handleScenarioClick}
+          onRequirementClick={handleRequirementClick}
+          onEditScenario={handleEditScenario}
+          onDeleteScenario={handleDeleteScenario}
+          onUpdateScenario={handleUpdateScenario}
+          onToggleSelect={handleSelectScenario}
+        />
       </div>
 
       <RequirementsCoverage
