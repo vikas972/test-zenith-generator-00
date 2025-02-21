@@ -105,18 +105,6 @@ export const FlowCondition = ({
                   onChange={onEditingChange}
                 />
               </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(flowIndex, subflowIndex, "coverage", coverage);
-                  }}
-                >
-                  <Edit2 className="h-3 w-3" />
-                </Button>
-              </div>
             </div>
             <div className="flex items-center justify-between text-gray-600">
               <div>
@@ -132,18 +120,6 @@ export const FlowCondition = ({
                   onCancel={onCancelEdit}
                   onChange={onEditingChange}
                 />
-              </div>
-              <div className="flex items-center gap-1">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEdit(flowIndex, subflowIndex, "expectedResults", expectedResults);
-                  }}
-                >
-                  <Edit2 className="h-3 w-3" />
-                </Button>
               </div>
             </div>
             {entries.length > 0 && (
