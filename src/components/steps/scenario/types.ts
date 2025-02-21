@@ -1,7 +1,6 @@
-
 export type FlowType = "primary" | "alternate" | "negative" | "exception";
 export type Priority = "high" | "medium" | "low";
-export type ScenarioStatus = "draft" | "in_review" | "approved" | "rejected";
+export type ScenarioStatus = "completed" | "needs_review" | "in_progress";
 
 export interface TestFlow {
   description: string;

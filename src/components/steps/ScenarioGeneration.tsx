@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
-import { Plus, Trash2 } from "lucide-react";
+import { Plus, Trash2, CheckSquare } from "lucide-react";
 import { type TestScenario, type ScenarioStatus } from "./scenario/types";
 import { ScenarioCard } from "./scenario/ScenarioCard";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
@@ -14,12 +14,11 @@ import {
 import { initialScenarios } from "./scenario/scenarioData";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -148,32 +147,42 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             <h2 className="text-lg font-semibold">Test Scenarios</h2>
           </div>
           <div className="flex items-center gap-2">
-            {selectedScenarios.length > 0 && (
-              <>
-                <Select onValueChange={handleBulkStatusChange}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Change status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="draft">Draft</SelectItem>
-                    <SelectItem value="in_review">In Review</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
-                  </SelectContent>
-                </Select>
-                <Button 
-                  variant="destructive" 
-                  size="sm"
-                  onClick={handleBulkDelete}
-                >
-                  <Trash2 className="h-4 w-4 mr-2" />
-                  Delete Selected
-                </Button>
-              </>
-            )}
-            <Button onClick={handleAddScenario}>
+            <Button 
+              className="bg-blue-500 hover:bg-blue-600"
+              onClick={handleAddScenario}
+            >
               <Plus className="h-4 w-4 mr-2" />
               Add Scenario
+            </Button>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  className="bg-blue-500 hover:bg-blue-600"
+                  disabled={selectedScenarios.length === 0}
+                >
+                  <CheckSquare className="h-4 w-4 mr-2" />
+                  Change Status
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => handleBulkStatusChange("completed")}>
+                  Mark as Completed
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleBulkStatusChange("needs_review")}>
+                  Mark as Needs Review
+                </DropdownMenuItem>
+                <DropdownMenuItem onSelect={() => handleBulkStatusChange("in_progress")}>
+                  Mark as In Progress
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button 
+              onClick={handleBulkDelete}
+              disabled={selectedScenarios.length === 0}
+              variant="destructive"
+            >
+              <Trash2 className="h-4 w-4 mr-2" />
+              Delete Selected
             </Button>
           </div>
         </div>

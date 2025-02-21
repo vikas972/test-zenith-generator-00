@@ -38,7 +38,7 @@ export const ScenarioCard = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(scenario.title);
   const [editedPriority, setEditedPriority] = useState<Priority>(scenario.priority);
-  const [editedStatus, setEditedStatus] = useState<ScenarioStatus>(scenario.status || "draft");
+  const [editedStatus, setEditedStatus] = useState<ScenarioStatus>(scenario.status || "in_progress");
 
   const handleUpdateFlows = (updatedFlows: TestScenarioFlow[]) => {
     onUpdateScenario({
@@ -67,7 +67,7 @@ export const ScenarioCard = ({
     e.stopPropagation();
     setEditedTitle(scenario.title);
     setEditedPriority(scenario.priority);
-    setEditedStatus(scenario.status || "draft");
+    setEditedStatus(scenario.status || "in_progress");
     setIsEditing(false);
   };
 
@@ -77,12 +77,12 @@ export const ScenarioCard = ({
 
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
     switch (status) {
-      case "approved":
+      case "completed":
         return "default";
-      case "in_review":
+      case "in_progress":
         return "secondary";
-      case "rejected":
-        return "destructive";
+      case "needs_review":
+        return "outline";
       default:
         return "outline";
     }
@@ -150,10 +150,9 @@ export const ScenarioCard = ({
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent onClick={(e) => e.stopPropagation()}>
-                        <SelectItem value="draft">Draft</SelectItem>
-                        <SelectItem value="in_review">In Review</SelectItem>
-                        <SelectItem value="approved">Approved</SelectItem>
-                        <SelectItem value="rejected">Rejected</SelectItem>
+                        <SelectItem value="completed">Completed</SelectItem>
+                        <SelectItem value="needs_review">Needs Review</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
                       </SelectContent>
                     </Select>
                     <Button
@@ -180,8 +179,8 @@ export const ScenarioCard = ({
                   <div className="text-sm text-gray-500 flex items-center gap-2">
                     <span>ID: {scenario.id}</span>
                     <span>Priority: {scenario.priority}</span>
-                    <Badge variant={getStatusVariant(scenario.status || "draft")}>
-                      {(scenario.status || "draft").replace("_", " ")}
+                    <Badge variant={getStatusVariant(scenario.status || "in_progress")}>
+                      {(scenario.status || "in_progress").replace("_", " ")}
                     </Badge>
                     <span>
                       Requirement:{" "}
