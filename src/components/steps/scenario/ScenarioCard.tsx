@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronRight, Edit2, Trash2, Save, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type TestScenario, type TestScenarioFlow, type Priority } from "./types";
+import { type TestScenario, type TestScenarioFlow, type Priority, type ScenarioStatus } from "./types";
 import { ScenarioFlows } from "./ScenarioFlows";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -39,7 +38,7 @@ export const ScenarioCard = ({
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(scenario.title);
   const [editedPriority, setEditedPriority] = useState<Priority>(scenario.priority);
-  const [editedStatus, setEditedStatus] = useState(scenario.status || "draft");
+  const [editedStatus, setEditedStatus] = useState<ScenarioStatus>(scenario.status || "draft");
 
   const handleUpdateFlows = (updatedFlows: TestScenarioFlow[]) => {
     onUpdateScenario({
@@ -70,6 +69,10 @@ export const ScenarioCard = ({
     setEditedPriority(scenario.priority);
     setEditedStatus(scenario.status || "draft");
     setIsEditing(false);
+  };
+
+  const handleStatusChange = (value: ScenarioStatus) => {
+    setEditedStatus(value);
   };
 
   const getStatusVariant = (status: string): "default" | "secondary" | "destructive" | "outline" => {
@@ -138,7 +141,7 @@ export const ScenarioCard = ({
                     </Select>
                     <Select
                       value={editedStatus}
-                      onValueChange={setEditedStatus}
+                      onValueChange={handleStatusChange}
                     >
                       <SelectTrigger 
                         className="w-[120px]" 

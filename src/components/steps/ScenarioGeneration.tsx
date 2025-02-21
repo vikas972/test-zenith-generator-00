@@ -1,9 +1,8 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Plus, Trash2 } from "lucide-react";
-import { type TestScenario } from "./scenario/types";
+import { type TestScenario, type ScenarioStatus } from "./scenario/types";
 import { ScenarioCard } from "./scenario/ScenarioCard";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
 import {
@@ -112,7 +111,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     });
   };
 
-  const handleBulkStatusChange = (newStatus: string) => {
+  const handleBulkStatusChange = (newStatus: ScenarioStatus) => {
     if (selectedScenarios.length === 0) {
       toast({
         title: "Error",
