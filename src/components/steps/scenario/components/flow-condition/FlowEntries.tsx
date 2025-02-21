@@ -30,13 +30,12 @@ export const FlowEntries = ({
   if (!entries.length) return null;
 
   const handleDeleteEntry = (entryIndex: number, e: React.MouseEvent) => {
-    e.stopPropagation(); // Prevent event bubbling
+    e.stopPropagation();
     onDeleteEntry(entryIndex);
     toast.success("Entry deleted successfully");
   };
 
-  const handleEntryEdit = (entryIndex: number, value: string, e?: React.MouseEvent) => {
-    e?.stopPropagation();
+  const handleEntryEdit = (entryIndex: number, value: string) => {
     if (onEdit) {
       onEdit(entryIndex, value);
     }
@@ -53,7 +52,7 @@ export const FlowEntries = ({
           >
             <div className="flex-1 mr-2">
               <EditableField
-                isEditing={isEditing && editingEntryIndex === entryIndex}
+                isEditing={isEditing}
                 value={entry.description}
                 editedValue={editedValue || entry.description}
                 width="w-full"
@@ -64,16 +63,6 @@ export const FlowEntries = ({
               />
             </div>
             <div className="flex gap-2">
-              {isEditing && (
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8 flex-shrink-0"
-                  onClick={(e) => handleEntryEdit(entryIndex, entry.description, e)}
-                >
-                  <Edit2 className="h-4 w-4 text-blue-500" />
-                </Button>
-              )}
               <Button
                 variant="ghost"
                 size="icon"
