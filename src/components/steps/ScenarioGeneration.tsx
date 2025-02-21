@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { initialScenarios } from "./scenario/scenarioData";
 import { Checkbox } from "@/components/ui/checkbox";
+import { AddScenarioDialog } from "./scenario/dialogs/AddScenarioDialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -32,6 +33,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   const [showRequirementDialog, setShowRequirementDialog] = useState(false);
   const [selectedRequirement, setSelectedRequirement] = useState<string | null>(null);
   const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
+  const [showAddDialog, setShowAddDialog] = useState(false);
 
   const handleScenarioClick = (scenarioId: string) => {
     setSelectedScenario(scenarioId);
@@ -48,6 +50,17 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   const handleAddScenario = () => {
+    setShowAddDialog(true);
+  };
+
+  const handleSaveNewScenario = (newScenario: Omit<TestScenario, "id">) => {
+    const id = `TS-${String(scenarios.length + 1).padStart(3, '0')}`;
+    const scenarioToAdd: TestScenario = {
+      id,
+      ...newScenario
+    };
+    
+    setScenarios(prev => [...prev, scenarioToAdd]);
     toast({
       title: "Success",
       description: "New scenario added"
@@ -232,6 +245,13 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           </div>
         </DialogContent>
       </Dialog>
+
+      <AddScenarioDialog
+        open={showAddDialog}
+        onOpenChange={setShowAddDialog}
+        onSave={handleSaveNewScenario}
+        requirementId={selectedRequirement || "REQ-001"}
+      />
     </div>
   );
 };
