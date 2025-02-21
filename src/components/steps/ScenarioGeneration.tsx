@@ -1,79 +1,37 @@
 
-import { useState } from "react";
-import { useToast } from "@/components/ui/use-toast";
-import { type TestScenario, type ScenarioStatus } from "./scenario/types";
+import { type TestScenario } from "./scenario/types";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
 import { AddScenarioDialog } from "./scenario/dialogs/AddScenarioDialog";
 import { ScenarioHeader } from "./scenario/components/ScenarioHeader";
 import { ScenarioList } from "./scenario/components/ScenarioList";
 import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
-import { initialScenarios } from "./scenario/scenarioData";
+import { ScenarioActions } from "./scenario/components/ScenarioActions";
+import { useScenarioState } from "./scenario/hooks/useScenarioState";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
 }
 
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
-  const { toast } = useToast();
-  const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
-  const [expandedScenarios, setExpandedScenarios] = useState<string[]>([]);
-  const [scenarios, setScenarios] = useState<TestScenario[]>(initialScenarios);
-  const [showRequirementDialog, setShowRequirementDialog] = useState(false);
-  const [selectedRequirement, setSelectedRequirement] = useState<string | null>(null);
-  const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
-  const [showAddDialog, setShowAddDialog] = useState(false);
-  const [editingScenario, setEditingScenario] = useState<TestScenario | null>(null);
-
-  const handleScenarioClick = (scenarioId: string) => {
-    setSelectedScenario(scenarioId);
-    setExpandedScenarios(prev => 
-      prev.includes(scenarioId) 
-        ? prev.filter(id => id !== scenarioId)
-        : [...prev, scenarioId]
-    );
-  };
-
-  const handleRequirementClick = (requirementId: string) => {
-    setSelectedRequirement(requirementId);
-    setShowRequirementDialog(true);
-  };
-
-  const handleAddScenario = () => {
-    setEditingScenario(null);
-    setShowAddDialog(true);
-  };
-
-  const handleSaveNewScenario = (newScenario: Omit<TestScenario, "id">) => {
-    if (editingScenario) {
-      // Handling edit case
-      const updatedScenario = {
-        ...editingScenario,
-        ...newScenario
-      };
-      setScenarios(prev => prev.map(s => 
-        s.id === editingScenario.id ? updatedScenario : s
-      ));
-      toast({
-        title: "Success",
-        description: "Scenario updated successfully"
-      });
-    } else {
-      // Handling add case
-      const id = `TS-${String(scenarios.length + 1).padStart(3, '0')}`;
-      const scenarioToAdd: TestScenario = {
-        id,
-        ...newScenario
-      };
-      
-      setScenarios(prev => [...prev, scenarioToAdd]);
-      toast({
-        title: "Success",
-        description: "New scenario added"
-      });
-    }
-    setShowAddDialog(false);
-    setEditingScenario(null);
-  };
+  const {
+    scenarios,
+    selectedScenario,
+    expandedScenarios,
+    showRequirementDialog,
+    selectedRequirement,
+    selectedScenarios,
+    showAddDialog,
+    editingScenario,
+    setScenarios,
+    setShowAddDialog,
+    setShowRequirementDialog,
+    setSelectedScenarios,
+    setEditingScenario,
+    handleScenarioClick,
+    handleRequirementClick,
+    handleSaveNewScenario,
+    handleBulkStatusChange
+  } = useScenarioState();
 
   const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
@@ -86,8 +44,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
   const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
-    setScenarios(prev => prev.filter(scenario => scenario.id !== scenarioId));
-    setSelectedScenarios(prev => prev.filter(id => id !== scenarioId));
+    setScenarios(scenarios.filter(scenario => scenario.id !== scenarioId));
+    setSelectedScenarios(selectedScenarios.filter(id => id !== scenarioId));
     toast({
       title: "Success",
       description: "Scenario deleted"
@@ -95,11 +53,9 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   const handleUpdateScenario = (updatedScenario: TestScenario) => {
-    setScenarios(prev =>
-      prev.map(scenario =>
-        scenario.id === updatedScenario.id ? updatedScenario : scenario
-      )
-    );
+    setScenarios(scenarios.map(scenario =>
+      scenario.id === updatedScenario.id ? updatedScenario : scenario
+    ));
   };
 
   const handleSelectScenario = (scenarioId: string, checked: boolean) => {
@@ -114,48 +70,6 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     setSelectedScenarios(checked ? scenarios.map(s => s.id) : []);
   };
 
-  const handleBulkDelete = () => {
-    if (selectedScenarios.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please select at least one scenario to delete",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setScenarios(prev => prev.filter(scenario => !selectedScenarios.includes(scenario.id)));
-    setSelectedScenarios([]);
-    toast({
-      title: "Success",
-      description: `Deleted ${selectedScenarios.length} scenarios`
-    });
-  };
-
-  const handleBulkStatusChange = (newStatus: ScenarioStatus) => {
-    if (selectedScenarios.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please select at least one scenario",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setScenarios(prev =>
-      prev.map(scenario =>
-        selectedScenarios.includes(scenario.id)
-          ? { ...scenario, status: newStatus }
-          : scenario
-      )
-    );
-
-    toast({
-      title: "Success",
-      description: `Updated status for ${selectedScenarios.length} scenarios`
-    });
-  };
-
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
@@ -163,9 +77,15 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           selectedScenariosCount={selectedScenarios.length}
           totalScenariosCount={scenarios.length}
           onSelectAll={handleSelectAll}
-          onAddScenario={handleAddScenario}
+          onAddScenario={() => setShowAddDialog(true)}
           onBulkStatusChange={handleBulkStatusChange}
-          onBulkDelete={handleBulkDelete}
+        />
+
+        <ScenarioActions
+          scenarios={scenarios}
+          selectedScenarios={selectedScenarios}
+          setScenarios={setScenarios}
+          setSelectedScenarios={setSelectedScenarios}
         />
 
         <ScenarioList
