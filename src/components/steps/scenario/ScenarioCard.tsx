@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -173,27 +174,31 @@ export const ScenarioCard = ({
                 </div>
               ) : (
                 <>
-                  <div className="font-medium">
-                    📋 {scenario.title}
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="bg-muted px-2 py-0.5 rounded-md text-sm font-semibold text-muted-foreground">
+                      {scenario.id}
+                    </span>
+                    <span className="font-medium">
+                      {scenario.title}
+                    </span>
                   </div>
-                  <div className="text-sm text-gray-500 flex items-center gap-2">
-                    <span>ID: {scenario.id}</span>
-                    <span>Priority: {scenario.priority}</span>
+                  <div className="text-sm text-muted-foreground flex items-center gap-2">
+                    <span className="font-medium">Priority:</span> 
+                    <span className="capitalize">{scenario.priority}</span>
+                    <span className="font-medium">Status:</span>
                     <Badge variant={getStatusVariant(scenario.status || "in_progress")}>
                       {(scenario.status || "in_progress").replace("_", " ")}
                     </Badge>
-                    <span>
-                      Requirement:{" "}
-                      <button 
-                        className="text-primary hover:underline"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onRequirementClick(scenario.requirementId);
-                        }}
-                      >
-                        {scenario.requirementId}
-                      </button>
-                    </span>
+                    <span className="font-medium">Requirement:</span>
+                    <button 
+                      className="text-primary hover:underline"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onRequirementClick(scenario.requirementId);
+                      }}
+                    >
+                      {scenario.requirementId}
+                    </button>
                   </div>
                 </>
               )}
