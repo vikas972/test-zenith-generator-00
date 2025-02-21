@@ -7,6 +7,7 @@ import { ScenarioList } from "./scenario/components/ScenarioList";
 import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
 import { ScenarioActions } from "./scenario/components/ScenarioActions";
 import { useScenarioState } from "./scenario/hooks/useScenarioState";
+import { toast } from "sonner";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -46,10 +47,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     e.stopPropagation();
     setScenarios(scenarios.filter(scenario => scenario.id !== scenarioId));
     setSelectedScenarios(selectedScenarios.filter(id => id !== scenarioId));
-    toast({
-      title: "Success",
-      description: "Scenario deleted"
-    });
+    toast("Scenario deleted successfully");
   };
 
   const handleUpdateScenario = (updatedScenario: TestScenario) => {
@@ -70,6 +68,12 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     setSelectedScenarios(checked ? scenarios.map(s => s.id) : []);
   };
 
+  const handleBulkDelete = () => {
+    setScenarios(scenarios.filter(scenario => !selectedScenarios.includes(scenario.id)));
+    setSelectedScenarios([]);
+    toast("Deleted selected scenarios successfully");
+  };
+
   return (
     <div className="flex gap-4 h-full">
       <div className="w-2/3 flex flex-col">
@@ -79,6 +83,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           onSelectAll={handleSelectAll}
           onAddScenario={() => setShowAddDialog(true)}
           onBulkStatusChange={handleBulkStatusChange}
+          onBulkDelete={handleBulkDelete}
         />
 
         <ScenarioActions

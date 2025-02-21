@@ -18,20 +18,13 @@ export const ScenarioActions = ({
 }: ScenarioActionsProps) => {
   const handleBulkDelete = () => {
     if (selectedScenarios.length === 0) {
-      toast({
-        title: "Error",
-        description: "Please select at least one scenario to delete",
-        variant: "destructive",
-      });
+      toast("Please select at least one scenario to delete");
       return;
     }
 
     setScenarios(scenarios.filter(scenario => !selectedScenarios.includes(scenario.id)));
     setSelectedScenarios([]);
-    toast({
-      title: "Success",
-      description: `Deleted ${selectedScenarios.length} scenarios`
-    });
+    toast("Deleted scenarios successfully");
   };
 
   return (
