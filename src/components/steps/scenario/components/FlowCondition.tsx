@@ -47,13 +47,11 @@ export const FlowCondition = ({
   onEditingChange,
   entries = [],
 }: FlowConditionProps) => {
-  const isEditing = (field: string) =>
-    editingState?.flowIndex === flowIndex &&
-    editingState?.subflowIndex === subflowIndex &&
-    editingState?.field === field;
-
-  const isEditingAnyField = editingState?.flowIndex === flowIndex && 
+  const isEditingThisCondition = editingState?.flowIndex === flowIndex && 
     editingState?.subflowIndex === subflowIndex;
+
+  const isEditing = (field: string) =>
+    isEditingThisCondition && editingState?.field === field;
 
   const handleDeleteEntry = (entryIndex: number) => {
     onDeleteEntry?.(flowIndex, subflowIndex, entryIndex);
@@ -61,6 +59,11 @@ export const FlowCondition = ({
 
   const handleEditEntry = (entryIndex: number, value: string) => {
     onEdit(flowIndex, subflowIndex, `entry_${entryIndex}`, value);
+  };
+
+  const handleMainEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onEdit(flowIndex, subflowIndex, "name", name);
   };
 
   return (
@@ -86,10 +89,7 @@ export const FlowCondition = ({
                 e.stopPropagation();
                 onAddEntry(flowIndex, subflowIndex);
               }}
-              onEdit={(e) => {
-                e.stopPropagation();
-                onEdit(flowIndex, subflowIndex, "name", name);
-              }}
+              onEdit={handleMainEdit}
               onDelete={(e) => {
                 e.stopPropagation();
                 onDelete(flowIndex, subflowIndex);
@@ -133,7 +133,7 @@ export const FlowCondition = ({
               <FlowEntries
                 entries={entries}
                 onDeleteEntry={handleDeleteEntry}
-                isEditing={isEditingAnyField}
+                isEditing={isEditingThisCondition}
                 onEdit={handleEditEntry}
                 editedValue={editingState?.value}
                 editingEntryIndex={editingState?.field?.startsWith('entry_') ? 

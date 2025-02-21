@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
+import { Trash2, Edit2 } from "lucide-react";
 import { toast } from "sonner";
 import { EditableField } from "./EditableField";
 
@@ -45,29 +45,37 @@ export const FlowEntries = ({
             className="flex items-center justify-between py-2 group"
           >
             <div className="flex-1 mr-2">
-              {isEditing ? (
-                <EditableField
-                  isEditing={editingEntryIndex === entryIndex}
-                  value={entry.description}
-                  editedValue={editedValue || ""}
-                  width="w-full"
-                  onEdit={() => onEdit?.(entryIndex, entry.description)}
-                  onSave={onSaveEdit}
-                  onCancel={onCancelEdit}
-                  onChange={onEditingChange}
-                />
-              ) : (
-                entry.description
-              )}
+              <EditableField
+                isEditing={isEditing && editingEntryIndex === entryIndex}
+                value={entry.description}
+                editedValue={editedValue || ""}
+                width="w-full"
+                onEdit={() => onEdit?.(entryIndex, entry.description)}
+                onSave={onSaveEdit}
+                onCancel={onCancelEdit}
+                onChange={onEditingChange}
+              />
             </div>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 flex-shrink-0"
-              onClick={(e) => handleDeleteEntry(entryIndex, e)}
-            >
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </Button>
+            <div className="flex gap-2">
+              {isEditing && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 flex-shrink-0"
+                  onClick={() => onEdit?.(entryIndex, entry.description)}
+                >
+                  <Edit2 className="h-4 w-4 text-blue-500" />
+                </Button>
+              )}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="opacity-0 group-hover:opacity-100 transition-opacity h-8 w-8 flex-shrink-0"
+                onClick={(e) => handleDeleteEntry(entryIndex, e)}
+              >
+                <Trash2 className="h-4 w-4 text-red-500" />
+              </Button>
+            </div>
           </div>
         ))}
       </div>
