@@ -113,14 +113,14 @@ export const ScenarioCard = ({
         onClick={() => !isEditing && onScenarioClick(scenario.id)}
       >
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-4 flex-1">
             <Checkbox
               checked={isChecked}
               onCheckedChange={(checked) => onToggleSelect(scenario.id, checked as boolean)}
               onClick={(e) => e.stopPropagation()}
             />
             <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
+              <div className="flex items-center gap-2 mb-2">
                 <span className="font-medium">{scenario.id}</span>
                 <Badge
                   variant="outline"
@@ -132,93 +132,109 @@ export const ScenarioCard = ({
                 >
                   {scenario.requirementId}
                 </Badge>
+              </div>
+              
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  {isEditing ? (
+                    <div className="flex items-center gap-4" onClick={(e) => e.stopPropagation()}>
+                      <Input
+                        value={editedTitle}
+                        onChange={(e) => setEditedTitle(e.target.value)}
+                        className="text-sm w-48"
+                        placeholder="Title"
+                      />
+                      <Select value={editedStatus} onValueChange={(value: ScenarioStatus) => setEditedStatus(value)}>
+                        <SelectTrigger className="h-8 w-32" onClick={(e) => e.stopPropagation()}>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="needs_review">Needs Review</SelectItem>
+                          <SelectItem value="in_progress">In Progress</SelectItem>
+                        </SelectContent>
+                      </Select>
+                      <Select value={editedPriority} onValueChange={(value: Priority) => setEditedPriority(value)}>
+                        <SelectTrigger className="h-8 w-28">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="high">High</SelectItem>
+                          <SelectItem value="medium">Medium</SelectItem>
+                          <SelectItem value="low">Low</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-gray-600 w-48">{scenario.title}</span>
+                      <Badge variant="secondary" className="w-32 justify-center">{scenario.status || 'in_progress'}</Badge>
+                      <Badge variant="outline" className="w-28 justify-center">{scenario.priority}</Badge>
+                    </div>
+                  )}
+                </div>
+                <div className="flex items-center gap-2 ml-4">
+                  {isEditing ? (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={handleSaveEdit}
+                      >
+                        <Save className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={handleCancelEdit}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </>
+                  ) : (
+                    <>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={handleEditClick}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className="h-8 w-8"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          onDelete(e, scenario.id);
+                        }}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </>
+                  )}
+                </div>
+              </div>
+
+              <div className="mt-2">
                 {isEditing ? (
-                  <Select value={editedStatus} onValueChange={(value: ScenarioStatus) => setEditedStatus(value)}>
-                    <SelectTrigger className="h-7 w-[130px]" onClick={(e) => e.stopPropagation()}>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="completed">Completed</SelectItem>
-                      <SelectItem value="needs_review">Needs Review</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <Textarea
+                      value={editedDescription}
+                      onChange={(e) => setEditedDescription(e.target.value)}
+                      className="text-sm min-h-[60px]"
+                      placeholder="Description"
+                    />
+                  </div>
                 ) : (
-                  <Badge variant="secondary">{scenario.status || 'in_progress'}</Badge>
+                  <p className="text-sm text-gray-500">{scenario.description}</p>
                 )}
               </div>
-              {isEditing ? (
-                <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
-                  <Input
-                    value={editedTitle}
-                    onChange={(e) => setEditedTitle(e.target.value)}
-                    className="text-sm"
-                  />
-                  <Textarea
-                    value={editedDescription}
-                    onChange={(e) => setEditedDescription(e.target.value)}
-                    className="text-sm min-h-[60px]"
-                  />
-                  <Select value={editedPriority} onValueChange={(value: Priority) => setEditedPriority(value)}>
-                    <SelectTrigger className="h-8">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="low">Low</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              ) : (
-                <p className="text-sm text-gray-600">{scenario.title}</p>
-              )}
             </div>
-          </div>
-          <div className="flex items-center gap-2">
-            {isEditing ? (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={handleSaveEdit}
-                >
-                  <Save className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={handleCancelEdit}
-                >
-                  <X className="h-4 w-4" />
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={handleEditClick}
-                >
-                  <Pencil className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    onDelete(e, scenario.id);
-                  }}
-                >
-                  <Trash2 className="h-4 w-4 text-red-500" />
-                </Button>
-              </>
-            )}
           </div>
         </div>
 
