@@ -57,9 +57,9 @@ export const FlowCondition = ({
   };
 
   return (
-    <div className="text-sm border rounded-md p-3 bg-red-500 font-bold text-white">
+    <div className="text-sm border rounded-md p-3">
       <div className="flex items-start gap-2">
-        <span className="text-white mt-1">{getFlowTypeIcon(flowType)}</span>
+        <span className="text-gray-400 mt-1">{getFlowTypeIcon(flowType)}</span>
         <div className="space-y-1 flex-1">
           <div className="flex items-start justify-between">
             <div className="font-medium">
@@ -90,7 +90,7 @@ export const FlowCondition = ({
             />
           </div>
           <div className="space-y-2 mt-2">
-            <div className="flex items-center justify-between text-white border-b pb-2">
+            <div className="flex items-center justify-between text-gray-600 border-b pb-2">
               <div>
                 <EditableField
                   isEditing={isEditing("coverage")}
@@ -118,7 +118,7 @@ export const FlowCondition = ({
                 </Button>
               </div>
             </div>
-            <div className="flex items-center justify-between text-white">
+            <div className="flex items-center justify-between text-gray-600">
               <div>
                 <EditableField
                   isEditing={isEditing("expectedResults")}
