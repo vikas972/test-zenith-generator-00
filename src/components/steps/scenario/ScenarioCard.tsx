@@ -1,13 +1,15 @@
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { ScenarioFlows } from "./ScenarioFlows";
-import { CheckCircle, XCircle, AlertCircle, PlusCircle, Pencil, Trash2 } from "lucide-react";
+import { CheckCircle, XCircle, AlertCircle, PlusCircle, Pencil, Trash2, Save } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { type TestScenario } from "./types";
+import { type TestScenario, type Priority, type ScenarioStatus } from "./types";
 import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 interface ScenarioCardProps {
   scenario: TestScenario;
@@ -34,6 +36,12 @@ export const ScenarioCard = ({
   isChecked,
   onToggleSelect,
 }: ScenarioCardProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(scenario.title);
+  const [editedDescription, setEditedDescription] = useState(scenario.description);
+  const [editedPriority, setEditedPriority] = useState<Priority>(scenario.priority);
+  const [editedStatus, setEditedStatus] = useState<ScenarioStatus>(scenario.status || "in_progress");
+
   const [suggestions] = useState([
     {
       id: 1,
@@ -65,6 +73,32 @@ export const ScenarioCard = ({
     });
   };
 
+  const handleEditClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsEditing(true);
+  };
+
+  const handleSaveEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    onUpdateScenario({
+      ...scenario,
+      title: editedTitle,
+      description: editedDescription,
+      priority: editedPriority,
+      status: editedStatus,
+    });
+    setIsEditing(false);
+  };
+
+  const handleCancelEdit = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setEditedTitle(scenario.title);
+    setEditedDescription(scenario.description);
+    setEditedPriority(scenario.priority);
+    setEditedStatus(scenario.status || "in_progress");
+    setIsEditing(false);
+  };
+
   return (
     <Card
       className={cn(
@@ -75,7 +109,7 @@ export const ScenarioCard = ({
     >
       <div
         className="p-4 cursor-pointer hover:bg-gray-50"
-        onClick={() => onScenarioClick(scenario.id)}
+        onClick={() => !isEditing && onScenarioClick(scenario.id)}
       >
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
@@ -84,7 +118,7 @@ export const ScenarioCard = ({
               onCheckedChange={(checked) => onToggleSelect(scenario.id, checked as boolean)}
               onClick={(e) => e.stopPropagation()}
             />
-            <div>
+            <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
                 <span className="font-medium">{scenario.id}</span>
                 <Badge
@@ -97,40 +131,97 @@ export const ScenarioCard = ({
                 >
                   {scenario.requirementId}
                 </Badge>
-                <Badge variant="secondary">{scenario.status || 'in_progress'}</Badge>
+                {isEditing ? (
+                  <Select value={editedStatus} onValueChange={(value: ScenarioStatus) => setEditedStatus(value)}>
+                    <SelectTrigger className="h-7 w-[130px]" onClick={(e) => e.stopPropagation()}>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="needs_review">Needs Review</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                    </SelectContent>
+                  </Select>
+                ) : (
+                  <Badge variant="secondary">{scenario.status || 'in_progress'}</Badge>
+                )}
               </div>
-              <p className="text-sm text-gray-600">{scenario.title}</p>
+              {isEditing ? (
+                <div className="space-y-2" onClick={(e) => e.stopPropagation()}>
+                  <Input
+                    value={editedTitle}
+                    onChange={(e) => setEditedTitle(e.target.value)}
+                    className="text-sm"
+                  />
+                  <Textarea
+                    value={editedDescription}
+                    onChange={(e) => setEditedDescription(e.target.value)}
+                    className="text-sm min-h-[60px]"
+                  />
+                  <Select value={editedPriority} onValueChange={(value: Priority) => setEditedPriority(value)}>
+                    <SelectTrigger className="h-8">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              ) : (
+                <p className="text-sm text-gray-600">{scenario.title}</p>
+              )}
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onEdit(e, scenario.id);
-              }}
-            >
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={(e) => {
-                e.preventDefault();
-                e.stopPropagation();
-                onDelete(e, scenario.id);
-              }}
-            >
-              <Trash2 className="h-4 w-4 text-red-500" />
-            </Button>
+            {isEditing ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={handleSaveEdit}
+                >
+                  <Save className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={handleCancelEdit}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={handleEditClick}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onDelete(e, scenario.id);
+                  }}
+                >
+                  <Trash2 className="h-4 w-4 text-red-500" />
+                </Button>
+              </>
+            )}
           </div>
         </div>
 
-        {suggestions.length > 0 && !isExpanded && (
+        {!isEditing && suggestions.length > 0 && !isExpanded && (
           <div className="mt-2 flex items-center gap-1 text-amber-600">
             <AlertCircle className="h-4 w-4" />
             <span className="text-xs">
@@ -139,7 +230,7 @@ export const ScenarioCard = ({
           </div>
         )}
 
-        {isExpanded && (
+        {isExpanded && !isEditing && (
           <>
             <ScenarioFlows
               flows={scenario.flows}
