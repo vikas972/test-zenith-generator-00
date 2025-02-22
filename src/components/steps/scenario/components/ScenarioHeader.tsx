@@ -39,23 +39,23 @@ export const ScenarioHeader = ({
         />
         <h2 className="text-lg font-semibold">Test Scenarios</h2>
       </div>
-      <div className="flex items-center gap-2 flex-wrap justify-end min-w-0">
+      <div className="flex items-center gap-1.5">
         <Button 
           variant="outline"
           size="sm"
           onClick={onShowGrid}
           className="whitespace-nowrap"
         >
-          <Grid className="h-4 w-4 mr-2" />
-          View Grid
+          <Grid className="h-4 w-4" />
+          Grid
         </Button>
         <Button 
           className="bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
           size="sm"
           onClick={onAddScenario}
         >
-          <Plus className="h-4 w-4 mr-2" />
-          Add Scenario
+          <Plus className="h-4 w-4" />
+          New
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
@@ -64,8 +64,8 @@ export const ScenarioHeader = ({
               size="sm"
               disabled={selectedScenariosCount === 0}
             >
-              <CheckSquare className="h-4 w-4 mr-2" />
-              Change Status
+              <CheckSquare className="h-4 w-4" />
+              Status
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
@@ -87,8 +87,8 @@ export const ScenarioHeader = ({
           size="sm"
           className="whitespace-nowrap"
         >
-          <Trash2 className="h-4 w-4 mr-2" />
-          Delete Selected
+          <Trash2 className="h-4 w-4" />
+          Delete
         </Button>
       </div>
     </div>
