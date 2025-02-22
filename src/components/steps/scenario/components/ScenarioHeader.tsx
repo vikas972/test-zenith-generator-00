@@ -41,10 +41,9 @@ export const ScenarioHeader = ({
       </div>
       <div className="flex items-center gap-1.5">
         <Button 
-          variant="outline"
+          className="bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
           size="sm"
           onClick={onShowGrid}
-          className="whitespace-nowrap"
         >
           <Grid className="h-4 w-4" />
           Grid
