@@ -1,6 +1,7 @@
+
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Plus, Trash2, CheckSquare } from "lucide-react";
+import { Grid, Plus, Trash2, CheckSquare } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,6 +17,7 @@ interface ScenarioHeaderProps {
   onAddScenario: () => void;
   onBulkStatusChange: (status: ScenarioStatus) => void;
   onBulkDelete: () => void;
+  onShowGrid: () => void;
 }
 
 export const ScenarioHeader = ({
@@ -25,6 +27,7 @@ export const ScenarioHeader = ({
   onAddScenario,
   onBulkStatusChange,
   onBulkDelete,
+  onShowGrid,
 }: ScenarioHeaderProps) => {
   return (
     <div className="mb-4 flex items-center justify-between">
@@ -37,6 +40,13 @@ export const ScenarioHeader = ({
         <h2 className="text-lg font-semibold">Test Scenarios</h2>
       </div>
       <div className="flex items-center gap-2">
+        <Button 
+          variant="outline"
+          onClick={onShowGrid}
+        >
+          <Grid className="h-4 w-4 mr-2" />
+          View Grid
+        </Button>
         <Button 
           className="bg-blue-500 hover:bg-blue-600"
           onClick={onAddScenario}

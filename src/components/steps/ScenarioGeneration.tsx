@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { type TestScenario } from "./scenario/types";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
@@ -9,6 +8,7 @@ import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
 import { ScenarioActions } from "./scenario/components/ScenarioActions";
 import { useScenarioState } from "./scenario/hooks/useScenarioState";
 import { toast } from "sonner";
+import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -34,6 +34,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
     handleSaveNewScenario,
     handleBulkStatusChange
   } = useScenarioState();
+
+  const [showGridDialog, setShowGridDialog] = useState(false);
 
   const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
     e.stopPropagation();
@@ -85,6 +87,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
           onAddScenario={() => setShowAddDialog(true)}
           onBulkStatusChange={handleBulkStatusChange}
           onBulkDelete={handleBulkDelete}
+          onShowGrid={() => setShowGridDialog(true)}
         />
 
         <ScenarioActions
@@ -126,6 +129,12 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
         onSave={handleSaveNewScenario}
         requirementId={selectedRequirement || "REQ-001"}
         editingScenario={editingScenario}
+      />
+
+      <ScenarioGridDialog
+        open={showGridDialog}
+        onOpenChange={setShowGridDialog}
+        scenarios={scenarios}
       />
     </div>
   );
