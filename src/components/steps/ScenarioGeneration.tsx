@@ -1,4 +1,5 @@
 
+import { useState } from "react";
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -155,7 +156,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             defaultSize={30} 
             minSize={5} 
             maxSize={50}
-            onCollapse={(collapsed) => setLeftPanelCollapsed(collapsed)}
+            onCollapse={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
             className="relative"
           >
             <div className="h-full p-4">
