@@ -1,4 +1,5 @@
 
+import React, { useState } from "react";
 import { type TestScenario } from "./scenario/types";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
 import { AddScenarioDialog } from "./scenario/dialogs/AddScenarioDialog";

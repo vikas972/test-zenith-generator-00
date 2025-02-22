@@ -1,5 +1,7 @@
+
 import { type TestScenario } from "../types";
 import { ScenarioCard } from "../ScenarioCard";
+import React from "react";
 
 interface ScenarioListProps {
   scenarios: TestScenario[];
@@ -15,10 +17,10 @@ interface ScenarioListProps {
 }
 
 export const ScenarioList = ({
-  scenarios,
+  scenarios = [],
   selectedScenario,
-  expandedScenarios,
-  selectedScenarios,
+  expandedScenarios = [],
+  selectedScenarios = [],
   onScenarioClick,
   onRequirementClick,
   onEditScenario,
