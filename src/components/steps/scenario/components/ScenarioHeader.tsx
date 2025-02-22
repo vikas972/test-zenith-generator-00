@@ -30,7 +30,7 @@ export const ScenarioHeader = ({
   onShowGrid,
 }: ScenarioHeaderProps) => {
   return (
-    <div className="mb-4 flex items-center justify-between">
+    <div className="mb-4 flex items-center justify-between pr-4">
       <div className="flex items-center gap-4">
         <Checkbox
           checked={selectedScenariosCount === totalScenariosCount}
@@ -39,16 +39,19 @@ export const ScenarioHeader = ({
         />
         <h2 className="text-lg font-semibold">Test Scenarios</h2>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="flex items-center gap-2 flex-wrap justify-end min-w-0">
         <Button 
           variant="outline"
+          size="sm"
           onClick={onShowGrid}
+          className="whitespace-nowrap"
         >
           <Grid className="h-4 w-4 mr-2" />
           View Grid
         </Button>
         <Button 
-          className="bg-blue-500 hover:bg-blue-600"
+          className="bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
+          size="sm"
           onClick={onAddScenario}
         >
           <Plus className="h-4 w-4 mr-2" />
@@ -57,7 +60,8 @@ export const ScenarioHeader = ({
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button
-              className="bg-blue-500 hover:bg-blue-600"
+              className="bg-blue-500 hover:bg-blue-600 whitespace-nowrap"
+              size="sm"
               disabled={selectedScenariosCount === 0}
             >
               <CheckSquare className="h-4 w-4 mr-2" />
@@ -80,6 +84,8 @@ export const ScenarioHeader = ({
           onClick={onBulkDelete}
           disabled={selectedScenariosCount === 0}
           variant="destructive"
+          size="sm"
+          className="whitespace-nowrap"
         >
           <Trash2 className="h-4 w-4 mr-2" />
           Delete Selected
