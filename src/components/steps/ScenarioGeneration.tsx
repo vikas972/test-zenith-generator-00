@@ -149,35 +149,37 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   return (
-    <div className="flex-1">
-      <div className="container mx-auto px-4 py-6">
-        <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border">
+    <div className="flex-1 bg-gray-50">
+      <div className="container mx-auto py-6">
+        <ResizablePanelGroup direction="horizontal" className="min-h-[calc(100vh-12rem)] rounded-lg bg-white">
           <ResizablePanel 
-            defaultSize={30} 
-            minSize={5} 
-            maxSize={50}
+            defaultSize={25} 
+            minSize={20} 
+            maxSize={40}
             onCollapse={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
             className="relative"
           >
-            <div className="h-full p-4">
+            <div className="h-full p-4 overflow-y-auto">
               <ScenarioActions
                 scenarios={scenarios}
                 selectedScenarios={selectedScenarios}
                 setScenarios={setScenarios}
                 setSelectedScenarios={setSelectedScenarios}
               />
-              <ScenarioList
-                scenarios={scenarios}
-                selectedScenario={selectedScenario}
-                onScenarioClick={setSelectedScenario}
-                selectedScenarios={selectedScenarios}
-                setSelectedScenarios={setSelectedScenarios}
-              />
+              <div className="mt-4">
+                <ScenarioList
+                  scenarios={scenarios}
+                  selectedScenario={selectedScenario}
+                  onScenarioClick={setSelectedScenario}
+                  selectedScenarios={selectedScenarios}
+                  setSelectedScenarios={setSelectedScenarios}
+                />
+              </div>
             </div>
             <Button 
               variant="ghost" 
               size="icon"
-              className="absolute right-[-12px] top-1/2 transform -translate-y-1/2 z-10"
+              className="absolute right-[-12px] top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-sm border"
               onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
             >
               {leftPanelCollapsed ? 
@@ -187,21 +189,23 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             </Button>
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={70}>
-            <div className="flex h-full">
-              <div className={`flex-1 p-4 ${rightPanelCollapsed ? 'mr-0' : 'mr-[200px]'}`}>
+          <ResizablePanel defaultSize={75}>
+            <div className="flex h-full relative">
+              <div className={`flex-1 p-6 overflow-y-auto ${rightPanelCollapsed ? 'mr-0' : 'mr-[300px]'}`}>
                 {selectedScenario && scenarios.find((s) => s.id === selectedScenario) && (
-                  <div className="prose prose-sm">
-                    <h3>{scenarios.find((s) => s.id === selectedScenario)?.description}</h3>
-                    <ul className="list-disc">
+                  <div className="prose prose-sm max-w-none">
+                    <h3 className="text-lg font-semibold text-gray-900">
+                      {scenarios.find((s) => s.id === selectedScenario)?.description}
+                    </h3>
+                    <ul className="list-disc mt-4">
                       {scenarios
                         .find((s) => s.id === selectedScenario)
                         ?.flows.map((flow, index) => (
-                          <li key={index}>
-                            {flow.type}:
-                            <ul className="list-disc ml-4">
+                          <li key={index} className="mt-2">
+                            <span className="font-medium">{flow.type}:</span>
+                            <ul className="list-disc ml-6 mt-1">
                               {flow.subflows.map((subflow, subIndex) => (
-                                <li key={subIndex}>{subflow.name}</li>
+                                <li key={subIndex} className="text-gray-600">{subflow.name}</li>
                               ))}
                             </ul>
                           </li>
@@ -210,11 +214,11 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                   </div>
                 )}
               </div>
-              <div className="absolute right-0 h-full">
+              <div className="absolute right-0 h-full border-l bg-white" style={{ width: rightPanelCollapsed ? 'auto' : '300px' }}>
                 <Button 
                   variant="ghost" 
                   size="icon"
-                  className="absolute left-[-12px] top-1/2 transform -translate-y-1/2 z-10"
+                  className="absolute left-[-12px] top-1/2 transform -translate-y-1/2 z-10 bg-white shadow-sm border"
                   onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
                 >
                   {rightPanelCollapsed ? 
