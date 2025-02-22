@@ -22,7 +22,8 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
   } | null>(null);
 
   const handleAddCondition = (e: React.MouseEvent, flow: TestScenarioFlow, index: number) => {
-    e.stopPropagation();
+    e.preventDefault(); // Prevent default behavior
+    e.stopPropagation(); // Stop event propagation
     setActiveFlow({ type: flow.type, index });
     setShowAddDialog(true);
   };
@@ -116,7 +117,7 @@ export const ScenarioFlows = ({ flows, onUpdateFlows }: ScenarioFlowsProps) => {
       const newFlows = [...flows];
       newFlows[activeFlow.index].subflows.push({
         ...condition,
-        entries: []  // Initialize empty entries array
+        entries: []
       });
       onUpdateFlows(newFlows);
       setShowAddDialog(false);

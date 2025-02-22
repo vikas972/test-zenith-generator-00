@@ -70,16 +70,18 @@ export const FlowCondition = ({
     onEdit(flowIndex, subflowIndex, "name", name);
   };
 
-  const handleAddEntry = () => {
+  const handleAddEntry = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent event bubbling
     setShowAddEntryDialog(true);
   };
 
-  const handleAddEntrySubmit = (entry: { description: string }) => {
+  const handleAddEntrySubmit = () => {
     onAddEntry(flowIndex, subflowIndex);
+    setShowAddEntryDialog(false);
   };
 
   return (
-    <div className="text-sm border rounded-md p-3">
+    <div className="text-sm border rounded-md p-3" onClick={(e) => e.stopPropagation()}>
       <div className="flex items-start gap-2">
         <span className="text-gray-400 mt-1">{getFlowTypeIcon(flowType)}</span>
         <div className="space-y-1 flex-1">
