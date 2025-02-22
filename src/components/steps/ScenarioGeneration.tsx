@@ -1,131 +1,166 @@
-
-import { type TestScenario } from "./scenario/types";
-import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
-import { AddScenarioDialog } from "./scenario/dialogs/AddScenarioDialog";
-import { ScenarioHeader } from "./scenario/components/ScenarioHeader";
+import { type SelectedFile } from "@/types";
+import { useState } from "react";
 import { ScenarioList } from "./scenario/components/ScenarioList";
-import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
+import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
+import { TestScenario } from "./scenario/types";
 import { ScenarioActions } from "./scenario/components/ScenarioActions";
-import { useScenarioState } from "./scenario/hooks/useScenarioState";
-import { toast } from "sonner";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface ScenarioGenerationProps {
-  selectedFile: { id: string; name: string; uploadTime: Date } | null;
+  selectedFile: SelectedFile | null;
 }
 
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
-  const {
-    scenarios,
-    selectedScenario,
-    expandedScenarios,
-    showRequirementDialog,
-    selectedRequirement,
-    selectedScenarios,
-    showAddDialog,
-    editingScenario,
-    setScenarios,
-    setShowAddDialog,
-    setShowRequirementDialog,
-    setSelectedScenarios,
-    setEditingScenario,
-    handleScenarioClick,
-    handleRequirementClick,
-    handleSaveNewScenario,
-    handleBulkStatusChange
-  } = useScenarioState();
+  const [scenarios, setScenarios] = useState<TestScenario[]>([
+    {
+      id: "1",
+      requirementId: "REQ-001",
+      description: "Verify user can log in with valid credentials",
+      flows: [
+        {
+          type: "happy",
+          subflows: ["Enter username", "Enter password", "Click login button", "Verify successful login"],
+        },
+      ],
+    },
+    {
+      id: "2",
+      requirementId: "REQ-001",
+      description: "Check error message when logging in with invalid credentials",
+      flows: [
+        {
+          type: "sad",
+          subflows: ["Enter username", "Enter incorrect password", "Click login button", "Verify error message"],
+        },
+      ],
+    },
+    {
+      id: "3",
+      requirementId: "REQ-002",
+      description: "Test password reset functionality",
+      flows: [
+        {
+          type: "happy",
+          subflows: [
+            "Click 'Forgot Password'",
+            "Enter email",
+            "Click 'Reset Password'",
+            "Verify email sent",
+            "Reset password using link from email",
+          ],
+        },
+      ],
+    },
+  ]);
 
-  const handleEditScenario = (e: React.MouseEvent, scenarioId: string) => {
-    e.stopPropagation();
-    const scenario = scenarios.find(s => s.id === scenarioId);
-    if (scenario) {
-      setEditingScenario(scenario);
-      setShowAddDialog(true);
-    }
-  };
+  const [selectedScenario, setSelectedScenario] = useState<string | null>(null);
+  const [selectedScenarios, setSelectedScenarios] = useState<string[]>([]);
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false);
+  const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false);
 
-  const handleDeleteScenario = (e: React.MouseEvent, scenarioId: string) => {
-    e.stopPropagation();
-    setScenarios(scenarios.filter(scenario => scenario.id !== scenarioId));
-    setSelectedScenarios(selectedScenarios.filter(id => id !== scenarioId));
-    toast("Scenario deleted successfully");
-  };
-
-  const handleUpdateScenario = (updatedScenario: TestScenario) => {
-    setScenarios(scenarios.map(scenario =>
-      scenario.id === updatedScenario.id ? updatedScenario : scenario
-    ));
-  };
-
-  const handleSelectScenario = (scenarioId: string, checked: boolean) => {
-    setSelectedScenarios(prev =>
-      checked
-        ? [...prev, scenarioId]
-        : prev.filter(id => id !== scenarioId)
-    );
-  };
-
-  const handleSelectAll = (checked: boolean) => {
-    setSelectedScenarios(checked ? scenarios.map(s => s.id) : []);
-  };
-
-  const handleBulkDelete = () => {
-    setScenarios(scenarios.filter(scenario => !selectedScenarios.includes(scenario.id)));
-    setSelectedScenarios([]);
-    toast("Deleted selected scenarios successfully");
+  const handleRequirementClick = (requirementId: string) => {
+    setSelectedScenario((prevSelectedScenario) => {
+      if (
+        prevSelectedScenario &&
+        scenarios.find((s) => s.id === prevSelectedScenario)?.requirementId === requirementId
+      ) {
+        return null;
+      } else {
+        const firstScenarioId = scenarios.find((s) => s.requirementId === requirementId)?.id;
+        return firstScenarioId || null;
+      }
+    });
   };
 
   return (
-    <div className="flex gap-4 h-full">
-      <div className="w-2/3 flex flex-col">
-        <ScenarioHeader
-          selectedScenariosCount={selectedScenarios.length}
-          totalScenariosCount={scenarios.length}
-          onSelectAll={handleSelectAll}
-          onAddScenario={() => setShowAddDialog(true)}
-          onBulkStatusChange={handleBulkStatusChange}
-          onBulkDelete={handleBulkDelete}
-        />
-
-        <ScenarioActions
-          scenarios={scenarios}
-          selectedScenarios={selectedScenarios}
-          setScenarios={setScenarios}
-          setSelectedScenarios={setSelectedScenarios}
-        />
-
-        <ScenarioList
-          scenarios={scenarios}
-          selectedScenario={selectedScenario}
-          expandedScenarios={expandedScenarios}
-          selectedScenarios={selectedScenarios}
-          onScenarioClick={handleScenarioClick}
-          onRequirementClick={handleRequirementClick}
-          onEditScenario={handleEditScenario}
-          onDeleteScenario={handleDeleteScenario}
-          onUpdateScenario={handleUpdateScenario}
-          onToggleSelect={handleSelectScenario}
-        />
+    <div className="flex-1">
+      <div className="container mx-auto px-4 py-6">
+        <ResizablePanelGroup direction="horizontal" className="min-h-[600px] rounded-lg border">
+          <ResizablePanel 
+            defaultSize={30} 
+            minSize={5} 
+            maxSize={50}
+            collapsible 
+            collapsed={leftPanelCollapsed}
+            className="relative"
+          >
+            <div className="h-full p-4">
+              <ScenarioActions
+                scenarios={scenarios}
+                selectedScenarios={selectedScenarios}
+                setScenarios={setScenarios}
+                setSelectedScenarios={setSelectedScenarios}
+              />
+              <ScenarioList
+                scenarios={scenarios}
+                selectedScenario={selectedScenario}
+                onScenarioClick={setSelectedScenario}
+                selectedScenarios={selectedScenarios}
+                onSelectedScenariosChange={setSelectedScenarios}
+              />
+            </div>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="absolute right-[-12px] top-1/2 transform -translate-y-1/2 z-10"
+              onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
+            >
+              {leftPanelCollapsed ? 
+                <ChevronRight className="h-4 w-4" /> : 
+                <ChevronLeft className="h-4 w-4" />
+              }
+            </Button>
+          </ResizablePanel>
+          <ResizableHandle withHandle />
+          <ResizablePanel defaultSize={70}>
+            <div className="flex h-full">
+              <div className={`flex-1 p-4 ${rightPanelCollapsed ? 'mr-0' : 'mr-[200px]'}`}>
+                {selectedScenario && scenarios.find((s) => s.id === selectedScenario) && (
+                  <div className="prose prose-sm">
+                    <h3>{scenarios.find((s) => s.id === selectedScenario)?.description}</h3>
+                    <ul className="list-disc">
+                      {scenarios
+                        .find((s) => s.id === selectedScenario)
+                        ?.flows.map((flow, index) => (
+                          <li key={index}>
+                            {flow.type}:
+                            <ul className="list-disc ml-4">
+                              {flow.subflows.map((subflow, subIndex) => (
+                                <li key={subIndex}>{subflow}</li>
+                              ))}
+                            </ul>
+                          </li>
+                        ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+              <div className="absolute right-0 h-full">
+                <Button 
+                  variant="ghost" 
+                  size="icon"
+                  className="absolute left-[-12px] top-1/2 transform -translate-y-1/2 z-10"
+                  onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
+                >
+                  {rightPanelCollapsed ? 
+                    <ChevronLeft className="h-4 w-4" /> : 
+                    <ChevronRight className="h-4 w-4" />
+                  }
+                </Button>
+                {!rightPanelCollapsed && (
+                  <RequirementsCoverage
+                    scenarios={scenarios}
+                    selectedScenario={selectedScenario}
+                    onRequirementClick={handleRequirementClick}
+                  />
+                )}
+              </div>
+            </div>
+          </ResizablePanel>
+        </ResizablePanelGroup>
       </div>
-
-      <RequirementsCoverage
-        scenarios={scenarios}
-        selectedScenario={selectedScenario}
-        onRequirementClick={handleRequirementClick}
-      />
-
-      <RequirementDialog
-        open={showRequirementDialog}
-        onOpenChange={setShowRequirementDialog}
-        selectedRequirement={selectedRequirement}
-      />
-
-      <AddScenarioDialog
-        open={showAddDialog}
-        onOpenChange={setShowAddDialog}
-        onSave={handleSaveNewScenario}
-        requirementId={selectedRequirement || "REQ-001"}
-        editingScenario={editingScenario}
-      />
     </div>
   );
 };
