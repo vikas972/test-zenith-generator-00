@@ -1,54 +1,127 @@
-import { type SelectedFile } from "@/types";
-import { useState } from "react";
+
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import { ScenarioList } from "./scenario/components/ScenarioList";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
 import { TestScenario } from "./scenario/types";
 import { ScenarioActions } from "./scenario/components/ScenarioActions";
-import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 interface ScenarioGenerationProps {
-  selectedFile: SelectedFile | null;
+  selectedFile: { id: string; name: string; uploadTime: Date; } | null;
 }
 
 export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) => {
   const [scenarios, setScenarios] = useState<TestScenario[]>([
     {
       id: "1",
-      requirementId: "REQ-001",
+      title: "Login with valid credentials",
       description: "Verify user can log in with valid credentials",
+      requirementId: "REQ-001",
+      priority: "high",
+      status: "completed",
       flows: [
         {
-          type: "happy",
-          subflows: ["Enter username", "Enter password", "Click login button", "Verify successful login"],
+          type: "primary",
+          description: "Happy path login flow",
+          subflows: [
+            {
+              name: "Enter username",
+              coverage: "Username field input",
+              expectedResults: "Username entered successfully",
+            },
+            {
+              name: "Enter password",
+              coverage: "Password field input",
+              expectedResults: "Password entered successfully",
+            },
+            {
+              name: "Click login button",
+              coverage: "Login button interaction",
+              expectedResults: "Login button clicked",
+            },
+            {
+              name: "Verify successful login",
+              coverage: "Login success verification",
+              expectedResults: "User successfully logged in",
+            }
+          ],
         },
       ],
     },
     {
       id: "2",
-      requirementId: "REQ-001",
+      title: "Login with invalid credentials",
       description: "Check error message when logging in with invalid credentials",
+      requirementId: "REQ-001",
+      priority: "high",
+      status: "completed",
       flows: [
         {
-          type: "sad",
-          subflows: ["Enter username", "Enter incorrect password", "Click login button", "Verify error message"],
+          type: "negative",
+          description: "Invalid credentials flow",
+          subflows: [
+            {
+              name: "Enter username",
+              coverage: "Username field input",
+              expectedResults: "Username entered successfully",
+            },
+            {
+              name: "Enter incorrect password",
+              coverage: "Invalid password input",
+              expectedResults: "Invalid password entered",
+            },
+            {
+              name: "Click login button",
+              coverage: "Login button interaction",
+              expectedResults: "Login button clicked",
+            },
+            {
+              name: "Verify error message",
+              coverage: "Error message verification",
+              expectedResults: "Error message displayed correctly",
+            }
+          ],
         },
       ],
     },
     {
       id: "3",
-      requirementId: "REQ-002",
+      title: "Password reset functionality",
       description: "Test password reset functionality",
+      requirementId: "REQ-002",
+      priority: "medium",
+      status: "completed",
       flows: [
         {
-          type: "happy",
+          type: "primary",
+          description: "Password reset flow",
           subflows: [
-            "Click 'Forgot Password'",
-            "Enter email",
-            "Click 'Reset Password'",
-            "Verify email sent",
-            "Reset password using link from email",
+            {
+              name: "Click 'Forgot Password'",
+              coverage: "Password reset initiation",
+              expectedResults: "Password reset flow initiated",
+            },
+            {
+              name: "Enter email",
+              coverage: "Email input for reset",
+              expectedResults: "Email entered successfully",
+            },
+            {
+              name: "Click 'Reset Password'",
+              coverage: "Reset password submission",
+              expectedResults: "Reset password request submitted",
+            },
+            {
+              name: "Verify email sent",
+              coverage: "Email delivery verification",
+              expectedResults: "Reset email sent successfully",
+            },
+            {
+              name: "Reset password using link from email",
+              coverage: "Password reset completion",
+              expectedResults: "Password successfully reset",
+            }
           ],
         },
       ],
@@ -82,8 +155,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             defaultSize={30} 
             minSize={5} 
             maxSize={50}
-            collapsible 
-            collapsed={leftPanelCollapsed}
+            onCollapse={(collapsed) => setLeftPanelCollapsed(collapsed)}
             className="relative"
           >
             <div className="h-full p-4">
@@ -98,7 +170,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                 selectedScenario={selectedScenario}
                 onScenarioClick={setSelectedScenario}
                 selectedScenarios={selectedScenarios}
-                onSelectedScenariosChange={setSelectedScenarios}
+                setSelectedScenarios={setSelectedScenarios}
               />
             </div>
             <Button 
@@ -128,7 +200,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
                             {flow.type}:
                             <ul className="list-disc ml-4">
                               {flow.subflows.map((subflow, subIndex) => (
-                                <li key={subIndex}>{subflow}</li>
+                                <li key={subIndex}>{subflow.name}</li>
                               ))}
                             </ul>
                           </li>
