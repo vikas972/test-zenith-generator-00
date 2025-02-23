@@ -1,6 +1,7 @@
 
 import { AlertCircle, CheckCircle, FileText, GitBranch } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CoverageStats, TestCase } from "./types";
 import { mockTestCases } from "./mockData";
