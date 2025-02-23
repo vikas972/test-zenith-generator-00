@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Maximize2, Minimize2, PieChart, AlertCircle } from "lucide-react";
+import { Maximize2, Minimize2, PieChart, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -16,6 +16,12 @@ import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
 import { ScenarioDialog } from "./scenario/dialogs/ScenarioDialog";
 import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
 import { TestScenario } from "./scenario/types";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 interface TestCase {
   id: string;
@@ -198,6 +204,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
                     : prev.filter(id => id !== testCase.id)
                 );
               }}
+              onClick={(e) => e.stopPropagation()}
             />
             <div className="flex-1">
               <div className="flex items-center gap-2 mb-1">
@@ -209,91 +216,116 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
                 <Badge
                   variant="outline"
                   className="cursor-pointer hover:bg-primary/10"
-                  onClick={() => handleScenarioClick(testCase.scenarioId)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleScenarioClick(testCase.scenarioId);
+                  }}
                 >
                   {testCase.scenarioId}
                 </Badge>
                 <Badge
                   variant="outline"
                   className="cursor-pointer hover:bg-primary/10"
-                  onClick={() => handleRequirementClick(testCase.requirementId)}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleRequirementClick(testCase.requirementId);
+                  }}
                 >
                   {testCase.requirementId}
                 </Badge>
-                <Badge>{testCase.priority}</Badge>
+                <Badge variant={testCase.priority === 'high' ? 'destructive' : 'secondary'}>
+                  {testCase.priority}
+                </Badge>
+                <Badge variant={testCase.status === 'completed' ? 'default' : 'secondary'}>
+                  {testCase.status}
+                </Badge>
               </div>
             </div>
             <Button
               variant="ghost"
               size="sm"
               onClick={() => toggleTestCase(testCase.id)}
+              className="gap-2"
             >
+              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
               {isExpanded ? "Collapse" : "Expand"}
             </Button>
           </div>
         </CardHeader>
         {isExpanded && (
           <CardContent className="px-4 pb-4">
-            <div className="space-y-4">
-              <section>
-                <h4 className="font-medium mb-2">Description</h4>
-                <p className="text-sm text-gray-600">{testCase.description}</p>
-              </section>
+            <Accordion type="single" collapsible className="w-full">
+              <AccordionItem value="description">
+                <AccordionTrigger className="text-sm font-medium">Description</AccordionTrigger>
+                <AccordionContent>
+                  <p className="text-sm text-gray-600">{testCase.description}</p>
+                </AccordionContent>
+              </AccordionItem>
 
-              <section>
-                <h4 className="font-medium mb-2">Pre-conditions</h4>
-                <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                  {testCase.preconditions.map((condition, index) => (
-                    <li key={index}>{condition}</li>
-                  ))}
-                </ul>
-              </section>
+              <AccordionItem value="preconditions">
+                <AccordionTrigger className="text-sm font-medium">Pre-conditions</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                    {testCase.preconditions.map((condition, index) => (
+                      <li key={index}>{condition}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
 
-              <section>
-                <h4 className="font-medium mb-2">Test Data</h4>
-                <div className="grid grid-cols-2 gap-2 text-sm">
-                  {testCase.testData.map((data, index) => (
-                    <div key={index} className="flex justify-between">
-                      <span className="text-gray-600">{data.field}:</span>
-                      <span>{data.value}</span>
-                    </div>
-                  ))}
-                </div>
-              </section>
-
-              <section>
-                <h4 className="font-medium mb-2">Test Steps</h4>
-                <div className="space-y-3">
-                  {testCase.testSteps.map((step, index) => (
-                    <div key={index} className="text-sm">
-                      <div className="font-medium">{index + 1}. {step.step}</div>
-                      <div className="ml-4 text-gray-600">
-                        <div>Input: {step.input}</div>
-                        <div>Expected: {step.expected}</div>
+              <AccordionItem value="test-data">
+                <AccordionTrigger className="text-sm font-medium">Test Data</AccordionTrigger>
+                <AccordionContent>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    {testCase.testData.map((data, index) => (
+                      <div key={index} className="flex justify-between p-2 bg-gray-50 rounded">
+                        <span className="text-gray-600 font-medium">{data.field}:</span>
+                        <span>{data.value}</span>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </section>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
 
-              <section>
-                <h4 className="font-medium mb-2">Expected Results</h4>
-                <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                  {testCase.expectedResults.map((result, index) => (
-                    <li key={index}>{result}</li>
-                  ))}
-                </ul>
-              </section>
+              <AccordionItem value="test-steps" className="border-b">
+                <AccordionTrigger className="text-sm font-medium">Test Steps</AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4">
+                    {testCase.testSteps.map((step, index) => (
+                      <div key={index} className="p-3 bg-gray-50 rounded">
+                        <div className="font-medium text-sm mb-2">Step {index + 1}: {step.step}</div>
+                        <div className="text-sm space-y-1 ml-4">
+                          <div className="text-gray-600">Input: {step.input}</div>
+                          <div className="text-gray-600">Expected: {step.expected}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
 
-              <section>
-                <h4 className="font-medium mb-2">Post-conditions</h4>
-                <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                  {testCase.postconditions.map((condition, index) => (
-                    <li key={index}>{condition}</li>
-                  ))}
-                </ul>
-              </section>
-            </div>
+              <AccordionItem value="expected-results">
+                <AccordionTrigger className="text-sm font-medium">Expected Results</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                    {testCase.expectedResults.map((result, index) => (
+                      <li key={index}>{result}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+
+              <AccordionItem value="postconditions">
+                <AccordionTrigger className="text-sm font-medium">Post-conditions</AccordionTrigger>
+                <AccordionContent>
+                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
+                    {testCase.postconditions.map((condition, index) => (
+                      <li key={index}>{condition}</li>
+                    ))}
+                  </ul>
+                </AccordionContent>
+              </AccordionItem>
+            </Accordion>
           </CardContent>
         )}
       </Card>
