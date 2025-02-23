@@ -15,6 +15,7 @@ import {
 import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
 import { ScenarioDialog } from "./scenario/dialogs/ScenarioDialog";
 import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
+import { TestScenario } from "./scenario/types";
 
 interface TestCase {
   id: string;
@@ -101,6 +102,29 @@ interface CoverageStats {
   testCaseCount: number;
   scenarioCount: number;
 }
+
+const transformTestCaseToScenario = (testCase: TestCase): TestScenario => {
+  return {
+    id: testCase.id,
+    title: testCase.title,
+    description: testCase.description,
+    requirementId: testCase.requirementId,
+    priority: testCase.priority,
+    status: testCase.status,
+    flows: [
+      {
+        type: "primary",
+        description: "Main test flow",
+        subflows: testCase.testSteps.map((step, index) => ({
+          name: `Step ${index + 1}`,
+          coverage: step.step,
+          expectedResults: step.expected,
+          entries: []
+        }))
+      }
+    ]
+  };
+};
 
 export const TestCases = ({ selectedFile }: TestCasesProps) => {
   const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false);
@@ -358,6 +382,8 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
     );
   };
 
+  const scenariosForGrid = mockTestCases.map(transformTestCaseToScenario);
+
   return (
     <>
       <div className="flex gap-4 h-full">
@@ -474,7 +500,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
       <ScenarioGridDialog
         open={showGridDialog}
         onOpenChange={setShowGridDialog}
-        scenarios={mockTestCases}
+        scenarios={scenariosForGrid}
       />
 
       <ScenarioDialog
