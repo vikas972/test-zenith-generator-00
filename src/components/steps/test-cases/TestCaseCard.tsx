@@ -28,6 +28,7 @@ interface TestCaseCardProps {
   isSelected: boolean;
   onSelect: (checked: boolean) => void;
   onToggle: () => void;
+  onClick: () => void;
   onScenarioClick: (scenarioId: string) => void;
   onRequirementClick: (requirementId: string) => void;
 }
@@ -38,6 +39,7 @@ export const TestCaseCard = ({
   isSelected,
   onSelect,
   onToggle,
+  onClick,
   onScenarioClick,
   onRequirementClick,
 }: TestCaseCardProps) => {
@@ -66,9 +68,10 @@ export const TestCaseCard = ({
   return (
     <Card
       className={cn(
-        "mb-4 transition-all",
+        "mb-4 transition-all cursor-pointer",
         isSelected && "border-primary"
       )}
+      onClick={() => onClick()}
     >
       <CardHeader className="p-4">
         <div className="flex items-center gap-3">
@@ -122,7 +125,7 @@ export const TestCaseCard = ({
                   >
                     <SelectTrigger 
                       className="h-7 w-24"
-                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <SelectValue />
                     </SelectTrigger>
@@ -138,7 +141,7 @@ export const TestCaseCard = ({
                   >
                     <SelectTrigger 
                       className="h-7 w-32"
-                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => e.stopPropagation()}
                     >
                       <SelectValue />
                     </SelectTrigger>
@@ -210,7 +213,10 @@ export const TestCaseCard = ({
                   variant="ghost"
                   size="icon"
                   className="h-8 w-8"
-                  onClick={onToggle}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onToggle();
+                  }}
                 >
                   {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                 </Button>

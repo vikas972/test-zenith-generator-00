@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -46,6 +47,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
   const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false);
   const [isRightPanelMaximized, setIsRightPanelMaximized] = useState(false);
   const [selectedTestCases, setSelectedTestCases] = useState<string[]>([]);
+  const [selectedTestCase, setSelectedTestCase] = useState<TestCase | null>(null);
   const [expandedTestCases, setExpandedTestCases] = useState<string[]>([]);
   const [showGridDialog, setShowGridDialog] = useState(false);
   const [showScenarioDialog, setShowScenarioDialog] = useState(false);
@@ -94,9 +96,9 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
 
   const scenariosForGrid = mockTestCases.map(transformTestCaseToScenario);
 
-  const selectedTestCase = selectedTestCases.length === 1 
-    ? mockTestCases.find(tc => tc.id === selectedTestCases[0])
-    : null;
+  const handleTestCaseClick = (testCase: TestCase) => {
+    setSelectedTestCase(testCase);
+  };
 
   return (
     <>
@@ -192,6 +194,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
                   onToggle={() => toggleTestCase(testCase.id)}
                   onScenarioClick={handleScenarioClick}
                   onRequirementClick={handleRequirementClick}
+                  onClick={() => handleTestCaseClick(testCase)}
                 />
               ))}
             </div>
