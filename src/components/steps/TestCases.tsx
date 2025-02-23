@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -94,6 +93,10 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
   };
 
   const scenariosForGrid = mockTestCases.map(transformTestCaseToScenario);
+
+  const selectedTestCase = selectedTestCases.length === 1 
+    ? mockTestCases.find(tc => tc.id === selectedTestCases[0])
+    : null;
 
   return (
     <>
@@ -218,7 +221,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
           </div>
 
           <ScrollArea className="flex-1">
-            <CoverageAnalysis />
+            <CoverageAnalysis selectedTestCase={selectedTestCase} />
           </ScrollArea>
         </div>
       </div>
