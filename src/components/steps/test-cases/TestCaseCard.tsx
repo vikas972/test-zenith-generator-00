@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -42,8 +43,8 @@ export const TestCaseCard = ({
 }: TestCaseCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editedTitle, setEditedTitle] = useState(testCase.title);
-  const [editedPriority, setEditedPriority] = useState(testCase.priority);
-  const [editedStatus, setEditedStatus] = useState(testCase.status);
+  const [editedPriority, setEditedPriority] = useState<"high" | "medium" | "low">(testCase.priority);
+  const [editedStatus, setEditedStatus] = useState<"completed" | "in_progress" | "needs_review">(testCase.status);
 
   const handleSaveEdit = () => {
     // Here you would typically call a function passed from the parent to update the test case
@@ -117,8 +118,8 @@ export const TestCaseCard = ({
                 <>
                   <Select 
                     value={editedPriority} 
-                    onValueChange={setEditedPriority}
-                    onOpenChange={(e) => e.stopPropagation()}
+                    onValueChange={(value: "high" | "medium" | "low") => setEditedPriority(value)}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <SelectTrigger className="h-7 w-24">
                       <SelectValue />
@@ -131,8 +132,8 @@ export const TestCaseCard = ({
                   </Select>
                   <Select 
                     value={editedStatus} 
-                    onValueChange={setEditedStatus}
-                    onOpenChange={(e) => e.stopPropagation()}
+                    onValueChange={(value: "completed" | "in_progress" | "needs_review") => setEditedStatus(value)}
+                    onClick={(e) => e.stopPropagation()}
                   >
                     <SelectTrigger className="h-7 w-32">
                       <SelectValue />
