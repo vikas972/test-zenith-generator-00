@@ -25,7 +25,6 @@ export const RequirementsCoverage = ({
     const totalSubflows = relatedScenarios.reduce((acc, scenario) => 
       acc + scenario.flows.reduce((flowAcc, flow) => flowAcc + flow.subflows.length, 0), 0);
     
-    // Calculate coverage based on number of flows and subflows
     const coverage = Math.min(100, Math.round((totalFlows * 20 + totalSubflows * 10) / 3));
     return coverage;
   };
@@ -33,7 +32,6 @@ export const RequirementsCoverage = ({
   const getMissingCoverageItems = (coverage: number): MissingCoverage[] => {
     if (coverage === 100) return [];
     
-    // This is an example - in a real app, you'd analyze the actual coverage gaps
     const missingItems: MissingCoverage[] = [];
     if (coverage < 100) {
       missingItems.push({
@@ -57,10 +55,9 @@ export const RequirementsCoverage = ({
   };
 
   return (
-    <div className="w-1/3 border-l p-4">
-      <div className="prose prose-sm">
-        <h3 className="text-lg font-semibold mb-4">Requirements Coverage</h3>
-        <div className="space-y-2">
+    <div className="h-full p-4">
+      <div className="prose prose-sm max-w-none">
+        <div className="space-y-4">
           {Object.entries(
             scenarios.reduce((acc: { [key: string]: TestScenario[] }, scenario) => {
               if (!acc[scenario.requirementId]) {
@@ -77,7 +74,7 @@ export const RequirementsCoverage = ({
               <div
                 key={requirementId}
                 className={cn(
-                  "p-3 border rounded transition-colors cursor-pointer",
+                  "p-3 border rounded transition-colors cursor-pointer w-full",
                   selectedScenario && relatedScenarios.some(s => s.id === selectedScenario)
                     ? "bg-primary/10 border-primary" 
                     : "hover:bg-gray-50"
