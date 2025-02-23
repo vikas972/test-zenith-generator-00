@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { type TestScenario } from "./scenario/types";
 import { RequirementsCoverage } from "./scenario/RequirementsCoverage";
@@ -9,6 +10,7 @@ import { ScenarioActions } from "./scenario/components/ScenarioActions";
 import { useScenarioState } from "./scenario/hooks/useScenarioState";
 import { toast } from "sonner";
 import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable";
 
 interface ScenarioGenerationProps {
   selectedFile: { id: string; name: string; uploadTime: Date } | null;
@@ -78,44 +80,50 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
   };
 
   return (
-    <div className="flex gap-4 h-full">
-      <div className="w-2/3 flex flex-col">
-        <ScenarioHeader
-          selectedScenariosCount={selectedScenarios.length}
-          totalScenariosCount={scenarios.length}
-          onSelectAll={handleSelectAll}
-          onAddScenario={() => setShowAddDialog(true)}
-          onBulkStatusChange={handleBulkStatusChange}
-          onBulkDelete={handleBulkDelete}
-          onShowGrid={() => setShowGridDialog(true)}
-        />
+    <div className="flex h-full">
+      <ResizablePanelGroup direction="horizontal" className="flex-1">
+        <ResizablePanel defaultSize={66} className="flex flex-col">
+          <ScenarioHeader
+            selectedScenariosCount={selectedScenarios.length}
+            totalScenariosCount={scenarios.length}
+            onSelectAll={handleSelectAll}
+            onAddScenario={() => setShowAddDialog(true)}
+            onBulkStatusChange={handleBulkStatusChange}
+            onBulkDelete={handleBulkDelete}
+            onShowGrid={() => setShowGridDialog(true)}
+          />
 
-        <ScenarioActions
-          scenarios={scenarios}
-          selectedScenarios={selectedScenarios}
-          setScenarios={setScenarios}
-          setSelectedScenarios={setSelectedScenarios}
-        />
+          <ScenarioActions
+            scenarios={scenarios}
+            selectedScenarios={selectedScenarios}
+            setScenarios={setScenarios}
+            setSelectedScenarios={setSelectedScenarios}
+          />
 
-        <ScenarioList
-          scenarios={scenarios}
-          selectedScenario={selectedScenario}
-          expandedScenarios={expandedScenarios}
-          selectedScenarios={selectedScenarios}
-          onScenarioClick={handleScenarioClick}
-          onRequirementClick={handleRequirementClick}
-          onEditScenario={handleEditScenario}
-          onDeleteScenario={handleDeleteScenario}
-          onUpdateScenario={handleUpdateScenario}
-          onToggleSelect={handleSelectScenario}
-        />
-      </div>
+          <ScenarioList
+            scenarios={scenarios}
+            selectedScenario={selectedScenario}
+            expandedScenarios={expandedScenarios}
+            selectedScenarios={selectedScenarios}
+            onScenarioClick={handleScenarioClick}
+            onRequirementClick={handleRequirementClick}
+            onEditScenario={handleEditScenario}
+            onDeleteScenario={handleDeleteScenario}
+            onUpdateScenario={handleUpdateScenario}
+            onToggleSelect={handleSelectScenario}
+          />
+        </ResizablePanel>
 
-      <RequirementsCoverage
-        scenarios={scenarios}
-        selectedScenario={selectedScenario}
-        onRequirementClick={handleRequirementClick}
-      />
+        <ResizableHandle withHandle />
+
+        <ResizablePanel defaultSize={34}>
+          <RequirementsCoverage
+            scenarios={scenarios}
+            selectedScenario={selectedScenario}
+            onRequirementClick={handleRequirementClick}
+          />
+        </ResizablePanel>
+      </ResizablePanelGroup>
 
       <RequirementDialog
         open={showRequirementDialog}
