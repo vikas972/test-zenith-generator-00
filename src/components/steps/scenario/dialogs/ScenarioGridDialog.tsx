@@ -8,18 +8,16 @@ import {
 import { Button } from "@/components/ui/button";
 import { Download, Maximize2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { type TestScenario } from "../types";
-import { exportToExcel } from "../utils/exportUtils";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
 
 interface ScenarioGridDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  scenarios: TestScenario[];
+  testCases: any[]; // Will be properly typed when integrated
 }
 
-export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGridDialogProps) => {
+export const ScenarioGridDialog = ({ open, onOpenChange, testCases }: ScenarioGridDialogProps) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -27,7 +25,8 @@ export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGr
   };
 
   const handleExport = () => {
-    exportToExcel(scenarios);
+    // TODO: Implement export functionality
+    console.log("Export to Excel");
   };
 
   const dialogClass = isFullScreen 
@@ -38,7 +37,7 @@ export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={dialogClass}>
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>Test Scenarios Overview</DialogTitle>
+          <DialogTitle>Test Cases Overview</DialogTitle>
           <div className="flex gap-2">
             <Button variant="outline" onClick={toggleFullScreen}>
               <Maximize2 className="h-4 w-4" />
@@ -56,39 +55,25 @@ export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGr
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Title</TableHead>
+                  <TableHead>Scenario</TableHead>
                   <TableHead>Requirement</TableHead>
                   <TableHead>Priority</TableHead>
-                  <TableHead>Flow Type</TableHead>
-                  <TableHead>Condition</TableHead>
-                  <TableHead>Coverage</TableHead>
-                  <TableHead>Expected Results</TableHead>
-                  <TableHead>Entries</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Description</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {scenarios.flatMap((scenario) =>
-                  scenario.flows.flatMap((flow) =>
-                    flow.subflows.map((subflow, subflowIndex) => (
-                      <TableRow key={`${scenario.id}-${flow.type}-${subflowIndex}`}>
-                        <TableCell className="font-medium">{scenario.id}</TableCell>
-                        <TableCell>{scenario.title}</TableCell>
-                        <TableCell>{scenario.requirementId}</TableCell>
-                        <TableCell className="capitalize">{scenario.priority}</TableCell>
-                        <TableCell className="capitalize">{flow.type}</TableCell>
-                        <TableCell>{subflow.name}</TableCell>
-                        <TableCell>{subflow.coverage}</TableCell>
-                        <TableCell>{subflow.expectedResults}</TableCell>
-                        <TableCell>
-                          {subflow.entries?.map((entry, i) => (
-                            <div key={i} className="py-1">
-                              {entry.description}
-                            </div>
-                          ))}
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )
-                )}
+                {testCases.map((testCase) => (
+                  <TableRow key={testCase.id}>
+                    <TableCell className="font-medium">{testCase.id}</TableCell>
+                    <TableCell>{testCase.title}</TableCell>
+                    <TableCell>{testCase.scenarioId}</TableCell>
+                    <TableCell>{testCase.requirementId}</TableCell>
+                    <TableCell className="capitalize">{testCase.priority}</TableCell>
+                    <TableCell className="capitalize">{testCase.status}</TableCell>
+                    <TableCell className="max-w-md truncate">{testCase.description}</TableCell>
+                  </TableRow>
+                ))}
               </TableBody>
             </Table>
           </div>
