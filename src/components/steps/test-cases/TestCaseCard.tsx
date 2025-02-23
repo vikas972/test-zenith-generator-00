@@ -1,15 +1,23 @@
-
-import { ChevronDown, ChevronUp } from "lucide-react";
+import { useState } from "react";
+import { ChevronDown, ChevronUp, Pencil, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { TestCase } from "./types";
 
@@ -32,6 +40,28 @@ export const TestCaseCard = ({
   onScenarioClick,
   onRequirementClick,
 }: TestCaseCardProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedTitle, setEditedTitle] = useState(testCase.title);
+  const [editedPriority, setEditedPriority] = useState(testCase.priority);
+  const [editedStatus, setEditedStatus] = useState(testCase.status);
+
+  const handleSaveEdit = () => {
+    // Here you would typically call a function passed from the parent to update the test case
+    console.log("Saving edited test case:", {
+      ...testCase,
+      title: editedTitle,
+      priority: editedPriority,
+      status: editedStatus,
+    });
+    setIsEditing(false);
+  };
+
+  const handleDelete = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    // Here you would typically call a function passed from the parent to delete the test case
+    console.log("Deleting test case:", testCase.id);
+  };
+
   return (
     <Card
       className={cn(
@@ -47,11 +77,21 @@ export const TestCaseCard = ({
             onClick={(e) => e.stopPropagation()}
           />
           <div className="flex-1">
-            <div className="flex items-center gap-2 mb-1">
+            <div className="flex items-center gap-2 mb-2">
               <span className="font-medium">{testCase.id}</span>
               <span className="text-gray-500">-</span>
-              <span>{testCase.title}</span>
+              {isEditing ? (
+                <Input
+                  value={editedTitle}
+                  onChange={(e) => setEditedTitle(e.target.value)}
+                  className="h-7"
+                  onClick={(e) => e.stopPropagation()}
+                />
+              ) : (
+                <span>{testCase.title}</span>
+              )}
             </div>
+            <p className="text-sm text-gray-600 mb-2">{testCase.description}</p>
             <div className="flex items-center gap-2 text-sm">
               <Badge
                 variant="outline"
@@ -73,35 +113,110 @@ export const TestCaseCard = ({
               >
                 {testCase.requirementId}
               </Badge>
-              <Badge variant={testCase.priority === 'high' ? 'destructive' : 'secondary'}>
-                {testCase.priority}
-              </Badge>
-              <Badge variant={testCase.status === 'completed' ? 'default' : 'secondary'}>
-                {testCase.status}
-              </Badge>
+              {isEditing ? (
+                <>
+                  <Select 
+                    value={editedPriority} 
+                    onValueChange={setEditedPriority}
+                    onOpenChange={(e) => e.stopPropagation()}
+                  >
+                    <SelectTrigger className="h-7 w-24">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="high">High</SelectItem>
+                      <SelectItem value="medium">Medium</SelectItem>
+                      <SelectItem value="low">Low</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Select 
+                    value={editedStatus} 
+                    onValueChange={setEditedStatus}
+                    onOpenChange={(e) => e.stopPropagation()}
+                  >
+                    <SelectTrigger className="h-7 w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="completed">Completed</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="needs_review">Needs Review</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : (
+                <>
+                  <Badge variant={testCase.priority === 'high' ? 'destructive' : 'secondary'}>
+                    {testCase.priority}
+                  </Badge>
+                  <Badge variant={testCase.status === 'completed' ? 'default' : 'secondary'}>
+                    {testCase.status}
+                  </Badge>
+                </>
+              )}
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onToggle}
-            className="gap-2"
-          >
-            {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-            {isExpanded ? "Collapse" : "Expand"}
-          </Button>
+          <div className="flex items-center gap-2">
+            {isEditing ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleSaveEdit();
+                  }}
+                >
+                  Save
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(false);
+                  }}
+                >
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setIsEditing(true);
+                  }}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8 text-red-500 hover:text-red-600 hover:bg-red-50"
+                  onClick={handleDelete}
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={onToggle}
+                >
+                  {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                </Button>
+              </>
+            )}
+          </div>
         </div>
       </CardHeader>
       {isExpanded && (
         <CardContent className="px-4 pb-4">
           <Accordion type="single" collapsible className="w-full">
-            <AccordionItem value="description">
-              <AccordionTrigger className="text-sm font-medium">Description</AccordionTrigger>
-              <AccordionContent>
-                <p className="text-sm text-gray-600">{testCase.description}</p>
-              </AccordionContent>
-            </AccordionItem>
-
             <AccordionItem value="preconditions">
               <AccordionTrigger className="text-sm font-medium">Pre-conditions</AccordionTrigger>
               <AccordionContent>
