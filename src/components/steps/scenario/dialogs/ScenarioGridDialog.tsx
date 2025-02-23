@@ -18,7 +18,11 @@ interface ScenarioGridDialogProps {
   scenarios: TestScenario[]; // Changed from testCases to scenarios to match the prop being passed
 }
 
-export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGridDialogProps) => {
+export const ScenarioGridDialog = ({ 
+  open, 
+  onOpenChange, 
+  scenarios = [] // Provide default empty array
+}: ScenarioGridDialogProps) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -63,7 +67,7 @@ export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGr
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {scenarios.map((scenario) => (
+                {scenarios?.map((scenario) => (
                   <TableRow key={scenario.id}>
                     <TableCell className="font-medium">{scenario.id}</TableCell>
                     <TableCell>{scenario.title}</TableCell>
@@ -75,6 +79,11 @@ export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGr
                 ))}
               </TableBody>
             </Table>
+            {(!scenarios || scenarios.length === 0) && (
+              <div className="text-center py-4 text-gray-500">
+                No scenarios available
+              </div>
+            )}
           </div>
         </ScrollArea>
       </DialogContent>
