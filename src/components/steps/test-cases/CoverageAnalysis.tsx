@@ -62,9 +62,14 @@ export const CoverageAnalysis = ({ selectedTestCase }: CoverageAnalysisProps) =>
               <div className="p-3 border rounded bg-primary/5">
                 <div className="flex items-center justify-between mb-2">
                   <span className="font-medium">{selectedTestCase.id}</span>
-                  <Badge variant={selectedTestCase.status === "completed" ? "default" : "secondary"}>
+                  <div className={cn(
+                    "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
+                    selectedTestCase.status === "completed" 
+                      ? "border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
+                      : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
+                  )}>
                     {selectedTestCase.status}
-                  </Badge>
+                  </div>
                 </div>
                 <p className="text-sm text-gray-600">{selectedTestCase.title}</p>
               </div>
