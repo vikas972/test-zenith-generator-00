@@ -1,10 +1,9 @@
+
 import { useState } from "react";
-import { Maximize2, Minimize2, PieChart, AlertCircle, ChevronDown, ChevronUp } from "lucide-react";
+import { Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Tooltip,
@@ -15,99 +14,11 @@ import {
 import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
 import { ScenarioDialog } from "./scenario/dialogs/ScenarioDialog";
 import { RequirementDialog } from "./scenario/dialogs/RequirementDialog";
+import { TestCase, TestCasesProps } from "./test-cases/types";
+import { TestCaseCard } from "./test-cases/TestCaseCard";
+import { CoverageAnalysis } from "./test-cases/CoverageAnalysis";
+import { mockTestCases } from "./test-cases/mockData";
 import { TestScenario } from "./scenario/types";
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
-
-interface TestCase {
-  id: string;
-  title: string;
-  scenarioId: string;
-  requirementId: string;
-  priority: "high" | "medium" | "low";
-  description: string;
-  preconditions: string[];
-  testData: {
-    field: string;
-    value: string;
-  }[];
-  testSteps: {
-    step: string;
-    input: string;
-    expected: string;
-  }[];
-  expectedResults: string[];
-  postconditions: string[];
-  status: "completed" | "in_progress" | "needs_review";
-}
-
-const mockTestCases: TestCase[] = [
-  {
-    id: "TC-001",
-    title: "Verify Successful Login",
-    scenarioId: "TS-001",
-    requirementId: "REQ-001",
-    priority: "high",
-    description: "Verify user can login with valid credentials",
-    preconditions: [
-      "User account exists",
-      "User is not logged in",
-      "System is accessible"
-    ],
-    testData: [
-      { field: "Username", value: "john.doe@example.com" },
-      { field: "Password", value: "Valid@123" },
-      { field: "Remember Me", value: "Yes" }
-    ],
-    testSteps: [
-      {
-        step: "Navigate to login page",
-        input: "https://app.com/login",
-        expected: "Login form displays"
-      },
-      {
-        step: "Enter username",
-        input: "john.doe@example.com",
-        expected: "Field accepts input"
-      },
-      {
-        step: "Enter password",
-        input: "Valid@123",
-        expected: "Password masked"
-      },
-      {
-        step: "Click login button",
-        input: "Click action",
-        expected: "Form submits"
-      }
-    ],
-    expectedResults: [
-      "User successfully logged in",
-      "Dashboard displayed",
-      "Username visible in header"
-    ],
-    postconditions: [
-      "User session created",
-      "Audit log updated"
-    ],
-    status: "completed"
-  }
-];
-
-interface TestCasesProps {
-  selectedFile: { id: string; name: string; uploadTime: Date } | null;
-}
-
-interface CoverageStats {
-  scenarioCoverage: number;
-  requirementCoverage: number;
-  testCaseCount: number;
-  scenarioCount: number;
-}
 
 const transformTestCaseToScenario = (testCase: TestCase): TestScenario => {
   return {
@@ -180,238 +91,6 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
       selectedTestCases.includes(testCase.id) ? { ...testCase, status } : testCase
     );
     console.log("Updated test cases with new status:", updatedTestCases);
-  };
-
-  const TestCaseCard = ({ testCase }: { testCase: TestCase }) => {
-    const isExpanded = expandedTestCases.includes(testCase.id);
-    const isSelected = selectedTestCases.includes(testCase.id);
-
-    return (
-      <Card
-        className={cn(
-          "mb-4 transition-all",
-          isSelected && "border-primary"
-        )}
-      >
-        <CardHeader className="p-4">
-          <div className="flex items-center gap-3">
-            <Checkbox
-              checked={isSelected}
-              onCheckedChange={(checked) => {
-                setSelectedTestCases(prev =>
-                  checked
-                    ? [...prev, testCase.id]
-                    : prev.filter(id => id !== testCase.id)
-                );
-              }}
-              onClick={(e) => e.stopPropagation()}
-            />
-            <div className="flex-1">
-              <div className="flex items-center gap-2 mb-1">
-                <span className="font-medium">{testCase.id}</span>
-                <span className="text-gray-500">-</span>
-                <span>{testCase.title}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <Badge
-                  variant="outline"
-                  className="cursor-pointer hover:bg-primary/10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleScenarioClick(testCase.scenarioId);
-                  }}
-                >
-                  {testCase.scenarioId}
-                </Badge>
-                <Badge
-                  variant="outline"
-                  className="cursor-pointer hover:bg-primary/10"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleRequirementClick(testCase.requirementId);
-                  }}
-                >
-                  {testCase.requirementId}
-                </Badge>
-                <Badge variant={testCase.priority === 'high' ? 'destructive' : 'secondary'}>
-                  {testCase.priority}
-                </Badge>
-                <Badge variant={testCase.status === 'completed' ? 'default' : 'secondary'}>
-                  {testCase.status}
-                </Badge>
-              </div>
-            </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => toggleTestCase(testCase.id)}
-              className="gap-2"
-            >
-              {isExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-              {isExpanded ? "Collapse" : "Expand"}
-            </Button>
-          </div>
-        </CardHeader>
-        {isExpanded && (
-          <CardContent className="px-4 pb-4">
-            <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="description">
-                <AccordionTrigger className="text-sm font-medium">Description</AccordionTrigger>
-                <AccordionContent>
-                  <p className="text-sm text-gray-600">{testCase.description}</p>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="preconditions">
-                <AccordionTrigger className="text-sm font-medium">Pre-conditions</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                    {testCase.preconditions.map((condition, index) => (
-                      <li key={index}>{condition}</li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="test-data">
-                <AccordionTrigger className="text-sm font-medium">Test Data</AccordionTrigger>
-                <AccordionContent>
-                  <div className="grid grid-cols-2 gap-2 text-sm">
-                    {testCase.testData.map((data, index) => (
-                      <div key={index} className="flex justify-between p-2 bg-gray-50 rounded">
-                        <span className="text-gray-600 font-medium">{data.field}:</span>
-                        <span>{data.value}</span>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="test-steps" className="border-b">
-                <AccordionTrigger className="text-sm font-medium">Test Steps</AccordionTrigger>
-                <AccordionContent>
-                  <div className="space-y-4">
-                    {testCase.testSteps.map((step, index) => (
-                      <div key={index} className="p-3 bg-gray-50 rounded">
-                        <div className="font-medium text-sm mb-2">Step {index + 1}: {step.step}</div>
-                        <div className="text-sm space-y-1 ml-4">
-                          <div className="text-gray-600">Input: {step.input}</div>
-                          <div className="text-gray-600">Expected: {step.expected}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="expected-results">
-                <AccordionTrigger className="text-sm font-medium">Expected Results</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                    {testCase.expectedResults.map((result, index) => (
-                      <li key={index}>{result}</li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-
-              <AccordionItem value="postconditions">
-                <AccordionTrigger className="text-sm font-medium">Post-conditions</AccordionTrigger>
-                <AccordionContent>
-                  <ul className="list-disc pl-5 text-sm text-gray-600 space-y-1">
-                    {testCase.postconditions.map((condition, index) => (
-                      <li key={index}>{condition}</li>
-                    ))}
-                  </ul>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          </CardContent>
-        )}
-      </Card>
-    );
-  };
-
-  const CoverageAnalysis = () => {
-    const stats: CoverageStats = {
-      scenarioCoverage: 75,
-      requirementCoverage: 85,
-      testCaseCount: mockTestCases.length,
-      scenarioCount: 3
-    };
-
-    return (
-      <div className="space-y-4 pr-4">
-        <Card>
-          <CardContent className="p-4">
-            <div className="space-y-4">
-              <div>
-                <h3 className="font-medium mb-2">Overall Coverage</h3>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="p-3 border rounded">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-gray-600">Requirements</span>
-                      <div className="flex items-center gap-2">
-                        <PieChart className={cn(
-                          "h-4 w-4",
-                          stats.requirementCoverage >= 90 ? "text-green-500" : "text-amber-500"
-                        )} />
-                        <span className="font-medium">{stats.requirementCoverage}%</span>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="p-3 border rounded">
-                    <div className="flex items-center justify-between mb-1">
-                      <span className="text-sm text-gray-600">Scenarios</span>
-                      <div className="flex items-center gap-2">
-                        <PieChart className={cn(
-                          "h-4 w-4",
-                          stats.scenarioCoverage >= 90 ? "text-green-500" : "text-amber-500"
-                        )} />
-                        <span className="font-medium">{stats.scenarioCoverage}%</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div>
-                <h3 className="font-medium mb-2">Test Cases Distribution</h3>
-                <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Total Test Cases</span>
-                    <span className="font-medium">{stats.testCaseCount}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm text-gray-600">Scenarios Covered</span>
-                    <span className="font-medium">{stats.scenarioCount}</span>
-                  </div>
-                </div>
-              </div>
-
-              {stats.requirementCoverage < 100 && (
-                <div className="p-3 bg-amber-50 border border-amber-200 rounded">
-                  <div className="flex items-center gap-2 text-amber-600 mb-2">
-                    <AlertCircle className="h-4 w-4" />
-                    <span className="text-sm font-medium">Coverage Gaps</span>
-                  </div>
-                  <ul className="space-y-1">
-                    <li className="text-sm text-amber-700 flex items-start gap-2">
-                      <span>•</span>
-                      <span>Some requirements are not fully covered by test cases</span>
-                    </li>
-                    <li className="text-sm text-amber-700 flex items-start gap-2">
-                      <span>•</span>
-                      <span>Consider adding more test cases for edge cases</span>
-                    </li>
-                  </ul>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
   };
 
   const scenariosForGrid = mockTestCases.map(transformTestCaseToScenario);
@@ -495,7 +174,22 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
           <ScrollArea className="flex-1">
             <div className="pr-4">
               {mockTestCases.map((testCase) => (
-                <TestCaseCard key={testCase.id} testCase={testCase} />
+                <TestCaseCard
+                  key={testCase.id}
+                  testCase={testCase}
+                  isExpanded={expandedTestCases.includes(testCase.id)}
+                  isSelected={selectedTestCases.includes(testCase.id)}
+                  onSelect={(checked) => {
+                    setSelectedTestCases(prev =>
+                      checked
+                        ? [...prev, testCase.id]
+                        : prev.filter(id => id !== testCase.id)
+                    );
+                  }}
+                  onToggle={() => toggleTestCase(testCase.id)}
+                  onScenarioClick={handleScenarioClick}
+                  onRequirementClick={handleRequirementClick}
+                />
               ))}
             </div>
           </ScrollArea>
