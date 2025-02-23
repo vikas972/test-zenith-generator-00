@@ -183,7 +183,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
                   key={testCase.id}
                   testCase={testCase}
                   isExpanded={expandedTestCases.includes(testCase.id)}
-                  isSelected={selectedTestCases.includes(testCase.id)}
+                  isSelected={selectedTestCase?.id === testCase.id} {/* Changed this line */}
                   onSelect={(checked) => {
                     setSelectedTestCases(prev =>
                       checked
