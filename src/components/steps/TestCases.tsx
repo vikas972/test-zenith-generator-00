@@ -474,7 +474,7 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
       <ScenarioGridDialog
         open={showGridDialog}
         onOpenChange={setShowGridDialog}
-        testCases={mockTestCases}
+        scenarios={mockTestCases}
       />
 
       <ScenarioDialog
