@@ -99,7 +99,7 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
       <div className={cn(
         "flex flex-col transition-all duration-300",
         isLeftPanelMaximized ? "w-full" : "w-2/3",
-        isRightPanelMaximized ? "hidden" : "flex"
+        isRightPanelMaximized ? "w-0 hidden" : "flex"
       )}>
         <div className="flex justify-between items-center">
           <div className="flex-1">
@@ -150,8 +150,8 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
 
       <div className={cn(
         "flex flex-col transition-all duration-300",
-        isRightPanelMaximized ? "w-full" : "flex-1",
-        isLeftPanelMaximized ? "hidden" : "flex"
+        isRightPanelMaximized ? "w-full" : "w-1/3",
+        isLeftPanelMaximized ? "w-0 hidden" : "flex"
       )}>
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Requirements Coverage</h2>
@@ -167,11 +167,13 @@ export const ScenarioGeneration = ({ selectedFile }: ScenarioGenerationProps) =>
             )}
           </Button>
         </div>
-        <RequirementsCoverage
-          scenarios={scenarios}
-          selectedScenario={selectedScenario}
-          onRequirementClick={handleRequirementClick}
-        />
+        <div className="flex-1 overflow-auto">
+          <RequirementsCoverage
+            scenarios={scenarios}
+            selectedScenario={selectedScenario}
+            onRequirementClick={handleRequirementClick}
+          />
+        </div>
       </div>
 
       <RequirementDialog
