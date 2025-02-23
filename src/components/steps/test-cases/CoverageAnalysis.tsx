@@ -1,171 +1,130 @@
 
-import { AlertCircle, CheckCircle, FileText, GitBranch } from "lucide-react";
+import { AlertCircle, CheckCircle, FileText, GitBranch, Waves } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { CoverageStats, TestCase } from "./types";
 import { mockTestCases } from "./mockData";
 import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { RequirementDialog } from "../scenario/dialogs/RequirementDialog";
+import { ScenarioDialog } from "../scenario/dialogs/ScenarioDialog";
 
 interface CoverageAnalysisProps {
   selectedTestCase?: TestCase | null;
 }
 
 export const CoverageAnalysis = ({ selectedTestCase }: CoverageAnalysisProps) => {
-  const stats: CoverageStats = {
-    scenarioCoverage: 75,
-    requirementCoverage: 85,
-    testCaseCount: mockTestCases.length,
-    scenarioCount: new Set(mockTestCases.map(tc => tc.scenarioId)).size
-  };
+  if (!selectedTestCase) {
+    return (
+      <Card>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-center h-40 text-gray-500">
+            Select a test case to view coverage details
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
-  // Get all unique scenarios and requirements
-  const allScenarios = new Set(mockTestCases.map(tc => tc.scenarioId));
-  const allRequirements = new Set(mockTestCases.map(tc => tc.requirementId));
-
-  // Calculate coverage percentages for the selected test case
-  const getScenarioCoverage = (scenarioId: string) => {
+  // Calculate scenario flow coverage
+  const getScenarioFlowCoverage = (scenarioId: string) => {
     const scenarioTests = mockTestCases.filter(tc => tc.scenarioId === scenarioId);
-    const completed = scenarioTests.filter(tc => tc.status === "completed").length;
-    return Math.round((completed / scenarioTests.length) * 100);
+    const totalFlows = 7; // This would come from scenario data in a real implementation
+    const coveredFlows = 4; // This would be calculated from actual data
+    return {
+      percentage: Math.round((coveredFlows / totalFlows) * 100),
+      covered: coveredFlows,
+      total: totalFlows
+    };
   };
 
-  const getRequirementCoverage = (requirementId: string) => {
-    const requirementTests = mockTestCases.filter(tc => tc.requirementId === requirementId);
-    const completed = requirementTests.filter(tc => tc.status === "completed").length;
-    return Math.round((completed / requirementTests.length) * 100);
-  };
+  const scenarioCoverage = getScenarioFlowCoverage(selectedTestCase.scenarioId);
 
   return (
     <div className="space-y-4 pr-4">
-      {!selectedTestCase ? (
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex items-center justify-center h-40 text-gray-500">
-              Select a test case to view coverage details
-            </div>
-          </CardContent>
-        </Card>
-      ) : (
-        <>
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-medium mb-4 flex items-center gap-2">
-                <FileText className="h-4 w-4" />
-                Selected Test Case
-              </h3>
-              <div className="p-3 border rounded bg-primary/5">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="font-medium">{selectedTestCase.id}</span>
-                  <div className={cn(
-                    "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2",
-                    selectedTestCase.status === "completed" 
-                      ? "border-transparent bg-primary text-primary-foreground hover:bg-primary/80"
-                      : "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80"
-                  )}>
-                    {selectedTestCase.status}
+      <Card>
+        <CardContent className="p-4">
+          <h3 className="font-medium mb-4 flex items-center gap-2">
+            <Waves className="h-4 w-4" />
+            Coverage Details
+          </h3>
+          
+          <Dialog>
+            <DialogTrigger asChild>
+              <div className="space-y-4 cursor-pointer hover:bg-accent rounded-lg p-4 transition-colors">
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-medium">Linked Requirement</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedTestCase.requirementId} (User Authentication)
+                    </p>
                   </div>
-                </div>
-                <p className="text-sm text-gray-600">{selectedTestCase.title}</p>
-              </div>
-            </CardContent>
-          </Card>
 
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-medium mb-4 flex items-center gap-2">
-                <GitBranch className="h-4 w-4" />
-                Coverage Details
-              </h3>
-              
-              <div className="space-y-4">
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Scenario Coverage</h4>
-                  <div className="p-3 border rounded">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm">{selectedTestCase.scenarioId}</span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <div className="flex items-center gap-2">
-                              {getScenarioCoverage(selectedTestCase.scenarioId) === 100 ? (
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                              ) : (
-                                <AlertCircle className="h-4 w-4 text-amber-500" />
-                              )}
-                              <span className="font-medium">
-                                {getScenarioCoverage(selectedTestCase.scenarioId)}%
-                              </span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Coverage for this scenario</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="text-xs text-gray-600">
-                      {mockTestCases.filter(tc => tc.scenarioId === selectedTestCase.scenarioId).length} test cases
-                    </div>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-medium">Linked Scenario</h4>
+                    <p className="text-sm text-muted-foreground">
+                      {selectedTestCase.scenarioId} (User Authentication)
+                    </p>
                   </div>
-                </div>
 
-                <div>
-                  <h4 className="text-sm font-medium mb-2">Requirement Coverage</h4>
-                  <div className="p-3 border rounded">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-sm">{selectedTestCase.requirementId}</span>
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <div className="flex items-center gap-2">
-                              {getRequirementCoverage(selectedTestCase.requirementId) === 100 ? (
-                                <CheckCircle className="h-4 w-4 text-green-500" />
-                              ) : (
-                                <AlertCircle className="h-4 w-4 text-amber-500" />
-                              )}
-                              <span className="font-medium">
-                                {getRequirementCoverage(selectedTestCase.requirementId)}%
-                              </span>
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent>
-                            <p>Coverage for this requirement</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    </div>
-                    <div className="text-xs text-gray-600">
-                      {mockTestCases.filter(tc => tc.requirementId === selectedTestCase.requirementId).length} test cases
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-medium">Flow Covered</h4>
+                    <p className="text-sm text-muted-foreground">
+                      Primary flow (standard login)
+                    </p>
+                  </div>
+
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-medium">Overall Scenario Coverage</h4>
+                    <div className="flex items-center gap-2">
+                      {scenarioCoverage.percentage === 100 ? (
+                        <CheckCircle className="h-4 w-4 text-green-500" />
+                      ) : (
+                        <AlertCircle className="h-4 w-4 text-amber-500" />
+                      )}
+                      <p className="text-sm text-muted-foreground">
+                        {scenarioCoverage.percentage}% ({scenarioCoverage.covered} out of {scenarioCoverage.total} flows covered)
+                      </p>
                     </div>
                   </div>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </DialogTrigger>
 
-          <Card>
-            <CardContent className="p-4">
-              <h3 className="font-medium mb-4">Overall Progress</h3>
-              <div className="space-y-2">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Total Test Cases</span>
-                  <span className="font-medium">{stats.testCaseCount}</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Scenarios Covered</span>
-                  <span className="font-medium">{stats.scenarioCount}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </>
-      )}
+            <DialogContent className="max-w-4xl h-[80vh]">
+              <DialogHeader>
+                <DialogTitle>Coverage Details</DialogTitle>
+              </DialogHeader>
+              <Tabs defaultValue="requirement" className="h-full">
+                <TabsList>
+                  <TabsTrigger value="requirement">Requirement</TabsTrigger>
+                  <TabsTrigger value="scenario">Test Scenario</TabsTrigger>
+                </TabsList>
+                <TabsContent value="requirement" className="h-[calc(100%-48px)] overflow-y-auto">
+                  <RequirementDialog
+                    open={true}
+                    onOpenChange={() => {}}
+                    selectedRequirement={selectedTestCase.requirementId}
+                  />
+                </TabsContent>
+                <TabsContent value="scenario" className="h-[calc(100%-48px)] overflow-y-auto">
+                  <ScenarioDialog
+                    open={true}
+                    onOpenChange={() => {}}
+                    selectedScenario={selectedTestCase.scenarioId}
+                  />
+                </TabsContent>
+              </Tabs>
+            </DialogContent>
+          </Dialog>
+        </CardContent>
+      </Card>
     </div>
   );
 };
