@@ -10,14 +10,15 @@ import { Download, Maximize2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
+import { TestScenario } from "../types";
 
 interface ScenarioGridDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  testCases: any[]; // Will be properly typed when integrated
+  scenarios: TestScenario[]; // Changed from testCases to scenarios to match the prop being passed
 }
 
-export const ScenarioGridDialog = ({ open, onOpenChange, testCases }: ScenarioGridDialogProps) => {
+export const ScenarioGridDialog = ({ open, onOpenChange, scenarios }: ScenarioGridDialogProps) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -37,7 +38,7 @@ export const ScenarioGridDialog = ({ open, onOpenChange, testCases }: ScenarioGr
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={dialogClass}>
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>Test Cases Overview</DialogTitle>
+          <DialogTitle>Test Scenarios Overview</DialogTitle>
           <div className="flex gap-2">
             <Button variant="outline" onClick={toggleFullScreen}>
               <Maximize2 className="h-4 w-4" />
@@ -55,7 +56,6 @@ export const ScenarioGridDialog = ({ open, onOpenChange, testCases }: ScenarioGr
                 <TableRow>
                   <TableHead>ID</TableHead>
                   <TableHead>Title</TableHead>
-                  <TableHead>Scenario</TableHead>
                   <TableHead>Requirement</TableHead>
                   <TableHead>Priority</TableHead>
                   <TableHead>Status</TableHead>
@@ -63,15 +63,14 @@ export const ScenarioGridDialog = ({ open, onOpenChange, testCases }: ScenarioGr
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {testCases.map((testCase) => (
-                  <TableRow key={testCase.id}>
-                    <TableCell className="font-medium">{testCase.id}</TableCell>
-                    <TableCell>{testCase.title}</TableCell>
-                    <TableCell>{testCase.scenarioId}</TableCell>
-                    <TableCell>{testCase.requirementId}</TableCell>
-                    <TableCell className="capitalize">{testCase.priority}</TableCell>
-                    <TableCell className="capitalize">{testCase.status}</TableCell>
-                    <TableCell className="max-w-md truncate">{testCase.description}</TableCell>
+                {scenarios.map((scenario) => (
+                  <TableRow key={scenario.id}>
+                    <TableCell className="font-medium">{scenario.id}</TableCell>
+                    <TableCell>{scenario.title}</TableCell>
+                    <TableCell>{scenario.requirementId}</TableCell>
+                    <TableCell className="capitalize">{scenario.priority}</TableCell>
+                    <TableCell className="capitalize">{scenario.status || 'n/a'}</TableCell>
+                    <TableCell className="max-w-md truncate">{scenario.description}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
