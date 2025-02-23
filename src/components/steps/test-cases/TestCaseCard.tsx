@@ -119,9 +119,11 @@ export const TestCaseCard = ({
                   <Select 
                     value={editedPriority} 
                     onValueChange={(value: "high" | "medium" | "low") => setEditedPriority(value)}
-                    onClick={(e) => e.stopPropagation()}
                   >
-                    <SelectTrigger className="h-7 w-24">
+                    <SelectTrigger 
+                      className="h-7 w-24"
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -133,9 +135,11 @@ export const TestCaseCard = ({
                   <Select 
                     value={editedStatus} 
                     onValueChange={(value: "completed" | "in_progress" | "needs_review") => setEditedStatus(value)}
-                    onClick={(e) => e.stopPropagation()}
                   >
-                    <SelectTrigger className="h-7 w-32">
+                    <SelectTrigger 
+                      className="h-7 w-32"
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
