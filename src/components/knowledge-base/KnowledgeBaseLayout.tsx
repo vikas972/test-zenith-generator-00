@@ -19,8 +19,8 @@ interface Document {
 
 export const KnowledgeBaseLayout = () => {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-  const [isLeftPanelExpanded, setIsLeftPanelExpanded] = useState(true);
-  const [isRightPanelExpanded, setIsRightPanelExpanded] = useState(true);
+  const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false);
+  const [isRightPanelMaximized, setIsRightPanelMaximized] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState("dtb");
   const [selectedDomain, setSelectedDomain] = useState("payments");
 
@@ -78,26 +78,18 @@ export const KnowledgeBaseLayout = () => {
 
         <div className="flex gap-6">
           {/* Left Panel */}
-          <div className={`transition-all duration-300 ${!isRightPanelExpanded && isLeftPanelExpanded ? 'w-full' : isLeftPanelExpanded ? 'w-2/3' : 'w-0 hidden'}`}>
+          <div className={`transition-all duration-300 ${isLeftPanelMaximized ? 'w-full' : !isRightPanelMaximized ? 'w-2/3' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm">
               <div className="p-2 flex justify-end border-b">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    if (!isLeftPanelExpanded) {
-                      setIsRightPanelExpanded(false);
-                      setIsLeftPanelExpanded(true);
-                    } else {
-                      setIsLeftPanelExpanded(false);
-                      setIsRightPanelExpanded(true);
-                    }
-                  }}
+                  onClick={() => setIsLeftPanelMaximized(!isLeftPanelMaximized)}
                 >
-                  {!isRightPanelExpanded && isLeftPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {isLeftPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
-              {isLeftPanelExpanded && (
+              {isLeftPanelMaximized && (
                 <Tabs defaultValue="manage" className="space-y-6">
                   <TabsList className="bg-white w-full flex justify-start p-1 gap-1">
                     <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
@@ -117,26 +109,18 @@ export const KnowledgeBaseLayout = () => {
           </div>
 
           {/* Right Panel - Document Preview */}
-          <div className={`transition-all duration-300 ${!isLeftPanelExpanded && isRightPanelExpanded ? 'w-full' : isRightPanelExpanded ? 'w-1/3' : 'w-0 hidden'}`}>
+          <div className={`transition-all duration-300 ${isRightPanelMaximized ? 'w-full' : !isLeftPanelMaximized ? 'w-1/3' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-12rem)]">
               <div className="p-2 flex justify-end border-b">
                 <Button
                   variant="ghost"
                   size="sm"
-                  onClick={() => {
-                    if (!isRightPanelExpanded) {
-                      setIsLeftPanelExpanded(false);
-                      setIsRightPanelExpanded(true);
-                    } else {
-                      setIsRightPanelExpanded(false);
-                      setIsLeftPanelExpanded(true);
-                    }
-                  }}
+                  onClick={() => setIsRightPanelMaximized(!isRightPanelMaximized)}
                 >
-                  {!isLeftPanelExpanded && isRightPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {isRightPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
-              {isRightPanelExpanded && (
+              {isRightPanelMaximized || !isLeftPanelMaximized ? (
                 <div className="p-6">
                   {selectedDocument ? (
                     <div className="space-y-4">
