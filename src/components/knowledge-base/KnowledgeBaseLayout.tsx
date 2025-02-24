@@ -86,8 +86,14 @@ export const KnowledgeBaseLayout = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setIsLeftPanelExpanded(!isLeftPanelExpanded);
-                    setIsRightPanelExpanded(isLeftPanelExpanded);
+                    if (isLeftPanelExpanded) {
+                      // If left panel is expanded, hide it
+                      setIsLeftPanelExpanded(false);
+                    } else {
+                      // If left panel is hidden, show it and maximize it
+                      setIsLeftPanelExpanded(true);
+                      setIsRightPanelExpanded(false);
+                    }
                   }}
                 >
                   {isLeftPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -120,8 +126,14 @@ export const KnowledgeBaseLayout = () => {
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    setIsRightPanelExpanded(!isRightPanelExpanded);
-                    setIsLeftPanelExpanded(isRightPanelExpanded);
+                    if (isRightPanelExpanded) {
+                      // If right panel is expanded, hide it
+                      setIsRightPanelExpanded(false);
+                    } else {
+                      // If right panel is hidden, show it and maximize it
+                      setIsRightPanelExpanded(true);
+                      setIsLeftPanelExpanded(false);
+                    }
                   }}
                 >
                   {isRightPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
