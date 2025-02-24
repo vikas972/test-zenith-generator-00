@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -33,13 +32,7 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  const documents = [
+  const [documents, setDocuments] = useState([
     {
       id: "1",
       title: "Product Requirements Document",
@@ -58,11 +51,16 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
       category: "Documentation",
       lastModified: new Date("2024-03-08"),
     },
-  ];
+  ]);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   const handleDelete = (docId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    console.log("Delete document:", docId);
+    setDocuments(prevDocs => prevDocs.filter(doc => doc.id !== docId));
   };
 
   const handleEdit = (doc: Document, event: React.MouseEvent) => {
