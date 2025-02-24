@@ -25,18 +25,12 @@ export const KnowledgeBaseLayout = () => {
         <div className="flex gap-6">
           {/* Left Panel */}
           <div className="w-2/3">
-            <Tabs defaultValue="view" className="space-y-6">
+            <Tabs defaultValue="manage" className="space-y-6">
               <TabsList className="bg-white w-full flex justify-start p-1 gap-1">
-                <TabsTrigger value="view" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                  View
-                </TabsTrigger>
                 <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
                   Manage KB
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="view">
-                <KnowledgeBaseView onSelectDocument={setSelectedDocument} />
-              </TabsContent>
               <TabsContent value="manage">
                 <KnowledgeBaseManage onSelectDocument={setSelectedDocument} />
               </TabsContent>
