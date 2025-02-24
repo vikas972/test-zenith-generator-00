@@ -1,6 +1,6 @@
 
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
+import { Index } from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import { KnowledgeBaseLayout } from "./components/knowledge-base/KnowledgeBaseLayout";
 

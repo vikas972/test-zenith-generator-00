@@ -25,7 +25,7 @@ interface SelectedFile {
   uploadTime: Date;
 }
 
-const Index = () => {
+export const Index = () => {
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedFile, setSelectedFile] = useState<SelectedFile | null>(null);
 
@@ -76,5 +76,3 @@ const Index = () => {
     </div>
   );
 };
-
-export default Index;
