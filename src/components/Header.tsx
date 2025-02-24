@@ -1,6 +1,17 @@
-import { Beaker } from "lucide-react";
+
+import { Beaker, Settings2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
 
 export const Header = () => {
+  const navigate = useNavigate();
+
   return (
     <header className="bg-gradient-to-r from-[#243949] to-[#517fa4] text-white py-6 shadow-lg">
       <div className="container mx-auto px-4 flex items-center justify-between">
@@ -17,10 +28,21 @@ export const Header = () => {
             </p>
           </div>
         </div>
-        <nav className="hidden md:flex space-x-6">
+        <nav className="flex items-center space-x-6">
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Dashboard</a>
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Projects</a>
-          <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Settings</a>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" size="icon" className="text-blue-100 hover:text-white">
+                <Settings2 className="h-5 w-5" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem onClick={() => navigate('/knowledge-base')}>
+                Product KB
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </nav>
       </div>
     </header>
