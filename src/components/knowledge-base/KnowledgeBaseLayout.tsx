@@ -79,7 +79,7 @@ export const KnowledgeBaseLayout = () => {
 
         <div className="flex gap-6">
           {/* Left Panel */}
-          <div className={`transition-all duration-300 ${isLeftPanelExpanded ? (isRightPanelExpanded ? 'w-2/3' : 'w-full') : 'w-16'}`}>
+          <div className={`transition-all duration-300 ${isLeftPanelExpanded ? (isRightPanelExpanded ? 'w-2/3' : 'w-full') : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm">
               <div className="p-2 flex justify-end border-b">
                 <Button
@@ -87,9 +87,7 @@ export const KnowledgeBaseLayout = () => {
                   size="sm"
                   onClick={() => {
                     setIsLeftPanelExpanded(!isLeftPanelExpanded);
-                    if (!isLeftPanelExpanded) {
-                      setIsRightPanelExpanded(false);
-                    }
+                    setIsRightPanelExpanded(isLeftPanelExpanded);
                   }}
                 >
                   {isLeftPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
@@ -115,7 +113,7 @@ export const KnowledgeBaseLayout = () => {
           </div>
 
           {/* Right Panel - Document Preview */}
-          <div className={`transition-all duration-300 ${isRightPanelExpanded ? (isLeftPanelExpanded ? 'w-1/3' : 'w-full') : 'w-16'}`}>
+          <div className={`transition-all duration-300 ${isRightPanelExpanded ? (isLeftPanelExpanded ? 'w-1/3' : 'w-full') : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-12rem)]">
               <div className="p-2 flex justify-end border-b">
                 <Button
@@ -123,9 +121,7 @@ export const KnowledgeBaseLayout = () => {
                   size="sm"
                   onClick={() => {
                     setIsRightPanelExpanded(!isRightPanelExpanded);
-                    if (!isRightPanelExpanded) {
-                      setIsLeftPanelExpanded(false);
-                    }
+                    setIsLeftPanelExpanded(isRightPanelExpanded);
                   }}
                 >
                   {isRightPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
