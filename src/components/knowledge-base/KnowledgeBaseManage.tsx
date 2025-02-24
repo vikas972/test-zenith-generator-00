@@ -7,6 +7,19 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Document {
   id: string;
@@ -23,6 +36,24 @@ interface KnowledgeBaseManageProps {
 export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManageProps) => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+
+  // Sample data for dropdowns
+  const domains = [
+    "Finance",
+    "Healthcare",
+    "Technology",
+    "Manufacturing",
+    "Retail",
+    "Education"
+  ];
+
+  const products = [
+    "Product A",
+    "Product B",
+    "Product C",
+    "Product D",
+    "Product E"
+  ];
 
   const documents = [
     {
@@ -47,7 +78,6 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
 
   const handleDelete = (docId: string, event: React.MouseEvent) => {
     event.stopPropagation();
-    // Delete functionality will be implemented here
     console.log("Delete document:", docId);
   };
 
@@ -57,19 +87,38 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
     setIsUploadDialogOpen(true);
   };
 
+  const handleAddDocument = (type: string) => {
+    setSelectedDocument(null);
+    setIsUploadDialogOpen(true);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="shadow-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Manage Documents</CardTitle>
-          <Button 
-            variant="default" 
-            className="bg-primary hover:bg-primary/90"
-            onClick={() => setIsUploadDialogOpen(true)}
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Document
-          </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="bg-primary hover:bg-primary/90">
+                <Plus className="h-4 w-4 mr-2" />
+                Add Document
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-48">
+              <DropdownMenuItem onClick={() => handleAddDocument("policy")}>
+                Policy Document
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAddDocument("procedure")}>
+                Procedure Document
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAddDocument("guide")}>
+                User Guide
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleAddDocument("technical")}>
+                Technical Document
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px]">
@@ -77,7 +126,7 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
               {documents.map((doc) => (
                 <div
                   key={doc.id}
-                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                  className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                   onClick={() => onSelectDocument?.(doc)}
                 >
                   <div className="flex justify-between items-center">
@@ -132,17 +181,33 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
             </div>
             <div className="grid gap-2">
               <label htmlFor="domain" className="text-sm font-medium">Domain</label>
-              <Input 
-                id="domain" 
-                placeholder="Enter domain (e.g., Finance, Healthcare)"
-              />
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select domain" />
+                </SelectTrigger>
+                <SelectContent>
+                  {domains.map((domain) => (
+                    <SelectItem key={domain} value={domain.toLowerCase()}>
+                      {domain}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <label htmlFor="product" className="text-sm font-medium">Product</label>
-              <Input 
-                id="product" 
-                placeholder="Enter product name"
-              />
+              <Select>
+                <SelectTrigger>
+                  <SelectValue placeholder="Select product" />
+                </SelectTrigger>
+                <SelectContent>
+                  {products.map((product) => (
+                    <SelectItem key={product} value={product.toLowerCase()}>
+                      {product}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
             <div className="grid gap-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
