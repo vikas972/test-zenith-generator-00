@@ -1,5 +1,5 @@
 
-import { Beaker, Settings2 } from "lucide-react";
+import { Beaker, Home, Settings2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
@@ -29,6 +29,9 @@ export const Header = () => {
           </div>
         </div>
         <nav className="flex items-center space-x-6">
+          <Button variant="ghost" size="icon" className="text-blue-100 hover:text-white" onClick={() => navigate('/')}>
+            <Home className="h-5 w-5" />
+          </Button>
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Dashboard</a>
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Projects</a>
           <DropdownMenu>
