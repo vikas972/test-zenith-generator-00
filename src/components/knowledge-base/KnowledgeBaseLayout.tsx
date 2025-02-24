@@ -1,7 +1,6 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload";
-import { KnowledgeBaseEdit } from "./KnowledgeBaseEdit";
 import { KnowledgeBaseView } from "./KnowledgeBaseView";
 import { KnowledgeBaseManage } from "./KnowledgeBaseManage";
 import { Header } from "../Header";
@@ -31,24 +30,12 @@ export const KnowledgeBaseLayout = () => {
                 <TabsTrigger value="view" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
                   View
                 </TabsTrigger>
-                <TabsTrigger value="upload" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                  Upload
-                </TabsTrigger>
-                <TabsTrigger value="edit" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                  Edit
-                </TabsTrigger>
                 <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                  Manage
+                  Manage KB
                 </TabsTrigger>
               </TabsList>
               <TabsContent value="view">
                 <KnowledgeBaseView onSelectDocument={setSelectedDocument} />
-              </TabsContent>
-              <TabsContent value="upload">
-                <KnowledgeBaseUpload />
-              </TabsContent>
-              <TabsContent value="edit">
-                <KnowledgeBaseEdit onSelectDocument={setSelectedDocument} />
               </TabsContent>
               <TabsContent value="manage">
                 <KnowledgeBaseManage onSelectDocument={setSelectedDocument} />

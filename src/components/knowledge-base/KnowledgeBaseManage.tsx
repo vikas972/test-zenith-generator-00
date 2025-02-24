@@ -2,7 +2,11 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Trash2 } from "lucide-react";
+import { Trash2, Pencil, Plus } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { useState } from "react";
 
 interface Document {
   id: string;
@@ -17,6 +21,9 @@ interface KnowledgeBaseManageProps {
 }
 
 export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManageProps) => {
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+
   const documents = [
     {
       id: "1",
@@ -38,11 +45,31 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
     },
   ];
 
+  const handleDelete = (docId: string, event: React.MouseEvent) => {
+    event.stopPropagation();
+    // Delete functionality will be implemented here
+    console.log("Delete document:", docId);
+  };
+
+  const handleEdit = (doc: Document, event: React.MouseEvent) => {
+    event.stopPropagation();
+    setSelectedDocument(doc);
+    setIsUploadDialogOpen(true);
+  };
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="shadow-md">
-        <CardHeader>
+        <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Manage Documents</CardTitle>
+          <Button 
+            variant="default" 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => setIsUploadDialogOpen(true)}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Document
+          </Button>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px]">
@@ -58,10 +85,23 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
                       <span className="font-medium">{doc.title}</span>
                       <p className="text-sm text-gray-500">Last modified: {doc.lastModified.toLocaleDateString()}</p>
                     </div>
-                    <Button variant="destructive" size="sm">
-                      <Trash2 className="h-4 w-4 mr-2" />
-                      Delete
-                    </Button>
+                    <div className="flex gap-2">
+                      <Button 
+                        variant="default" 
+                        size="sm" 
+                        className="bg-primary hover:bg-primary/90"
+                        onClick={(e) => handleEdit(doc, e)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="destructive" 
+                        size="sm"
+                        onClick={(e) => handleDelete(doc.id, e)}
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
               ))}
@@ -69,6 +109,60 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
           </ScrollArea>
         </CardContent>
       </Card>
+
+      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+        <DialogContent className="sm:max-w-[525px]">
+          <DialogHeader>
+            <DialogTitle>
+              {selectedDocument ? 'Update Document' : 'Add New Document'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <label htmlFor="file" className="text-sm font-medium">Document File</label>
+              <Input id="file" type="file" />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="title" className="text-sm font-medium">Title</label>
+              <Input 
+                id="title" 
+                defaultValue={selectedDocument?.title} 
+                placeholder="Enter document title"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="domain" className="text-sm font-medium">Domain</label>
+              <Input 
+                id="domain" 
+                placeholder="Enter domain (e.g., Finance, Healthcare)"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="product" className="text-sm font-medium">Product</label>
+              <Input 
+                id="product" 
+                placeholder="Enter product name"
+              />
+            </div>
+            <div className="grid gap-2">
+              <label htmlFor="description" className="text-sm font-medium">Description</label>
+              <Textarea 
+                id="description" 
+                placeholder="Enter document description (4-5 lines)"
+                className="min-h-[100px]"
+              />
+            </div>
+            <div className="flex justify-end gap-2">
+              <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button type="submit" className="bg-primary hover:bg-primary/90">
+                {selectedDocument ? 'Update' : 'Upload'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };
