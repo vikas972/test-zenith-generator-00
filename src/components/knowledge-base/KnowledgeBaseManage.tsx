@@ -6,7 +6,7 @@ import { Trash2, Pencil, Plus } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Select,
   SelectContent,
@@ -36,6 +36,12 @@ interface KnowledgeBaseManageProps {
 export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManageProps) => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
 
   // Sample data for dropdowns
   const domains = [
@@ -92,6 +98,10 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
     setIsUploadDialogOpen(true);
   };
 
+  if (!mounted) {
+    return null;
+  }
+
   return (
     <div className="flex flex-col gap-4">
       <Card className="shadow-md">
@@ -121,8 +131,8 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
           </DropdownMenu>
         </CardHeader>
         <CardContent>
-          <ScrollArea className="h-[400px]">
-            <div className="space-y-4">
+          <ScrollArea className="h-[400px] overflow-hidden">
+            <div className="space-y-4 p-1">
               {documents.map((doc) => (
                 <div
                   key={doc.id}
