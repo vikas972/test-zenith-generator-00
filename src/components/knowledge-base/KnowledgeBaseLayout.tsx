@@ -1,3 +1,4 @@
+
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload";
 import { KnowledgeBaseView } from "./KnowledgeBaseView";
@@ -89,22 +90,20 @@ export const KnowledgeBaseLayout = () => {
                   {isLeftPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
-              {isLeftPanelMaximized && (
-                <Tabs defaultValue="manage" className="space-y-6">
-                  <TabsList className="bg-white w-full flex justify-start p-1 gap-1">
-                    <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                      Manage KB
-                    </TabsTrigger>
-                  </TabsList>
-                  <TabsContent value="manage">
-                    <KnowledgeBaseManage 
-                      onSelectDocument={setSelectedDocument}
-                      selectedProduct={selectedProduct}
-                      selectedDomain={selectedDomain}
-                    />
-                  </TabsContent>
-                </Tabs>
-              )}
+              <Tabs defaultValue="manage" className="space-y-6">
+                <TabsList className="bg-white w-full flex justify-start p-1 gap-1">
+                  <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
+                    Manage KB
+                  </TabsTrigger>
+                </TabsList>
+                <TabsContent value="manage">
+                  <KnowledgeBaseManage 
+                    onSelectDocument={setSelectedDocument}
+                    selectedProduct={selectedProduct}
+                    selectedDomain={selectedDomain}
+                  />
+                </TabsContent>
+              </Tabs>
             </div>
           </div>
 
@@ -120,7 +119,7 @@ export const KnowledgeBaseLayout = () => {
                   {isRightPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
-              {isRightPanelMaximized || !isLeftPanelMaximized ? (
+              {(isRightPanelMaximized || !isLeftPanelMaximized) && (
                 <div className="p-6">
                   {selectedDocument ? (
                     <div className="space-y-4">
