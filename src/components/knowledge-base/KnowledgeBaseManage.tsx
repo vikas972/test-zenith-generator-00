@@ -14,12 +14,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
 
 interface Document {
   id: string;
@@ -31,9 +25,11 @@ interface Document {
 
 interface KnowledgeBaseManageProps {
   onSelectDocument?: (doc: Document) => void;
+  selectedProduct: string;
+  selectedDomain: string;
 }
 
-export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManageProps) => {
+export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selectedDomain }: KnowledgeBaseManageProps) => {
   const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false);
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -42,24 +38,6 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
     setMounted(true);
     return () => setMounted(false);
   }, []);
-
-  // Sample data for dropdowns
-  const domains = [
-    "Finance",
-    "Healthcare",
-    "Technology",
-    "Manufacturing",
-    "Retail",
-    "Education"
-  ];
-
-  const products = [
-    "Product A",
-    "Product B",
-    "Product C",
-    "Product D",
-    "Product E"
-  ];
 
   const documents = [
     {
@@ -93,11 +71,6 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
     setIsUploadDialogOpen(true);
   };
 
-  const handleAddDocument = (type: string) => {
-    setSelectedDocument(null);
-    setIsUploadDialogOpen(true);
-  };
-
   if (!mounted) {
     return null;
   }
@@ -107,28 +80,16 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
       <Card className="shadow-md">
         <CardHeader className="flex flex-row items-center justify-between">
           <CardTitle>Manage Documents</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button className="bg-primary hover:bg-primary/90">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Document
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-48">
-              <DropdownMenuItem onClick={() => handleAddDocument("policy")}>
-                Policy Document
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAddDocument("procedure")}>
-                Procedure Document
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAddDocument("guide")}>
-                User Guide
-              </DropdownMenuItem>
-              <DropdownMenuItem onClick={() => handleAddDocument("technical")}>
-                Technical Document
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Button 
+            className="bg-primary hover:bg-primary/90"
+            onClick={() => {
+              setSelectedDocument(null);
+              setIsUploadDialogOpen(true);
+            }}
+          >
+            <Plus className="h-4 w-4 mr-2" />
+            Add Document
+          </Button>
         </CardHeader>
         <CardContent>
           <ScrollArea className="h-[400px] overflow-hidden">
@@ -188,36 +149,6 @@ export const KnowledgeBaseManage = ({ onSelectDocument }: KnowledgeBaseManagePro
                 defaultValue={selectedDocument?.title} 
                 placeholder="Enter document title"
               />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="domain" className="text-sm font-medium">Domain</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select domain" />
-                </SelectTrigger>
-                <SelectContent>
-                  {domains.map((domain) => (
-                    <SelectItem key={domain} value={domain.toLowerCase()}>
-                      {domain}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="product" className="text-sm font-medium">Product</label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select product" />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product) => (
-                    <SelectItem key={product} value={product.toLowerCase()}>
-                      {product}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
             <div className="grid gap-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
