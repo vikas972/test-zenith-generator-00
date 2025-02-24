@@ -1,4 +1,3 @@
-
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload";
 import { KnowledgeBaseView } from "./KnowledgeBaseView";
@@ -79,24 +78,23 @@ export const KnowledgeBaseLayout = () => {
 
         <div className="flex gap-6">
           {/* Left Panel */}
-          <div className={`transition-all duration-300 ${isLeftPanelExpanded ? (isRightPanelExpanded ? 'w-2/3' : 'w-full') : 'hidden'}`}>
+          <div className={`transition-all duration-300 ${!isRightPanelExpanded && isLeftPanelExpanded ? 'w-full' : isLeftPanelExpanded ? 'w-2/3' : 'w-0 hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm">
               <div className="p-2 flex justify-end border-b">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    if (isLeftPanelExpanded) {
-                      // If left panel is expanded, hide it
-                      setIsLeftPanelExpanded(false);
-                    } else {
-                      // If left panel is hidden, show it and maximize it
-                      setIsLeftPanelExpanded(true);
+                    if (!isLeftPanelExpanded) {
                       setIsRightPanelExpanded(false);
+                      setIsLeftPanelExpanded(true);
+                    } else {
+                      setIsLeftPanelExpanded(false);
+                      setIsRightPanelExpanded(true);
                     }
                   }}
                 >
-                  {isLeftPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {!isRightPanelExpanded && isLeftPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
               {isLeftPanelExpanded && (
@@ -119,24 +117,23 @@ export const KnowledgeBaseLayout = () => {
           </div>
 
           {/* Right Panel - Document Preview */}
-          <div className={`transition-all duration-300 ${isRightPanelExpanded ? (isLeftPanelExpanded ? 'w-1/3' : 'w-full') : 'hidden'}`}>
+          <div className={`transition-all duration-300 ${!isLeftPanelExpanded && isRightPanelExpanded ? 'w-full' : isRightPanelExpanded ? 'w-1/3' : 'w-0 hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-12rem)]">
               <div className="p-2 flex justify-end border-b">
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={() => {
-                    if (isRightPanelExpanded) {
-                      // If right panel is expanded, hide it
-                      setIsRightPanelExpanded(false);
-                    } else {
-                      // If right panel is hidden, show it and maximize it
-                      setIsRightPanelExpanded(true);
+                    if (!isRightPanelExpanded) {
                       setIsLeftPanelExpanded(false);
+                      setIsRightPanelExpanded(true);
+                    } else {
+                      setIsRightPanelExpanded(false);
+                      setIsLeftPanelExpanded(true);
                     }
                   }}
                 >
-                  {isRightPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+                  {!isLeftPanelExpanded && isRightPanelExpanded ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
                 </Button>
               </div>
               {isRightPanelExpanded && (
