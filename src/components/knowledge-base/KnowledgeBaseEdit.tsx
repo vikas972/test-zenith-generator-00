@@ -7,7 +7,7 @@ import { Pencil } from "lucide-react";
 export const KnowledgeBaseEdit = () => {
   return (
     <div className="flex flex-col gap-4">
-      <Card>
+      <Card className="shadow-md">
         <CardHeader>
           <CardTitle>Edit Documents</CardTitle>
         </CardHeader>
@@ -21,7 +21,7 @@ export const KnowledgeBaseEdit = () => {
                 >
                   <div className="flex justify-between items-center">
                     <span className="font-medium">{doc}</span>
-                    <Button variant="ghost" size="sm">
+                    <Button variant="default" size="sm" className="bg-primary hover:bg-primary/90">
                       <Pencil className="h-4 w-4 mr-2" />
                       Edit
                     </Button>
