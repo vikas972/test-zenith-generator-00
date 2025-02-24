@@ -1,47 +1,46 @@
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload";
-import { KnowledgeBaseView } from "./KnowledgeBaseView";
-import { KnowledgeBaseManage } from "./KnowledgeBaseManage";
-import { Header } from "../Header";
-import { useState } from "react";
-import { Card } from "../ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
-import { Maximize2, Minimize2 } from "lucide-react";
-import { Button } from "../ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload"
+import { KnowledgeBaseView } from "./KnowledgeBaseView"
+import { KnowledgeBaseManage } from "./KnowledgeBaseManage"
+import { Header } from "../Header"
+import { useState } from "react"
+import { Card } from "../ui/card"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
+import { Maximize2, Minimize2 } from "lucide-react"
+import { Button } from "../ui/button"
 
 interface Document {
-  id: string;
-  title: string;
-  category: string;
-  content?: string;
-  lastModified: Date;
+  id: string
+  title: string
+  category: string
+  content?: string
+  lastModified: Date
 }
 
-export const KnowledgeBaseLayout = () => {
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null);
-  const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false);
-  const [isRightPanelMaximized, setIsRightPanelMaximized] = useState(false);
-  const [selectedProduct, setSelectedProduct] = useState("dtb");
-  const [selectedDomain, setSelectedDomain] = useState("payments");
+export const KnowledgeBaseLayout: React.FC = () => {
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false)
+  const [isRightPanelMaximized, setIsRightPanelMaximized] = useState(false)
+  const [selectedProduct, setSelectedProduct] = useState("dtb")
+  const [selectedDomain, setSelectedDomain] = useState("payments")
 
   const products = [
     { label: "DTB", value: "dtb" },
     { label: "Product A", value: "product-a" },
     { label: "Product B", value: "product-b" }
-  ];
+  ]
 
   const domains = [
     { label: "Payments", value: "payments" },
     { label: "Finance", value: "finance" },
     { label: "Healthcare", value: "healthcare" }
-  ];
+  ]
 
   return (
     <div className="min-h-screen bg-gray-50">
       <Header />
       <div className="container mx-auto px-4 py-4">
-        {/* Context Selection Bar */}
         <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex items-center gap-6">
           <div className="flex items-center gap-4 flex-1">
             <div className="flex items-center gap-2">
@@ -78,7 +77,6 @@ export const KnowledgeBaseLayout = () => {
         </div>
 
         <div className="flex gap-6">
-          {/* Left Panel */}
           <div className={`transition-all duration-300 ${isLeftPanelMaximized ? 'w-full' : !isRightPanelMaximized ? 'w-2/3' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm">
               <div className="p-2 flex justify-end border-b">
@@ -107,7 +105,6 @@ export const KnowledgeBaseLayout = () => {
             </div>
           </div>
 
-          {/* Right Panel - Document Preview */}
           <div className={`transition-all duration-300 ${isRightPanelMaximized ? 'w-full' : !isLeftPanelMaximized ? 'w-1/3' : 'hidden'}`}>
             <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-12rem)]">
               <div className="p-2 flex justify-end border-b">
@@ -147,5 +144,5 @@ export const KnowledgeBaseLayout = () => {
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
