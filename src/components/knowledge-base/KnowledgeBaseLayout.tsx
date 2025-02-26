@@ -186,9 +186,13 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={50}
                     collapsible={true}
-                    collapsed={leftPanelCollapsed}
                     minSize={25}
                     maxSize={75}
+                    onCollapse={() => {
+                      setLeftPanelCollapsed(true)
+                      setRightPanelCollapsed(false)
+                    }}
+                    onExpand={() => setLeftPanelCollapsed(false)}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -198,8 +202,13 @@ export const KnowledgeBaseLayout = () => {
                           size="sm" 
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            setLeftPanelCollapsed(!leftPanelCollapsed)
-                            if (rightPanelCollapsed) setRightPanelCollapsed(false)
+                            if (leftPanelCollapsed) {
+                              setLeftPanelCollapsed(false)
+                              setRightPanelCollapsed(false)
+                            } else {
+                              setLeftPanelCollapsed(true)
+                              setRightPanelCollapsed(false)
+                            }
                           }}
                         >
                           {leftPanelCollapsed ? (
@@ -227,9 +236,13 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={50}
                     collapsible={true}
-                    collapsed={rightPanelCollapsed}
                     minSize={25}
                     maxSize={75}
+                    onCollapse={() => {
+                      setRightPanelCollapsed(true)
+                      setLeftPanelCollapsed(false)
+                    }}
+                    onExpand={() => setRightPanelCollapsed(false)}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -239,8 +252,13 @@ export const KnowledgeBaseLayout = () => {
                           size="sm" 
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            setRightPanelCollapsed(!rightPanelCollapsed)
-                            if (leftPanelCollapsed) setLeftPanelCollapsed(false)
+                            if (rightPanelCollapsed) {
+                              setRightPanelCollapsed(false)
+                              setLeftPanelCollapsed(false)
+                            } else {
+                              setRightPanelCollapsed(true)
+                              setLeftPanelCollapsed(false)
+                            }
                           }}
                         >
                           {rightPanelCollapsed ? (
