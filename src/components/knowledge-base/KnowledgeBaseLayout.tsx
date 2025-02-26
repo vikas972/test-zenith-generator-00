@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -8,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import { DocumentsList } from "./components/DocumentsList"
 import { Document } from "@/types/knowledge-base"
+import { KBDataManagement } from "./components/KBDataManagement"
 
 export const KnowledgeBaseLayout = () => {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
