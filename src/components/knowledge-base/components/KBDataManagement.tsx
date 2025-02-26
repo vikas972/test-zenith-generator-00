@@ -69,8 +69,9 @@ export const KBDataManagement = () => {
     setSelectedDocument(documents[0])
   }
 
+  // Filter entries based on selected document
   const filteredEntries = entries.filter(
-    entry => entry.category === selectedTab && entry.documentId === selectedDocument?.id
+    entry => entry.documentId === selectedDocument?.id
   )
 
   return (

@@ -21,8 +21,13 @@ export const CategoryTabs = ({
   onEdit,
   onDelete
 }: CategoryTabsProps) => {
+  // Filter entries for each category
+  const getEntriesByCategory = (category: string) => {
+    return entries.filter(entry => entry.category === category)
+  }
+
   return (
-    <Tabs defaultValue={KB_CATEGORIES[0]} onValueChange={onTabChange}>
+    <Tabs value={selectedTab} onValueChange={onTabChange}>
       <div className="border rounded-md">
         <div className="overflow-auto">
           <TabsList className="w-full inline-flex h-auto p-0 bg-transparent">
@@ -43,7 +48,7 @@ export const CategoryTabs = ({
         <TabsContent key={category} value={category}>
           <EntriesGrid
             category={category}
-            entries={entries}
+            entries={getEntriesByCategory(category)}
             onAdd={onAdd}
             onEdit={onEdit}
             onDelete={onDelete}
