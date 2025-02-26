@@ -1,7 +1,7 @@
 
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Pencil, Trash2, Plus } from "lucide-react"
+import { Pencil, Trash2, Plus, Upload } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useState, MouseEvent } from "react"
+import { useState, MouseEvent, useCallback } from "react"
 import { Document } from "@/types/knowledge-base"
 
 interface DocumentsListProps {
@@ -38,6 +38,8 @@ export const DocumentsList = ({
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedType, setSelectedType] = useState<string>("")
   const [customType, setCustomType] = useState<string>("")
+  const [documentName, setDocumentName] = useState("")
+  const [isDragging, setIsDragging] = useState(false)
 
   const documentTypes = [
     "Payment Transactions",
@@ -61,6 +63,34 @@ export const DocumentsList = ({
       setCustomType("")
     }
   }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file) {
+      setDocumentName(file.name.replace(/\.[^/.]+$/, "")) // Remove file extension
+    }
+  }
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(true)
+  }, [])
+
+  const handleDragLeave = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+  }, [])
+
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault()
+    setIsDragging(false)
+    
+    const file = e.dataTransfer.files[0]
+    if (file) {
+      setDocumentName(file.name.replace(/\.[^/.]+$/, ""))
+      // You would typically handle the file upload here
+    }
+  }, [])
 
   const handleSave = () => {
     // Handle save logic here
@@ -89,7 +119,8 @@ export const DocumentsList = ({
               <div className="space-y-2">
                 <Label>Document Name</Label>
                 <Input 
-                  value={selectedDoc?.title || ""}
+                  value={documentName}
+                  onChange={(e) => setDocumentName(e.target.value)}
                   placeholder="Enter document name"
                 />
               </div>
@@ -120,12 +151,36 @@ export const DocumentsList = ({
                   </div>
                 )}
               </div>
-              <div className="space-y-2">
+              <div 
+                className={`space-y-2 border-2 border-dashed rounded-lg p-4 transition-colors ${
+                  isDragging ? "border-primary bg-primary/5" : "border-gray-200"
+                }`}
+                onDragOver={handleDragOver}
+                onDragLeave={handleDragLeave}
+                onDrop={handleDrop}
+              >
                 <Label>Document File</Label>
-                <Input 
-                  type="file"
-                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
-                />
+                <div className="flex flex-col items-center justify-center gap-2 py-4">
+                  <Upload className="h-8 w-8 text-gray-400" />
+                  <p className="text-sm text-gray-500">
+                    Drag and drop your file here, or
+                  </p>
+                  <label htmlFor="file-upload">
+                    <Input
+                      id="file-upload"
+                      type="file"
+                      className="hidden"
+                      accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
+                      onChange={handleFileChange}
+                    />
+                    <Button variant="outline" size="sm" className="cursor-pointer" onClick={() => document.getElementById('file-upload')?.click()}>
+                      Browse Files
+                    </Button>
+                  </label>
+                  <p className="text-xs text-gray-400">
+                    Supports: PDF, DOC, DOCX, XLS, XLSX, PPT, PPTX
+                  </p>
+                </div>
               </div>
               <div className="flex items-center space-x-2">
                 <Checkbox 
