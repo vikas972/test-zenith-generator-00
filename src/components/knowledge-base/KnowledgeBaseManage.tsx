@@ -1,3 +1,4 @@
+
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, FileText, Database, Settings } from "lucide-react"
@@ -129,45 +130,51 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="documents" className="grid grid-cols-12 gap-6">
-              <div className="col-span-5">
-                <div className="flex justify-end mb-4">
-                  <Button 
-                    className="bg-primary hover:bg-primary/90"
-                    onClick={() => {
-                      setSelectedDocument(null)
-                      setIsUploadDialogOpen(true)
-                    }}
-                  >
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Document
-                  </Button>
-                </div>
-                
-                <DocumentsSearch
-                  searchQuery={searchQuery}
-                  onSearchChange={setSearchQuery}
-                  statusFilter={statusFilter}
-                  onStatusFilterChange={setStatusFilter}
-                />
-                <DocumentsList
-                  documents={filteredDocuments}
-                  onSelectDocument={onSelectDocument || (() => {})}
-                  onEdit={handleEdit}
-                  onDelete={handleDelete}
-                  getStatusColor={getStatusColor}
-                  getStatusText={getStatusText}
-                />
+            <TabsContent value="documents">
+              <div className="flex justify-end mb-4">
+                <Button 
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    setSelectedDocument(null)
+                    setIsUploadDialogOpen(true)
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Document
+                </Button>
               </div>
-              <div className="col-span-7"></div>
+              
+              <div className="grid grid-cols-12 gap-6">
+                <div className="col-span-5">
+                  <DocumentsSearch
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    statusFilter={statusFilter}
+                    onStatusFilterChange={setStatusFilter}
+                  />
+                  <DocumentsList
+                    documents={filteredDocuments}
+                    onSelectDocument={onSelectDocument || (() => {})}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    getStatusColor={getStatusColor}
+                    getStatusText={getStatusText}
+                  />
+                </div>
+                <div className="col-span-7"></div>
+              </div>
             </TabsContent>
 
-            <TabsContent value="data">
-              <DataManagementTab />
+            <TabsContent value="data" className="w-full">
+              <div className="w-full">
+                <DataManagementTab />
+              </div>
             </TabsContent>
 
-            <TabsContent value="relationships">
-              <RelationshipsTab />
+            <TabsContent value="relationships" className="w-full">
+              <div className="w-full">
+                <RelationshipsTab />
+              </div>
             </TabsContent>
           </Tabs>
         </CardContent>
