@@ -165,11 +165,11 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
               </div>
             </TabsContent>
 
-            <TabsContent value="data" className="w-full">
+            <TabsContent value="data">
               <DataManagementTab />
             </TabsContent>
 
-            <TabsContent value="relationships" className="w-full">
+            <TabsContent value="relationships">
               <RelationshipsTab />
             </TabsContent>
           </Tabs>

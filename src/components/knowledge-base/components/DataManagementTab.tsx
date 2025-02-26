@@ -5,7 +5,7 @@ import { Plus } from "lucide-react"
 
 export const DataManagementTab = () => {
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 w-full">
       <div className="grid grid-cols-2 gap-4">
         <Card>
           <CardHeader>
