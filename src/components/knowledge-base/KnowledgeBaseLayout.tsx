@@ -103,21 +103,23 @@ export const KnowledgeBaseLayout = () => {
     ).join(' ')
   }
 
-  const handleLeftPanelExpand = () => {
-    setLeftPanelFullScreen(!leftPanelFullScreen)
-    if (!leftPanelFullScreen) {
-      setRightPanelCollapsed(true)
-    } else {
+  const handleLeftPanelFullScreen = () => {
+    if (leftPanelFullScreen) {
+      setLeftPanelFullScreen(false)
       setRightPanelCollapsed(false)
+    } else {
+      setLeftPanelFullScreen(true)
+      setRightPanelCollapsed(true)
     }
   }
 
-  const handleRightPanelExpand = () => {
-    setRightPanelFullScreen(!rightPanelFullScreen)
-    if (!rightPanelFullScreen) {
-      setLeftPanelCollapsed(true)
-    } else {
+  const handleRightPanelFullScreen = () => {
+    if (rightPanelFullScreen) {
+      setRightPanelFullScreen(false)
       setLeftPanelCollapsed(false)
+    } else {
+      setRightPanelFullScreen(true)
+      setLeftPanelCollapsed(true)
     }
   }
 
@@ -188,8 +190,7 @@ export const KnowledgeBaseLayout = () => {
                     maxSize={leftPanelFullScreen ? 100 : 75}
                     collapsible
                     collapsedSize={0}
-                    onCollapse={() => setLeftPanelCollapsed(true)}
-                    onExpand={() => setLeftPanelCollapsed(false)}
+                    collapsed={leftPanelCollapsed}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -199,7 +200,7 @@ export const KnowledgeBaseLayout = () => {
                             variant="ghost" 
                             size="sm" 
                             className="h-8 w-8 p-0"
-                            onClick={handleLeftPanelExpand}
+                            onClick={handleLeftPanelFullScreen}
                           >
                             {leftPanelFullScreen ? (
                               <Minimize2 className="h-4 w-4" />
@@ -238,8 +239,7 @@ export const KnowledgeBaseLayout = () => {
                     maxSize={rightPanelFullScreen ? 100 : 75}
                     collapsible
                     collapsedSize={0}
-                    onCollapse={() => setRightPanelCollapsed(true)}
-                    onExpand={() => setRightPanelCollapsed(false)}
+                    collapsed={rightPanelCollapsed}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -249,7 +249,7 @@ export const KnowledgeBaseLayout = () => {
                             variant="ghost" 
                             size="sm" 
                             className="h-8 w-8 p-0"
-                            onClick={handleRightPanelExpand}
+                            onClick={handleRightPanelFullScreen}
                           >
                             {rightPanelFullScreen ? (
                               <Minimize2 className="h-4 w-4" />
