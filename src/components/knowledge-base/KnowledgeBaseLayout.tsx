@@ -6,6 +6,7 @@ import { FileText, Database, Settings, Minimize2 } from "lucide-react"
 import { Header } from "@/components/Header"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import { Button } from "@/components/ui/button"
+import { DocumentsList } from "./components/DocumentsList"
 
 export const KnowledgeBaseLayout = () => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
@@ -73,8 +74,8 @@ export const KnowledgeBaseLayout = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
-                    defaultSize={30} 
-                    minSize={20}
+                    defaultSize={50} 
+                    minSize={30}
                     onCollapse={() => setLeftPanelCollapsed(true)}
                     onExpand={() => setLeftPanelCollapsed(false)}
                   >
@@ -90,14 +91,14 @@ export const KnowledgeBaseLayout = () => {
                           <Minimize2 className="h-4 w-4" />
                         </Button>
                       </div>
-                      <div className="p-4">
-                        List content goes here
+                      <div className="p-4 h-[calc(100%-65px)]">
+                        <DocumentsList />
                       </div>
                     </div>
                   </ResizablePanel>
                   <ResizableHandle withHandle />
                   <ResizablePanel 
-                    defaultSize={70} 
+                    defaultSize={50} 
                     minSize={30}
                     onCollapse={() => setRightPanelCollapsed(true)}
                     onExpand={() => setRightPanelCollapsed(false)}
