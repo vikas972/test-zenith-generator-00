@@ -36,46 +36,48 @@ export const EntriesGrid = ({
         </Button>
       </div>
 
-      <div className="border rounded-lg">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Last Modified</TableHead>
-              <TableHead className="w-[100px]">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {entries.map(entry => (
-              <TableRow key={entry.id}>
-                <TableCell className="font-medium">{entry.title}</TableCell>
-                <TableCell>{entry.description}</TableCell>
-                <TableCell>{entry.status}</TableCell>
-                <TableCell>{entry.lastModified.toLocaleDateString()}</TableCell>
-                <TableCell>
-                  <div className="flex gap-2">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onEdit(entry)}
-                    >
-                      <Pencil className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => onDelete(entry.id)}
-                    >
-                      <Trash2 className="h-4 w-4 text-red-500" />
-                    </Button>
-                  </div>
-                </TableCell>
+      <div className="border rounded-lg overflow-hidden">
+        <div className="w-full overflow-auto">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead className="w-[25%] min-w-[200px]">Title</TableHead>
+                <TableHead className="w-[35%] min-w-[250px]">Description</TableHead>
+                <TableHead className="w-[15%] min-w-[100px]">Status</TableHead>
+                <TableHead className="w-[15%] min-w-[120px]">Last Modified</TableHead>
+                <TableHead className="w-[10%] min-w-[100px] text-right">Actions</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {entries.map(entry => (
+                <TableRow key={entry.id}>
+                  <TableCell className="font-medium">{entry.title}</TableCell>
+                  <TableCell className="max-w-md">{entry.description}</TableCell>
+                  <TableCell>{entry.status}</TableCell>
+                  <TableCell>{entry.lastModified.toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right">
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onEdit(entry)}
+                      >
+                        <Pencil className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => onDelete(entry.id)}
+                      >
+                        <Trash2 className="h-4 w-4 text-red-500" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       </div>
     </div>
   )
