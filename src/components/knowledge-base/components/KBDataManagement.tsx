@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Document } from "@/types/knowledge-base"
@@ -203,12 +204,12 @@ export const KBDataManagement = () => {
       <Tabs defaultValue={categories[0]} onValueChange={setSelectedTab}>
         <div className="border rounded-md">
           <div className="overflow-auto">
-            <TabsList className="w-max border-b">
+            <TabsList className="w-full inline-flex h-auto p-0 bg-transparent">
               {categories.map(category => (
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="px-4 py-2 whitespace-nowrap"
+                  className="flex-1 px-4 py-2.5 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary border-r last:border-r-0 rounded-none"
                 >
                   {category}
                 </TabsTrigger>
