@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -102,26 +101,6 @@ export const KnowledgeBaseLayout = () => {
     ).join(' ')
   }
 
-  const toggleLeftPanel = () => {
-    if (leftPanelCollapsed) {
-      setLeftPanelCollapsed(false)
-      setRightPanelCollapsed(false)
-    } else {
-      setLeftPanelCollapsed(true)
-      setRightPanelCollapsed(false)
-    }
-  }
-
-  const toggleRightPanel = () => {
-    if (rightPanelCollapsed) {
-      setRightPanelCollapsed(false)
-      setLeftPanelCollapsed(false)
-    } else {
-      setRightPanelCollapsed(true)
-      setLeftPanelCollapsed(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Header />
@@ -184,15 +163,8 @@ export const KnowledgeBaseLayout = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
-                    defaultSize={50}
-                    collapsible={true}
-                    minSize={25}
-                    maxSize={75}
-                    onCollapse={() => {
-                      setLeftPanelCollapsed(true)
-                      setRightPanelCollapsed(false)
-                    }}
-                    onExpand={() => setLeftPanelCollapsed(false)}
+                    defaultSize={leftPanelCollapsed ? 0 : 50}
+                    minSize={0}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -202,13 +174,8 @@ export const KnowledgeBaseLayout = () => {
                           size="sm" 
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            if (leftPanelCollapsed) {
-                              setLeftPanelCollapsed(false)
-                              setRightPanelCollapsed(false)
-                            } else {
-                              setLeftPanelCollapsed(true)
-                              setRightPanelCollapsed(false)
-                            }
+                            setLeftPanelCollapsed(!leftPanelCollapsed)
+                            setRightPanelCollapsed(false)
                           }}
                         >
                           {leftPanelCollapsed ? (
@@ -234,15 +201,8 @@ export const KnowledgeBaseLayout = () => {
                   <ResizableHandle withHandle />
                   
                   <ResizablePanel 
-                    defaultSize={50}
-                    collapsible={true}
-                    minSize={25}
-                    maxSize={75}
-                    onCollapse={() => {
-                      setRightPanelCollapsed(true)
-                      setLeftPanelCollapsed(false)
-                    }}
-                    onExpand={() => setRightPanelCollapsed(false)}
+                    defaultSize={rightPanelCollapsed ? 0 : 50}
+                    minSize={0}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -252,13 +212,8 @@ export const KnowledgeBaseLayout = () => {
                           size="sm" 
                           className="h-8 w-8 p-0"
                           onClick={() => {
-                            if (rightPanelCollapsed) {
-                              setRightPanelCollapsed(false)
-                              setLeftPanelCollapsed(false)
-                            } else {
-                              setRightPanelCollapsed(true)
-                              setLeftPanelCollapsed(false)
-                            }
+                            setRightPanelCollapsed(!rightPanelCollapsed)
+                            setLeftPanelCollapsed(false)
                           }}
                         >
                           {rightPanelCollapsed ? (
