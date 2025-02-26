@@ -5,6 +5,7 @@ import { DocumentSelector } from "./DocumentSelector"
 import { CategoryTabs } from "./CategoryTabs"
 import { EntryDialog } from "./EntryDialog"
 import { useKBData } from "../hooks/useKBData"
+import { KBEntry } from "../types"
 
 export const KBDataManagement = () => {
   const {
@@ -36,11 +37,11 @@ export const KBDataManagement = () => {
     setIsDialogOpen(true)
   }
 
-  const handleEdit = (entry: Document) => {
+  const handleEdit = (entry: KBEntry) => {
     setEditMode("edit")
     setFormData({
       title: entry.title,
-      description: entry.content || "",
+      description: entry.description,
       status: entry.status
     })
     setIsDialogOpen(true)
