@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useRef } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, Database, Settings, Minimize2, Maximize2 } from "lucide-react"
@@ -10,6 +10,8 @@ import { Document } from "@/types/knowledge-base"
 
 export const KnowledgeBaseLayout = () => {
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  const leftPanelRef = useRef<HTMLButtonElement>(null)
+  const rightPanelRef = useRef<HTMLButtonElement>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: "1",
@@ -168,6 +170,18 @@ export const KnowledgeBaseLayout = () => {
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document List</h2>
+                        <Button 
+                          ref={leftPanelRef}
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => {
+                            const handle = leftPanelRef.current?.parentElement?.parentElement?.querySelector('[role="separator"]') as HTMLDivElement;
+                            handle?.click();
+                          }}
+                        >
+                          <Minimize2 className="h-4 w-4" />
+                        </Button>
                       </div>
                       <div className="p-4 h-[calc(100%-65px)]">
                         <DocumentsList
@@ -192,6 +206,18 @@ export const KnowledgeBaseLayout = () => {
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document Preview</h2>
+                        <Button 
+                          ref={rightPanelRef}
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => {
+                            const handle = rightPanelRef.current?.parentElement?.parentElement?.querySelector('[role="separator"]') as HTMLDivElement;
+                            handle?.click();
+                          }}
+                        >
+                          <Minimize2 className="h-4 w-4" />
+                        </Button>
                       </div>
                       <div className="p-4">
                         {selectedDocument ? (
