@@ -65,6 +65,11 @@ export const KBDataManagement = () => {
     setIsDialogOpen(false)
   }
 
+  console.log('Selected Document:', selectedDocument)
+  console.log('All Entries:', entries)
+  console.log('Filtered Entries:', entries.filter(entry => entry.documentId === selectedDocument?.id))
+
+  // Set initial document if none selected
   if (!selectedDocument && documents.length > 0) {
     setSelectedDocument(documents[0])
   }
