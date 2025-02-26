@@ -190,33 +190,24 @@ export const KnowledgeBaseLayout = () => {
                     maxSize={leftPanelFullScreen ? 100 : 75}
                     collapsible
                     collapsedSize={0}
-                    collapsed={leftPanelCollapsed}
+                    onCollapse={() => setLeftPanelCollapsed(true)}
+                    onExpand={() => setLeftPanelCollapsed(false)}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document List</h2>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={handleLeftPanelFullScreen}
-                          >
-                            {leftPanelFullScreen ? (
-                              <Minimize2 className="h-4 w-4" />
-                            ) : (
-                              <Maximize2 className="h-4 w-4" />
-                            )}
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
-                          >
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={handleLeftPanelFullScreen}
+                        >
+                          {leftPanelFullScreen ? (
                             <Minimize2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                          ) : (
+                            <Maximize2 className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
                       <div className="p-4 h-[calc(100%-65px)]">
                         <DocumentsList
@@ -239,33 +230,24 @@ export const KnowledgeBaseLayout = () => {
                     maxSize={rightPanelFullScreen ? 100 : 75}
                     collapsible
                     collapsedSize={0}
-                    collapsed={rightPanelCollapsed}
+                    onCollapse={() => setRightPanelCollapsed(true)}
+                    onExpand={() => setRightPanelCollapsed(false)}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document Preview</h2>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={handleRightPanelFullScreen}
-                          >
-                            {rightPanelFullScreen ? (
-                              <Minimize2 className="h-4 w-4" />
-                            ) : (
-                              <Maximize2 className="h-4 w-4" />
-                            )}
-                          </Button>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            className="h-8 w-8 p-0"
-                            onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
-                          >
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={handleRightPanelFullScreen}
+                        >
+                          {rightPanelFullScreen ? (
                             <Minimize2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+                          ) : (
+                            <Maximize2 className="h-4 w-4" />
+                          )}
+                        </Button>
                       </div>
                       <div className="p-4">
                         {selectedDocument ? (
