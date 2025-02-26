@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, FileText, Database, Settings } from "lucide-react"
@@ -165,16 +164,12 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
               </div>
             </TabsContent>
 
-            <TabsContent value="data" className="w-full">
-              <div className="w-full">
-                <DataManagementTab />
-              </div>
+            <TabsContent value="data">
+              <DataManagementTab />
             </TabsContent>
 
-            <TabsContent value="relationships" className="w-full">
-              <div className="w-full">
-                <RelationshipsTab />
-              </div>
+            <TabsContent value="relationships">
+              <RelationshipsTab />
             </TabsContent>
           </Tabs>
         </CardContent>
