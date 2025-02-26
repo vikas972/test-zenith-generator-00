@@ -1,39 +1,10 @@
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Button } from "@/components/ui/button"
-import { Plus, Pencil, Trash2, Save } from "lucide-react"
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-  DialogFooter,
-} from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Document } from "@/types/knowledge-base"
-
-interface KBEntry {
-  id: string
-  title: string
-  description: string
-  status: string
-  lastModified: Date
-  category: string
-  documentId: string
-}
+import { DocumentSelector } from "./DocumentSelector"
+import { EntriesGrid } from "./EntriesGrid"
+import { EntryDialog } from "./EntryDialog"
+import { KBEntry } from "../types"
 
 export const KBDataManagement = () => {
   const categories = [
@@ -223,38 +194,11 @@ export const KBDataManagement = () => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-white p-4 rounded-lg border space-y-4">
-        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
-          <div className="w-full sm:w-64">
-            <Label>Select Document</Label>
-            <Select
-              value={selectedDocument?.id}
-              onValueChange={(value) => {
-                const doc = documents.find(d => d.id === value)
-                setSelectedDocument(doc || null)
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a document" />
-              </SelectTrigger>
-              <SelectContent>
-                {documents.map((doc) => (
-                  <SelectItem key={doc.id} value={doc.id}>
-                    {doc.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          {selectedDocument && (
-            <div className="text-sm text-gray-500 space-y-1">
-              <p>Upload Date: {selectedDocument.lastModified.toLocaleDateString()}</p>
-              <p>Uploaded By: {selectedDocument.uploadedBy}</p>
-              <p>Document Type: {selectedDocument.type}</p>
-            </div>
-          )}
-        </div>
-      </div>
+      <DocumentSelector
+        documents={documents}
+        selectedDocument={selectedDocument}
+        onDocumentSelect={setSelectedDocument}
+      />
 
       <Tabs defaultValue={categories[0]} onValueChange={setSelectedTab}>
         <div className="border rounded-md">
@@ -274,93 +218,26 @@ export const KBDataManagement = () => {
         </div>
 
         {categories.map(category => (
-          <TabsContent key={category} value={category} className="space-y-4">
-            <div className="flex justify-between items-center">
-              <h3 className="text-lg font-semibold text-gray-800">{category}</h3>
-              <Button onClick={() => handleAdd(category)}>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Entry
-              </Button>
-            </div>
-
-            <div className="border rounded-lg">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Title</TableHead>
-                    <TableHead>Description</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Last Modified</TableHead>
-                    <TableHead className="w-[100px]">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {filteredEntries.map(entry => (
-                    <TableRow key={entry.id}>
-                      <TableCell className="font-medium">{entry.title}</TableCell>
-                      <TableCell>{entry.description}</TableCell>
-                      <TableCell>{entry.status}</TableCell>
-                      <TableCell>{entry.lastModified.toLocaleDateString()}</TableCell>
-                      <TableCell>
-                        <div className="flex gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleEdit(entry)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => handleDelete(entry.id)}
-                          >
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
+          <TabsContent key={category} value={category}>
+            <EntriesGrid
+              category={category}
+              entries={filteredEntries}
+              onAdd={handleAdd}
+              onEdit={handleEdit}
+              onDelete={handleDelete}
+            />
           </TabsContent>
         ))}
       </Tabs>
 
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle>
-              {editMode === "add" ? "Add New Entry" : "Edit Entry"}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input
-                value={formData.title}
-                onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave}>
-              Save Changes
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <EntryDialog
+        isOpen={isDialogOpen}
+        onOpenChange={setIsDialogOpen}
+        mode={editMode}
+        formData={formData}
+        onFormDataChange={setFormData}
+        onSave={handleSave}
+      />
     </div>
   )
 }
