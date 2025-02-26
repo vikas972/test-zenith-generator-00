@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -175,14 +174,7 @@ export const KnowledgeBaseLayout = () => {
                 className="flex items-center gap-2 h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary"
               >
                 <Database className="h-4 w-4" />
-                Data Management
-              </TabsTrigger>
-              <TabsTrigger 
-                value="relationships" 
-                className="flex items-center gap-2 h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary"
-              >
-                <Settings className="h-4 w-4" />
-                Relationships
+                KB Data Management
               </TabsTrigger>
             </TabsList>
             
@@ -196,7 +188,7 @@ export const KnowledgeBaseLayout = () => {
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
-                        <h2 className="font-semibold text-gray-800">Document List</h2>
+                        <h2 className="font-semibold text-gray-800">KB List</h2>
                         <Button 
                           variant="ghost" 
                           size="sm" 
@@ -267,12 +259,6 @@ export const KnowledgeBaseLayout = () => {
             <TabsContent value="data-management">
               <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 Data Management content
-              </div>
-            </TabsContent>
-            
-            <TabsContent value="relationships">
-              <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
-                Relationships content
               </div>
             </TabsContent>
           </Tabs>
