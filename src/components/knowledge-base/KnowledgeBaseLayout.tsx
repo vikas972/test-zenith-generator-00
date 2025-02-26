@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -14,8 +13,6 @@ export const KnowledgeBaseLayout = () => {
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
   const [leftPanelFullScreen, setLeftPanelFullScreen] = useState(false)
   const [rightPanelFullScreen, setRightPanelFullScreen] = useState(false)
-  const [leftPanelSize, setLeftPanelSize] = useState(50)
-  const [rightPanelSize, setRightPanelSize] = useState(50)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
@@ -110,13 +107,9 @@ export const KnowledgeBaseLayout = () => {
     if (leftPanelFullScreen) {
       setLeftPanelFullScreen(false)
       setRightPanelCollapsed(false)
-      setLeftPanelSize(50)
-      setRightPanelSize(50)
     } else {
       setLeftPanelFullScreen(true)
       setRightPanelCollapsed(true)
-      setLeftPanelSize(100)
-      setRightPanelSize(0)
     }
   }
 
@@ -124,13 +117,9 @@ export const KnowledgeBaseLayout = () => {
     if (rightPanelFullScreen) {
       setRightPanelFullScreen(false)
       setLeftPanelCollapsed(false)
-      setLeftPanelSize(50)
-      setRightPanelSize(50)
     } else {
       setRightPanelFullScreen(true)
       setLeftPanelCollapsed(true)
-      setLeftPanelSize(0)
-      setRightPanelSize(100)
     }
   }
 
@@ -196,8 +185,7 @@ export const KnowledgeBaseLayout = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
-                    defaultSize={50}
-                    size={leftPanelSize}
+                    defaultSize={leftPanelFullScreen ? 100 : 50}
                     minSize={25}
                     maxSize={leftPanelFullScreen ? 100 : 75}
                   >
@@ -233,8 +221,7 @@ export const KnowledgeBaseLayout = () => {
                   <ResizableHandle withHandle />
                   
                   <ResizablePanel 
-                    defaultSize={50}
-                    size={rightPanelSize}
+                    defaultSize={rightPanelFullScreen ? 100 : 50}
                     minSize={25}
                     maxSize={rightPanelFullScreen ? 100 : 75}
                   >
