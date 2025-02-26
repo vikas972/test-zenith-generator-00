@@ -1,17 +1,8 @@
-
-import { Button } from "@/components/ui/button"
-import { Plus } from "lucide-react"
-
 export const RelationshipsTab = () => {
   return (
-    <div className="w-full space-y-4">
-      <p className="text-sm text-gray-500">
-        Manage relationships between documents, products, and domains
-      </p>
-      <Button variant="outline">
-        <Plus className="h-4 w-4 mr-2" />
-        Create Relationship
-      </Button>
+    <div className="w-full">
+      <h2 className="text-xl font-semibold mb-4">Relationships</h2>
+      {/* Add your relationships content here */}
     </div>
   )
 }
