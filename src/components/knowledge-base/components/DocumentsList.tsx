@@ -25,13 +25,6 @@ interface Document {
   isUpdate: boolean
 }
 
-interface DocumentFormData {
-  title: string
-  type: string
-  format: string
-  isUpdate: boolean
-}
-
 export const DocumentsList = () => {
   const [documents, setDocuments] = useState<Document[]>([
     {
