@@ -310,13 +310,13 @@ export const KBDataManagement = () => {
     <div className="space-y-6">
       <Tabs defaultValue={categories[0]} onValueChange={setSelectedTab}>
         <div className="border rounded-md">
-          <ScrollArea className="w-full h-[40px]">
-            <TabsList className="inline-flex w-max min-w-full justify-start border-b">
+          <ScrollArea className="w-full">
+            <TabsList className="w-full h-[40px] flex-none inline-flex border-b">
               {categories.map(category => (
                 <TabsTrigger
                   key={category}
                   value={category}
-                  className="px-4 py-2 whitespace-nowrap"
+                  className="flex-none px-4 py-2 whitespace-nowrap"
                 >
                   {category}
                 </TabsTrigger>
