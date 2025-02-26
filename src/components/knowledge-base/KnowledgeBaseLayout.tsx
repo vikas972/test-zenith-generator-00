@@ -1,4 +1,5 @@
 
+import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, Database, Settings, Minimize2 } from "lucide-react"
@@ -7,6 +8,9 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Button } from "@/components/ui/button"
 
 export const KnowledgeBaseLayout = () => {
+  const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
+  const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Header />
@@ -42,15 +46,24 @@ export const KnowledgeBaseLayout = () => {
 
           <Tabs defaultValue="documents" className="w-full">
             <TabsList className="w-full bg-white border border-gray-100 rounded-lg h-12">
-              <TabsTrigger value="documents" className="flex items-center gap-2 h-10 px-6">
+              <TabsTrigger 
+                value="documents" 
+                className="flex items-center gap-2 h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary"
+              >
                 <FileText className="h-4 w-4" />
                 Documents
               </TabsTrigger>
-              <TabsTrigger value="data-management" className="flex items-center gap-2 h-10 px-6">
+              <TabsTrigger 
+                value="data-management" 
+                className="flex items-center gap-2 h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary"
+              >
                 <Database className="h-4 w-4" />
                 Data Management
               </TabsTrigger>
-              <TabsTrigger value="relationships" className="flex items-center gap-2 h-10 px-6">
+              <TabsTrigger 
+                value="relationships" 
+                className="flex items-center gap-2 h-10 px-6 data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary"
+              >
                 <Settings className="h-4 w-4" />
                 Relationships
               </TabsTrigger>
@@ -59,11 +72,22 @@ export const KnowledgeBaseLayout = () => {
             <TabsContent value="documents">
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
-                  <ResizablePanel defaultSize={30} minSize={20}>
+                  <ResizablePanel 
+                    defaultSize={30} 
+                    minSize={20}
+                    collapsible={true}
+                    collapsedSize={5}
+                    collapsed={leftPanelCollapsed}
+                  >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document List</h2>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => setLeftPanelCollapsed(!leftPanelCollapsed)}
+                        >
                           <Minimize2 className="h-4 w-4" />
                         </Button>
                       </div>
@@ -73,11 +97,22 @@ export const KnowledgeBaseLayout = () => {
                     </div>
                   </ResizablePanel>
                   <ResizableHandle withHandle />
-                  <ResizablePanel defaultSize={70} minSize={30}>
+                  <ResizablePanel 
+                    defaultSize={70} 
+                    minSize={30}
+                    collapsible={true}
+                    collapsedSize={5}
+                    collapsed={rightPanelCollapsed}
+                  >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document Preview</h2>
-                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                        <Button 
+                          variant="ghost" 
+                          size="sm" 
+                          className="h-8 w-8 p-0"
+                          onClick={() => setRightPanelCollapsed(!rightPanelCollapsed)}
+                        >
                           <Minimize2 className="h-4 w-4" />
                         </Button>
                       </div>
