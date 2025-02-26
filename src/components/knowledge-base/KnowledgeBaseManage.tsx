@@ -2,7 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus, FileText, Database, Settings, Trash2, Pencil } from "lucide-react"
+import { Plus, FileText, Database, Settings, Trash2, Pencil, Search } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
@@ -21,6 +21,8 @@ interface Document {
   title: string
   category: string
   lastModified: Date
+  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
+  type: string
   content?: string
 }
 
@@ -35,23 +37,31 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [activeTab, setActiveTab] = useState("documents")
   const [mounted, setMounted] = useState(false)
-  const [documents, setDocuments] = useState([
+  const [searchQuery, setSearchQuery] = useState("")
+  const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [documents, setDocuments] = useState<Document[]>([
     {
       id: "1",
       title: "Product Requirements Document",
       category: "Requirements",
+      type: "Documentation",
+      status: "processed",
       lastModified: new Date("2024-03-10"),
     },
     {
       id: "2",
       title: "API Documentation",
       category: "Technical",
+      type: "Technical",
+      status: "processing",
       lastModified: new Date("2024-03-09"),
     },
     {
       id: "3",
       title: "User Guide",
       category: "Documentation",
+      type: "Documentation",
+      status: "needs_review",
       lastModified: new Date("2024-03-08"),
     },
   ])
@@ -71,6 +81,34 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
     setSelectedDocument(doc)
     setIsUploadDialogOpen(true)
   }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'processed':
+        return 'bg-green-500'
+      case 'processing':
+        return 'bg-blue-500'
+      case 'needs_review':
+        return 'bg-yellow-500'
+      case 'deleted':
+        return 'bg-red-500'
+      default:
+        return 'bg-gray-500'
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    return status.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ')
+  }
+
+  const filteredDocuments = documents.filter(doc => {
+    const matchesSearch = doc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                         doc.category.toLowerCase().includes(searchQuery.toLowerCase())
+    const matchesStatus = statusFilter === "all" || doc.status === statusFilter
+    return matchesSearch && matchesStatus
+  })
 
   if (!mounted) {
     return null
@@ -112,18 +150,51 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
             </TabsList>
 
             <TabsContent value="documents">
+              <div className="flex gap-4 mb-4">
+                <div className="flex-1">
+                  <div className="relative">
+                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                    <Input
+                      className="pl-10"
+                      placeholder="Search documents..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="Filter by status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Status</SelectItem>
+                    <SelectItem value="processed">Processed</SelectItem>
+                    <SelectItem value="processing">Processing</SelectItem>
+                    <SelectItem value="needs_review">Needs Review</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
               <ScrollArea className="h-[400px] overflow-hidden">
                 <div className="space-y-4 p-1">
-                  {documents.map((doc) => (
+                  {filteredDocuments.map((doc) => (
                     <div
                       key={doc.id}
                       className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
                       onClick={() => onSelectDocument?.(doc)}
                     >
-                      <div className="flex justify-between items-center">
-                        <div>
-                          <span className="font-medium">{doc.title}</span>
-                          <p className="text-sm text-gray-500">Last modified: {doc.lastModified.toLocaleDateString()}</p>
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1">
+                          <div className="flex items-center gap-2">
+                            <span className="font-medium text-lg">{doc.title}</span>
+                            <span className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(doc.status)}`}>
+                              {getStatusText(doc.status)}
+                            </span>
+                          </div>
+                          <div className="text-sm text-gray-500 space-y-1">
+                            <p>Type: {doc.type}</p>
+                            <p>Category: {doc.category}</p>
+                            <p>Last modified: {doc.lastModified.toLocaleDateString()}</p>
+                          </div>
                         </div>
                         <div className="flex gap-2">
                           <Button 
