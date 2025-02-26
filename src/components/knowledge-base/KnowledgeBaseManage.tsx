@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, FileText, Database, Settings } from "lucide-react"
@@ -144,25 +143,21 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
                 </Button>
               </div>
               
-              <div className="grid grid-cols-12 gap-6">
-                <div className="col-span-5">
-                  <DocumentsSearch
-                    searchQuery={searchQuery}
-                    onSearchChange={setSearchQuery}
-                    statusFilter={statusFilter}
-                    onStatusFilterChange={setStatusFilter}
-                  />
-                  <DocumentsList
-                    documents={filteredDocuments}
-                    onSelectDocument={onSelectDocument || (() => {})}
-                    onEdit={handleEdit}
-                    onDelete={handleDelete}
-                    getStatusColor={getStatusColor}
-                    getStatusText={getStatusText}
-                  />
-                </div>
-                <div className="col-span-7">
-                </div>
+              <div>
+                <DocumentsSearch
+                  searchQuery={searchQuery}
+                  onSearchChange={setSearchQuery}
+                  statusFilter={statusFilter}
+                  onStatusFilterChange={setStatusFilter}
+                />
+                <DocumentsList
+                  documents={filteredDocuments}
+                  onSelectDocument={onSelectDocument || (() => {})}
+                  onEdit={handleEdit}
+                  onDelete={handleDelete}
+                  getStatusColor={getStatusColor}
+                  getStatusText={getStatusText}
+                />
               </div>
             </TabsContent>
 
