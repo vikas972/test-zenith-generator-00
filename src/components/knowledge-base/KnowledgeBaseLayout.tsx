@@ -101,6 +101,21 @@ export const KnowledgeBaseLayout = () => {
     ).join(' ')
   }
 
+  const triggerCollapse = (button: HTMLButtonElement) => {
+    const panel = button.closest('[data-panel]')
+    if (panel) {
+      const handle = panel.nextElementSibling?.matches('[role="separator"]') 
+        ? panel.nextElementSibling 
+        : panel.previousElementSibling?.matches('[role="separator"]')
+          ? panel.previousElementSibling
+          : null;
+      
+      if (handle) {
+        (handle as HTMLElement).click();
+      }
+    }
+  }
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Header />
@@ -175,10 +190,7 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={() => {
-                            const handle = leftPanelRef.current?.parentElement?.parentElement?.querySelector('[role="separator"]') as HTMLDivElement;
-                            handle?.click();
-                          }}
+                          onClick={(e) => triggerCollapse(e.currentTarget)}
                         >
                           <Minimize2 className="h-4 w-4" />
                         </Button>
@@ -211,10 +223,7 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={() => {
-                            const handle = rightPanelRef.current?.parentElement?.parentElement?.querySelector('[role="separator"]') as HTMLDivElement;
-                            handle?.click();
-                          }}
+                          onClick={(e) => triggerCollapse(e.currentTarget)}
                         >
                           <Minimize2 className="h-4 w-4" />
                         </Button>
