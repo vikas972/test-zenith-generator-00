@@ -75,9 +75,8 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={30} 
                     minSize={20}
-                    collapsible={true}
-                    collapsedSize={5}
-                    collapsed={leftPanelCollapsed}
+                    onCollapse={() => setLeftPanelCollapsed(true)}
+                    onExpand={() => setLeftPanelCollapsed(false)}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -100,9 +99,8 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={70} 
                     minSize={30}
-                    collapsible={true}
-                    collapsedSize={5}
-                    collapsed={rightPanelCollapsed}
+                    onCollapse={() => setRightPanelCollapsed(true)}
+                    onExpand={() => setRightPanelCollapsed(false)}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
