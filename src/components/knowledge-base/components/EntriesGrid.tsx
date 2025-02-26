@@ -45,17 +45,17 @@ export const EntriesGrid = ({
                 <TableHead className="w-[35%] min-w-[250px]">Description</TableHead>
                 <TableHead className="w-[15%] min-w-[100px]">Status</TableHead>
                 <TableHead className="w-[15%] min-w-[120px]">Last Modified</TableHead>
-                <TableHead className="w-[10%] min-w-[100px] text-right">Actions</TableHead>
+                <TableHead className="w-[10%] min-w-[100px] text-right pr-6">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {entries.map(entry => (
                 <TableRow key={entry.id}>
-                  <TableCell className="font-medium">{entry.title}</TableCell>
-                  <TableCell className="max-w-md">{entry.description}</TableCell>
-                  <TableCell>{entry.status}</TableCell>
-                  <TableCell>{entry.lastModified.toLocaleDateString()}</TableCell>
-                  <TableCell className="text-right">
+                  <TableCell className="font-medium py-3">{entry.title}</TableCell>
+                  <TableCell className="max-w-md py-3">{entry.description}</TableCell>
+                  <TableCell className="py-3">{entry.status}</TableCell>
+                  <TableCell className="py-3">{entry.lastModified.toLocaleDateString()}</TableCell>
+                  <TableCell className="text-right pr-4">
                     <div className="flex justify-end gap-2">
                       <Button
                         variant="ghost"
