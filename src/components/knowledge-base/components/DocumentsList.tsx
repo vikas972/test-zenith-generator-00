@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Pencil, Trash2, Plus } from "lucide-react"
@@ -15,17 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { useState, MouseEvent } from "react"
-
-interface Document {
-  id: string
-  title: string
-  category: string
-  lastModified: Date
-  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
-  type: string
-  content?: string
-  uploadedBy: string
-}
+import { Document } from "@/types/knowledge-base"
 
 interface DocumentsListProps {
   documents: Document[]

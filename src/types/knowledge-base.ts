@@ -1,4 +1,3 @@
-
 export interface Product {
   id: string
   name: string
@@ -85,4 +84,15 @@ export interface Relationship {
   parent_id: string
   child_type: string
   child_id: string
+}
+
+export interface Document {
+  id: string
+  title: string
+  category: string
+  lastModified: Date
+  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
+  type: string
+  content?: string
+  uploadedBy: string
 }

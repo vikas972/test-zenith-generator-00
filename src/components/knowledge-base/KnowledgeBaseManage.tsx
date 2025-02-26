@@ -1,4 +1,3 @@
-
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Plus, FileText, Database, Settings } from "lucide-react"
@@ -9,16 +8,7 @@ import { DocumentsSearch } from "./components/DocumentsSearch"
 import { DocumentDialog } from "./components/DocumentDialog"
 import { DataManagementTab } from "./components/DataManagementTab"
 import { RelationshipsTab } from "./components/RelationshipsTab"
-
-interface Document {
-  id: string
-  title: string
-  category: string
-  lastModified: Date
-  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
-  type: string
-  content?: string
-}
+import { Document } from "@/types/knowledge-base"
 
 interface KnowledgeBaseManageProps {
   onSelectDocument?: (doc: Document) => void
@@ -41,6 +31,7 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
       type: "Documentation",
       status: "processed",
       lastModified: new Date("2024-03-10"),
+      uploadedBy: "John Smith"
     },
     {
       id: "2",
@@ -49,6 +40,7 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
       type: "Technical",
       status: "processing",
       lastModified: new Date("2024-03-09"),
+      uploadedBy: "Sarah Johnson"
     },
     {
       id: "3",
@@ -57,6 +49,7 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
       type: "Documentation",
       status: "needs_review",
       lastModified: new Date("2024-03-08"),
+      uploadedBy: "Michael Brown"
     },
   ])
 
