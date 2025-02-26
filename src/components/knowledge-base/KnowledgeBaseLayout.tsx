@@ -102,12 +102,12 @@ export const KnowledgeBaseLayout = () => {
   }
 
   const triggerCollapse = (button: HTMLButtonElement) => {
-    const panel = button.closest('[data-panel]')
-    if (panel) {
-      const handle = panel.nextElementSibling?.matches('[role="separator"]') 
-        ? panel.nextElementSibling 
-        : panel.previousElementSibling?.matches('[role="separator"]')
-          ? panel.previousElementSibling
+    const panelElement = button.closest('div[class*="ResizablePanel"]');
+    if (panelElement) {
+      const handle = panelElement.nextElementSibling?.matches('[role="separator"]') 
+        ? panelElement.nextElementSibling 
+        : panelElement.previousElementSibling?.matches('[role="separator"]')
+          ? panelElement.previousElementSibling
           : null;
       
       if (handle) {
@@ -186,7 +186,6 @@ export const KnowledgeBaseLayout = () => {
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document List</h2>
                         <Button 
-                          ref={leftPanelRef}
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
@@ -219,7 +218,6 @@ export const KnowledgeBaseLayout = () => {
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document Preview</h2>
                         <Button 
-                          ref={rightPanelRef}
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
