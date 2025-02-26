@@ -258,7 +258,7 @@ export const KnowledgeBaseLayout = () => {
             
             <TabsContent value="data-management">
               <div className="p-6 bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
-                Data Management content
+                <KBDataManagement />
               </div>
             </TabsContent>
           </Tabs>
