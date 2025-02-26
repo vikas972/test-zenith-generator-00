@@ -1,11 +1,15 @@
 
-import { Beaker, Home, Settings2 } from "lucide-react";
+import { Beaker, Home, Settings2, LogOut, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
+  DropdownMenuSub,
+  DropdownMenuSubTrigger,
+  DropdownMenuSubContent,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 
@@ -34,15 +38,39 @@ export const Header = () => {
           </Button>
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Dashboard</a>
           <a href="#" className="hover:opacity-80 transition-opacity text-blue-100 hover:text-white">Projects</a>
+          
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-blue-100 hover:text-white">
-                <Settings2 className="h-5 w-5" />
+              <Button 
+                variant="ghost" 
+                size="icon" 
+                className="h-10 w-10 rounded-full border-2 border-blue-100/20 hover:border-blue-100/40"
+              >
+                <User className="h-5 w-5 text-blue-100" />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={() => navigate('/knowledge-base')}>
-                Product KB
+            <DropdownMenuContent align="end" className="w-56">
+              <DropdownMenuItem>
+                Profile
+              </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <Settings2 className="mr-2 h-4 w-4" />
+                  <span>Settings</span>
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem onClick={() => navigate('/knowledge-base')}>
+                    Product Knowledge Base
+                  </DropdownMenuItem>
+                  <DropdownMenuItem>
+                    General Settings
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>Log out</span>
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
