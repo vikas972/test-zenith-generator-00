@@ -116,25 +116,12 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
 
   return (
     <div className="flex flex-col gap-4">
+      <h1 className="text-2xl font-bold">Knowledge Base Management</h1>
+      
       <Card className="shadow-md">
-        <CardHeader className="flex flex-row items-center justify-between pb-2">
-          <CardTitle>Knowledge Base Management</CardTitle>
-          <div className="flex items-center gap-2">
-            <Button 
-              className="bg-primary hover:bg-primary/90"
-              onClick={() => {
-                setSelectedDocument(null)
-                setIsUploadDialogOpen(true)
-              }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Document
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
+        <CardContent className="pt-6">
           <Tabs defaultValue="documents" className="w-full" onValueChange={setActiveTab}>
-            <TabsList className="grid w-full grid-cols-3 mb-4">
+            <TabsList className="grid w-full grid-cols-3 mb-6">
               <TabsTrigger value="documents" className="flex items-center gap-2">
                 <FileText className="h-4 w-4" />
                 Documents
@@ -150,74 +137,123 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
             </TabsList>
 
             <TabsContent value="documents">
-              <div className="flex gap-4 mb-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                    <Input
-                      className="pl-10"
-                      placeholder="Search documents..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                    />
-                  </div>
-                </div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="Filter by status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="all">All Status</SelectItem>
-                    <SelectItem value="processed">Processed</SelectItem>
-                    <SelectItem value="processing">Processing</SelectItem>
-                    <SelectItem value="needs_review">Needs Review</SelectItem>
-                  </SelectContent>
-                </Select>
+              <div className="flex justify-end mb-4">
+                <Button 
+                  className="bg-primary hover:bg-primary/90"
+                  onClick={() => {
+                    setSelectedDocument(null)
+                    setIsUploadDialogOpen(true)
+                  }}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add Document
+                </Button>
               </div>
-              <ScrollArea className="h-[400px] overflow-hidden">
-                <div className="space-y-4 p-1">
-                  {filteredDocuments.map((doc) => (
-                    <div
-                      key={doc.id}
-                      className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                      onClick={() => onSelectDocument?.(doc)}
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="space-y-1">
-                          <div className="flex items-center gap-2">
-                            <span className="font-medium text-lg">{doc.title}</span>
-                            <span className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(doc.status)}`}>
-                              {getStatusText(doc.status)}
-                            </span>
-                          </div>
-                          <div className="text-sm text-gray-500 space-y-1">
-                            <p>Type: {doc.type}</p>
-                            <p>Category: {doc.category}</p>
-                            <p>Last modified: {doc.lastModified.toLocaleDateString()}</p>
-                          </div>
-                        </div>
-                        <div className="flex gap-2">
-                          <Button 
-                            variant="default" 
-                            size="sm" 
-                            className="bg-primary hover:bg-primary/90"
-                            onClick={(e) => handleEdit(doc, e)}
-                          >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button 
-                            variant="destructive" 
-                            size="sm"
-                            onClick={(e) => handleDelete(doc.id, e)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
+              
+              <div className="grid grid-cols-12 gap-6">
+                {/* Left Panel */}
+                <div className="col-span-5">
+                  <div className="flex gap-4 mb-4">
+                    <div className="flex-1">
+                      <div className="relative">
+                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
+                        <Input
+                          className="pl-10"
+                          placeholder="Search documents..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                        />
                       </div>
                     </div>
-                  ))}
+                    <Select value={statusFilter} onValueChange={setStatusFilter}>
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue placeholder="Filter by status" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Status</SelectItem>
+                        <SelectItem value="processed">Processed</SelectItem>
+                        <SelectItem value="processing">Processing</SelectItem>
+                        <SelectItem value="needs_review">Needs Review</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <ScrollArea className="h-[500px] overflow-hidden">
+                    <div className="space-y-4 p-1">
+                      {filteredDocuments.map((doc) => (
+                        <div
+                          key={doc.id}
+                          className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+                          onClick={() => onSelectDocument?.(doc)}
+                        >
+                          <div className="flex justify-between items-start">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-medium text-lg">{doc.title}</span>
+                                <span className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(doc.status)}`}>
+                                  {getStatusText(doc.status)}
+                                </span>
+                              </div>
+                              <div className="text-sm text-gray-500 space-y-1">
+                                <p>Type: {doc.type}</p>
+                                <p>Category: {doc.category}</p>
+                                <p>Last modified: {doc.lastModified.toLocaleDateString()}</p>
+                              </div>
+                            </div>
+                            <div className="flex gap-2">
+                              <Button 
+                                variant="default" 
+                                size="sm" 
+                                className="bg-primary hover:bg-primary/90"
+                                onClick={(e) => handleEdit(doc, e)}
+                              >
+                                <Pencil className="h-4 w-4" />
+                              </Button>
+                              <Button 
+                                variant="destructive" 
+                                size="sm"
+                                onClick={(e) => handleDelete(doc.id, e)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </ScrollArea>
                 </div>
-              </ScrollArea>
+                
+                {/* Right Panel */}
+                <div className="col-span-7">
+                  <Card className="h-full">
+                    <CardHeader>
+                      <CardTitle>Document Preview</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      {selectedDocument ? (
+                        <div className="space-y-4">
+                          <h2 className="text-xl font-semibold">{selectedDocument.title}</h2>
+                          <div className="text-sm text-gray-500">
+                            <p>Type: {selectedDocument.type}</p>
+                            <p>Category: {selectedDocument.category}</p>
+                            <p>Last modified: {selectedDocument.lastModified.toLocaleDateString()}</p>
+                            <p>Status: {getStatusText(selectedDocument.status)}</p>
+                          </div>
+                          {selectedDocument.content && (
+                            <div className="mt-4 prose">
+                              <p>{selectedDocument.content}</p>
+                            </div>
+                          )}
+                        </div>
+                      ) : (
+                        <div className="flex items-center justify-center h-[400px] text-gray-500">
+                          Select a document to preview its contents
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              </div>
             </TabsContent>
 
             <TabsContent value="data">
