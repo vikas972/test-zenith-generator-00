@@ -3,6 +3,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { FileText, Database, Settings } from "lucide-react"
 import { Header } from "@/components/Header"
+import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 
 export const KnowledgeBaseLayout = () => {
   return (
@@ -53,7 +54,21 @@ export const KnowledgeBaseLayout = () => {
             </TabsList>
             
             <TabsContent value="documents">
-              <div className="p-4 bg-white rounded-lg">Documents content</div>
+              <div className="bg-white rounded-lg">
+                <ResizablePanelGroup direction="horizontal">
+                  <ResizablePanel defaultSize={30}>
+                    <div className="h-[600px] p-4 border-r">
+                      Left Panel Content
+                    </div>
+                  </ResizablePanel>
+                  <ResizableHandle withHandle />
+                  <ResizablePanel defaultSize={70}>
+                    <div className="h-[600px] p-4">
+                      Right Panel Content
+                    </div>
+                  </ResizablePanel>
+                </ResizablePanelGroup>
+              </div>
             </TabsContent>
             
             <TabsContent value="data-management">
