@@ -13,30 +13,35 @@ import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
-import { useState } from "react"
+import { useState, MouseEvent } from "react"
 
 interface Document {
   id: string
   title: string
-  uploadDate: Date
+  category: string
+  lastModified: Date
+  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
   type: string
-  status: 'processed' | 'processing' | 'error'
-  format: 'Excel' | 'PDF' | 'Word' | 'PowerPoint'
-  isUpdate: boolean
+  content?: string
 }
 
-export const DocumentsList = () => {
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      id: '1',
-      title: 'DTB Kenya Functionalities',
-      uploadDate: new Date('2025-02-25'),
-      type: 'Functionalities',
-      status: 'processed',
-      format: 'PDF',
-      isUpdate: false
-    }
-  ])
+interface DocumentsListProps {
+  documents: Document[]
+  onSelectDocument: (doc: Document) => void
+  onEdit: (doc: Document, event: MouseEvent) => void
+  onDelete: (docId: string, event: MouseEvent) => void
+  getStatusColor: (status: string) => string
+  getStatusText: (status: string) => string
+}
+
+export const DocumentsList = ({
+  documents,
+  onSelectDocument,
+  onEdit,
+  onDelete,
+  getStatusColor,
+  getStatusText
+}: DocumentsListProps) => {
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
 
@@ -50,26 +55,10 @@ export const DocumentsList = () => {
     "Other"
   ]
 
-  const handleDelete = (docId: string) => {
-    setDocuments(prev => prev.filter(doc => doc.id !== docId))
-  }
-
-  const handleEdit = (doc: Document) => {
+  const handleEdit = (doc: Document, event: MouseEvent) => {
     setSelectedDoc(doc)
     setIsDialogOpen(true)
-  }
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case 'processed':
-        return 'bg-green-500'
-      case 'processing':
-        return 'bg-yellow-500'
-      case 'error':
-        return 'bg-red-500'
-      default:
-        return 'bg-gray-500'
-    }
+    onEdit(doc, event)
   }
 
   return (
@@ -116,7 +105,7 @@ export const DocumentsList = () => {
               <div className="space-y-2">
                 <Label>Document Format</Label>
                 <Input 
-                  value={selectedDoc?.format || "Auto-detected"}
+                  value="Auto-detected"
                   readOnly
                   disabled
                 />
@@ -124,7 +113,6 @@ export const DocumentsList = () => {
               <div className="flex items-center space-x-2">
                 <Checkbox 
                   id="isUpdate" 
-                  checked={selectedDoc?.isUpdate}
                   disabled
                 />
                 <Label htmlFor="isUpdate">Is Update to Existing Document</Label>
@@ -139,17 +127,18 @@ export const DocumentsList = () => {
             <div
               key={doc.id}
               className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+              onClick={() => onSelectDocument(doc)}
             >
               <div className="flex justify-between items-start">
                 <div className="space-y-2">
                   <h3 className="font-medium">{doc.title}</h3>
                   <div className="text-sm text-gray-500 space-y-1">
-                    <p>Upload Date: {doc.uploadDate.toLocaleDateString()}</p>
+                    <p>Upload Date: {doc.lastModified.toLocaleDateString()}</p>
                     <p>Type: {doc.type}</p>
                     <div className="flex items-center gap-2">
                       <span>Status:</span>
                       <span className="flex items-center gap-1">
-                        {doc.status.charAt(0).toUpperCase() + doc.status.slice(1)}
+                        {getStatusText(doc.status)}
                         <div className={`w-2 h-2 rounded-full ${getStatusColor(doc.status)}`} />
                       </span>
                     </div>
@@ -159,14 +148,14 @@ export const DocumentsList = () => {
                   <Button 
                     variant="outline" 
                     size="sm"
-                    onClick={() => handleEdit(doc)}
+                    onClick={(e) => handleEdit(doc, e)}
                   >
                     <Pencil className="h-4 w-4" />
                   </Button>
                   <Button 
                     variant="destructive" 
                     size="sm"
-                    onClick={() => handleDelete(doc.id)}
+                    onClick={(e) => onDelete(doc.id, e)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
