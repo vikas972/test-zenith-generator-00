@@ -1,3 +1,4 @@
+
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { Pencil, Trash2, Plus } from "lucide-react"
@@ -160,13 +161,6 @@ export const DocumentsList = ({
                     <p>Upload Date: {doc.lastModified.toLocaleDateString()}</p>
                     <p>Uploaded By: {doc.uploadedBy}</p>
                     <p>Type: {doc.type}</p>
-                    <div className="flex items-center gap-2">
-                      <span>Status:</span>
-                      <span className="flex items-center gap-1">
-                        {getStatusText(doc.status)}
-                        <div className={`w-2 h-2 rounded-full ${getStatusColor(doc.status)}`} />
-                      </span>
-                    </div>
                   </div>
                 </div>
                 <div className="flex gap-2">
