@@ -1,19 +1,14 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { ScrollArea } from "@/components/ui/scroll-area"
-import { Plus, FileText, Database, Settings, Trash2, Pencil, Search } from "lucide-react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { Input } from "@/components/ui/input"
-import { Textarea } from "@/components/ui/textarea"
+import { Plus, FileText, Database, Settings } from "lucide-react"
 import { useState, useEffect } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
+import { DocumentsList } from "./components/DocumentsList"
+import { DocumentsSearch } from "./components/DocumentsSearch"
+import { DocumentDialog } from "./components/DocumentDialog"
+import { DataManagementTab } from "./components/DataManagementTab"
+import { RelationshipsTab } from "./components/RelationshipsTab"
 
 interface Document {
   id: string
@@ -150,169 +145,43 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
               </div>
               
               <div className="grid grid-cols-12 gap-6">
-                {/* Left Panel */}
                 <div className="col-span-5">
-                  <div className="flex gap-4 mb-4">
-                    <div className="flex-1">
-                      <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-500" />
-                        <Input
-                          className="pl-10"
-                          placeholder="Search documents..."
-                          value={searchQuery}
-                          onChange={(e) => setSearchQuery(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <Select value={statusFilter} onValueChange={setStatusFilter}>
-                      <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Filter by status" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="all">All Status</SelectItem>
-                        <SelectItem value="processed">Processed</SelectItem>
-                        <SelectItem value="processing">Processing</SelectItem>
-                        <SelectItem value="needs_review">Needs Review</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <ScrollArea className="h-[500px] overflow-hidden">
-                    <div className="space-y-4 p-1">
-                      {filteredDocuments.map((doc) => (
-                        <div
-                          key={doc.id}
-                          className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
-                          onClick={() => onSelectDocument?.(doc)}
-                        >
-                          <div className="flex justify-between items-start">
-                            <div className="space-y-1">
-                              <div className="flex items-center gap-2">
-                                <span className="font-medium text-lg">{doc.title}</span>
-                                <span className={`px-2 py-0.5 rounded-full text-xs text-white ${getStatusColor(doc.status)}`}>
-                                  {getStatusText(doc.status)}
-                                </span>
-                              </div>
-                              <div className="text-sm text-gray-500 space-y-1">
-                                <p>Type: {doc.type}</p>
-                                <p>Category: {doc.category}</p>
-                                <p>Last modified: {doc.lastModified.toLocaleDateString()}</p>
-                              </div>
-                            </div>
-                            <div className="flex gap-2">
-                              <Button 
-                                variant="default" 
-                                size="sm" 
-                                className="bg-primary hover:bg-primary/90"
-                                onClick={(e) => handleEdit(doc, e)}
-                              >
-                                <Pencil className="h-4 w-4" />
-                              </Button>
-                              <Button 
-                                variant="destructive" 
-                                size="sm"
-                                onClick={(e) => handleDelete(doc.id, e)}
-                              >
-                                <Trash2 className="h-4 w-4" />
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </ScrollArea>
+                  <DocumentsSearch
+                    searchQuery={searchQuery}
+                    onSearchChange={setSearchQuery}
+                    statusFilter={statusFilter}
+                    onStatusFilterChange={setStatusFilter}
+                  />
+                  <DocumentsList
+                    documents={filteredDocuments}
+                    onSelectDocument={onSelectDocument || (() => {})}
+                    onEdit={handleEdit}
+                    onDelete={handleDelete}
+                    getStatusColor={getStatusColor}
+                    getStatusText={getStatusText}
+                  />
                 </div>
-                
-                {/* Right Panel */}
                 <div className="col-span-7">
                 </div>
               </div>
             </TabsContent>
 
             <TabsContent value="data">
-              <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Products</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-500">Manage product information and metadata</p>
-                      <Button variant="outline" className="mt-4">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Product
-                      </Button>
-                    </CardContent>
-                  </Card>
-                  <Card>
-                    <CardHeader>
-                      <CardTitle className="text-lg">Domains</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-sm text-gray-500">Manage domain configurations</p>
-                      <Button variant="outline" className="mt-4">
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Domain
-                      </Button>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
+              <DataManagementTab />
             </TabsContent>
 
             <TabsContent value="relationships">
-              <div className="space-y-4">
-                <p className="text-sm text-gray-500">
-                  Manage relationships between documents, products, and domains
-                </p>
-                <Button variant="outline">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Relationship
-                </Button>
-              </div>
+              <RelationshipsTab />
             </TabsContent>
           </Tabs>
         </CardContent>
       </Card>
 
-      <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
-        <DialogContent className="sm:max-w-[525px]">
-          <DialogHeader>
-            <DialogTitle>
-              {selectedDocument ? 'Update Document' : 'Add New Document'}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <label htmlFor="file" className="text-sm font-medium">Document File</label>
-              <Input id="file" type="file" />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="title" className="text-sm font-medium">Title</label>
-              <Input 
-                id="title" 
-                defaultValue={selectedDocument?.title} 
-                placeholder="Enter document title"
-              />
-            </div>
-            <div className="grid gap-2">
-              <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <Textarea 
-                id="description" 
-                placeholder="Enter document description (4-5 lines)"
-                className="min-h-[100px]"
-              />
-            </div>
-            <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => setIsUploadDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button type="submit" className="bg-primary hover:bg-primary/90">
-                {selectedDocument ? 'Update' : 'Upload'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
+      <DocumentDialog
+        isOpen={isUploadDialogOpen}
+        onOpenChange={setIsUploadDialogOpen}
+        selectedDocument={selectedDocument}
+      />
     </div>
   )
 }
