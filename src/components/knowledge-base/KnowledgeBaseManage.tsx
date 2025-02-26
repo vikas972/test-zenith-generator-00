@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ScrollArea } from "@/components/ui/scroll-area"
@@ -225,33 +224,6 @@ export const KnowledgeBaseManage = ({ onSelectDocument, selectedProduct, selecte
                 
                 {/* Right Panel */}
                 <div className="col-span-7">
-                  <Card className="h-full">
-                    <CardHeader>
-                      <CardTitle>Document Preview</CardTitle>
-                    </CardHeader>
-                    <CardContent>
-                      {selectedDocument ? (
-                        <div className="space-y-4">
-                          <h2 className="text-xl font-semibold">{selectedDocument.title}</h2>
-                          <div className="text-sm text-gray-500">
-                            <p>Type: {selectedDocument.type}</p>
-                            <p>Category: {selectedDocument.category}</p>
-                            <p>Last modified: {selectedDocument.lastModified.toLocaleDateString()}</p>
-                            <p>Status: {getStatusText(selectedDocument.status)}</p>
-                          </div>
-                          {selectedDocument.content && (
-                            <div className="mt-4 prose">
-                              <p>{selectedDocument.content}</p>
-                            </div>
-                          )}
-                        </div>
-                      ) : (
-                        <div className="flex items-center justify-center h-[400px] text-gray-500">
-                          Select a document to preview its contents
-                        </div>
-                      )}
-                    </CardContent>
-                  </Card>
                 </div>
               </div>
             </TabsContent>
