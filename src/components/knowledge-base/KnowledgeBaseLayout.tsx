@@ -6,17 +6,7 @@ import { Header } from "@/components/Header"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
 import { Button } from "@/components/ui/button"
 import { DocumentsList } from "./components/DocumentsList"
-
-interface Document {
-  id: string
-  title: string
-  category: string
-  lastModified: Date
-  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
-  type: string
-  content?: string
-  uploadedBy: string
-}
+import { Document } from "@/types/knowledge-base"
 
 export const KnowledgeBaseLayout = () => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
@@ -174,7 +164,10 @@ export const KnowledgeBaseLayout = () => {
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
                     defaultSize={50} 
-                    minSize={30}
+                    minSize={25}
+                    maxSize={75}
+                    collapsible
+                    collapsedSize={0}
                     onCollapse={() => setLeftPanelCollapsed(true)}
                     onExpand={() => setLeftPanelCollapsed(false)}
                   >
@@ -202,10 +195,15 @@ export const KnowledgeBaseLayout = () => {
                       </div>
                     </div>
                   </ResizablePanel>
+                  
                   <ResizableHandle withHandle />
+                  
                   <ResizablePanel 
                     defaultSize={50} 
-                    minSize={30}
+                    minSize={25}
+                    maxSize={75}
+                    collapsible
+                    collapsedSize={0}
                     onCollapse={() => setRightPanelCollapsed(true)}
                     onExpand={() => setRightPanelCollapsed(false)}
                   >
