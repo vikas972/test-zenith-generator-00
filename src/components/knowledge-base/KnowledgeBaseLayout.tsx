@@ -1,9 +1,10 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { FileText, Database, Settings } from "lucide-react"
+import { FileText, Database, Settings, Minimize2 } from "lucide-react"
 import { Header } from "@/components/Header"
 import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/components/ui/resizable"
+import { Button } from "@/components/ui/button"
 
 export const KnowledgeBaseLayout = () => {
   return (
@@ -58,15 +59,31 @@ export const KnowledgeBaseLayout = () => {
             <TabsContent value="documents">
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
-                  <ResizablePanel defaultSize={30}>
-                    <div className="h-[700px] p-6 border-r border-gray-100">
-                      Left Panel Content
+                  <ResizablePanel defaultSize={30} minSize={20}>
+                    <div className="h-[700px] border-r border-gray-100">
+                      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                        <h2 className="font-semibold text-gray-800">Document List</h2>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Minimize2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="p-4">
+                        List content goes here
+                      </div>
                     </div>
                   </ResizablePanel>
                   <ResizableHandle withHandle />
-                  <ResizablePanel defaultSize={70}>
-                    <div className="h-[700px] p-6">
-                      Right Panel Content
+                  <ResizablePanel defaultSize={70} minSize={30}>
+                    <div className="h-[700px]">
+                      <div className="flex items-center justify-between p-4 border-b border-gray-100">
+                        <h2 className="font-semibold text-gray-800">Document Preview</h2>
+                        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                          <Minimize2 className="h-4 w-4" />
+                        </Button>
+                      </div>
+                      <div className="p-4">
+                        Preview content goes here
+                      </div>
                     </div>
                   </ResizablePanel>
                 </ResizablePanelGroup>
