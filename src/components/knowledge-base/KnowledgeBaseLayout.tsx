@@ -1,3 +1,4 @@
+
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -184,12 +185,10 @@ export const KnowledgeBaseLayout = () => {
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
                     defaultSize={50}
-                    collapsible
-                    collapsedSize={0}
+                    collapsible={true}
+                    collapsed={leftPanelCollapsed}
                     minSize={25}
                     maxSize={75}
-                    onCollapse={() => setLeftPanelCollapsed(true)}
-                    onExpand={() => setLeftPanelCollapsed(false)}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -198,7 +197,10 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={toggleLeftPanel}
+                          onClick={() => {
+                            setLeftPanelCollapsed(!leftPanelCollapsed)
+                            if (rightPanelCollapsed) setRightPanelCollapsed(false)
+                          }}
                         >
                           {leftPanelCollapsed ? (
                             <Maximize2 className="h-4 w-4" />
@@ -224,12 +226,10 @@ export const KnowledgeBaseLayout = () => {
                   
                   <ResizablePanel 
                     defaultSize={50}
-                    collapsible
-                    collapsedSize={0}
+                    collapsible={true}
+                    collapsed={rightPanelCollapsed}
                     minSize={25}
                     maxSize={75}
-                    onCollapse={() => setRightPanelCollapsed(true)}
-                    onExpand={() => setRightPanelCollapsed(false)}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -238,7 +238,10 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={toggleRightPanel}
+                          onClick={() => {
+                            setRightPanelCollapsed(!rightPanelCollapsed)
+                            if (leftPanelCollapsed) setLeftPanelCollapsed(false)
+                          }}
                         >
                           {rightPanelCollapsed ? (
                             <Maximize2 className="h-4 w-4" />
