@@ -9,8 +9,6 @@ import { DocumentsList } from "./components/DocumentsList"
 import { Document } from "@/types/knowledge-base"
 
 export const KnowledgeBaseLayout = () => {
-  const [isLeftPanelCollapsed, setIsLeftPanelCollapsed] = useState(false)
-  const [isRightPanelCollapsed, setIsRightPanelCollapsed] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
@@ -101,20 +99,6 @@ export const KnowledgeBaseLayout = () => {
     ).join(' ')
   }
 
-  const onLeftPanelCollapse = () => {
-    setIsLeftPanelCollapsed(!isLeftPanelCollapsed)
-    if (isRightPanelCollapsed) {
-      setIsRightPanelCollapsed(false)
-    }
-  }
-
-  const onRightPanelCollapse = () => {
-    setIsRightPanelCollapsed(!isRightPanelCollapsed)
-    if (isLeftPanelCollapsed) {
-      setIsLeftPanelCollapsed(false)
-    }
-  }
-
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <Header />
@@ -179,25 +163,11 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={50}
                     minSize={0}
-                    collapsible
-                    collapsedSize={0}
-                    onCollapse={onLeftPanelCollapse}
+                    collapsible={true}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document List</h2>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 w-8 p-0"
-                          onClick={onLeftPanelCollapse}
-                        >
-                          {isLeftPanelCollapsed ? (
-                            <Maximize2 className="h-4 w-4" />
-                          ) : (
-                            <Minimize2 className="h-4 w-4" />
-                          )}
-                        </Button>
                       </div>
                       <div className="p-4 h-[calc(100%-65px)]">
                         <DocumentsList
@@ -217,25 +187,11 @@ export const KnowledgeBaseLayout = () => {
                   <ResizablePanel 
                     defaultSize={50}
                     minSize={0}
-                    collapsible
-                    collapsedSize={0}
-                    onCollapse={onRightPanelCollapse}
+                    collapsible={true}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
                         <h2 className="font-semibold text-gray-800">Document Preview</h2>
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          className="h-8 w-8 p-0"
-                          onClick={onRightPanelCollapse}
-                        >
-                          {isRightPanelCollapsed ? (
-                            <Maximize2 className="h-4 w-4" />
-                          ) : (
-                            <Minimize2 className="h-4 w-4" />
-                          )}
-                        </Button>
                       </div>
                       <div className="p-4">
                         {selectedDocument ? (
