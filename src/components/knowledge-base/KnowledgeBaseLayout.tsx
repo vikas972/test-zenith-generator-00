@@ -11,8 +11,6 @@ import { Document } from "@/types/knowledge-base"
 export const KnowledgeBaseLayout = () => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
-  const [leftPanelFullScreen, setLeftPanelFullScreen] = useState(false)
-  const [rightPanelFullScreen, setRightPanelFullScreen] = useState(false)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
@@ -103,23 +101,23 @@ export const KnowledgeBaseLayout = () => {
     ).join(' ')
   }
 
-  const handleLeftPanelFullScreen = () => {
-    if (leftPanelFullScreen) {
-      setLeftPanelFullScreen(false)
+  const toggleLeftPanel = () => {
+    if (leftPanelCollapsed) {
+      setLeftPanelCollapsed(false)
       setRightPanelCollapsed(false)
     } else {
-      setLeftPanelFullScreen(true)
-      setRightPanelCollapsed(true)
+      setLeftPanelCollapsed(true)
+      setRightPanelCollapsed(false)
     }
   }
 
-  const handleRightPanelFullScreen = () => {
-    if (rightPanelFullScreen) {
-      setRightPanelFullScreen(false)
+  const toggleRightPanel = () => {
+    if (rightPanelCollapsed) {
+      setRightPanelCollapsed(false)
       setLeftPanelCollapsed(false)
     } else {
-      setRightPanelFullScreen(true)
-      setLeftPanelCollapsed(true)
+      setRightPanelCollapsed(true)
+      setLeftPanelCollapsed(false)
     }
   }
 
@@ -185,9 +183,13 @@ export const KnowledgeBaseLayout = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
-                    defaultSize={leftPanelFullScreen ? 100 : 50}
+                    defaultSize={50}
+                    collapsible
+                    collapsedSize={0}
                     minSize={25}
-                    maxSize={leftPanelFullScreen ? 100 : 75}
+                    maxSize={75}
+                    onCollapse={() => setLeftPanelCollapsed(true)}
+                    onExpand={() => setLeftPanelCollapsed(false)}
                   >
                     <div className="h-[700px] border-r border-gray-100">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -196,12 +198,12 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={handleLeftPanelFullScreen}
+                          onClick={toggleLeftPanel}
                         >
-                          {leftPanelFullScreen ? (
-                            <Minimize2 className="h-4 w-4" />
-                          ) : (
+                          {leftPanelCollapsed ? (
                             <Maximize2 className="h-4 w-4" />
+                          ) : (
+                            <Minimize2 className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
@@ -221,9 +223,13 @@ export const KnowledgeBaseLayout = () => {
                   <ResizableHandle withHandle />
                   
                   <ResizablePanel 
-                    defaultSize={rightPanelFullScreen ? 100 : 50}
+                    defaultSize={50}
+                    collapsible
+                    collapsedSize={0}
                     minSize={25}
-                    maxSize={rightPanelFullScreen ? 100 : 75}
+                    maxSize={75}
+                    onCollapse={() => setRightPanelCollapsed(true)}
+                    onExpand={() => setRightPanelCollapsed(false)}
                   >
                     <div className="h-[700px]">
                       <div className="flex items-center justify-between p-4 border-b border-gray-100">
@@ -232,12 +238,12 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={handleRightPanelFullScreen}
+                          onClick={toggleRightPanel}
                         >
-                          {rightPanelFullScreen ? (
-                            <Minimize2 className="h-4 w-4" />
-                          ) : (
+                          {rightPanelCollapsed ? (
                             <Maximize2 className="h-4 w-4" />
+                          ) : (
+                            <Minimize2 className="h-4 w-4" />
                           )}
                         </Button>
                       </div>
