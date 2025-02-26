@@ -9,8 +9,6 @@ import { DocumentsList } from "./components/DocumentsList"
 import { Document } from "@/types/knowledge-base"
 
 export const KnowledgeBaseLayout = () => {
-  const [leftPanelSize, setLeftPanelSize] = useState(50)
-  const [rightPanelSize, setRightPanelSize] = useState(50)
   const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
@@ -78,26 +76,6 @@ export const KnowledgeBaseLayout = () => {
   const handleDelete = (docId: string, event: React.MouseEvent) => {
     event.stopPropagation()
     setDocuments(prev => prev.filter(doc => doc.id !== docId))
-  }
-
-  const handleLeftPanelToggle = () => {
-    if (leftPanelSize === 0) {
-      setLeftPanelSize(50)
-      setRightPanelSize(50)
-    } else {
-      setLeftPanelSize(0)
-      setRightPanelSize(100)
-    }
-  }
-
-  const handleRightPanelToggle = () => {
-    if (rightPanelSize === 0) {
-      setLeftPanelSize(50)
-      setRightPanelSize(50)
-    } else {
-      setLeftPanelSize(100)
-      setRightPanelSize(0)
-    }
   }
 
   const getStatusColor = (status: string) => {
@@ -183,7 +161,7 @@ export const KnowledgeBaseLayout = () => {
               <div className="bg-white rounded-lg shadow-sm border border-gray-100 mt-4">
                 <ResizablePanelGroup direction="horizontal">
                   <ResizablePanel 
-                    defaultSize={leftPanelSize}
+                    defaultSize={50}
                     minSize={0}
                   >
                     <div className="h-[700px] border-r border-gray-100">
@@ -193,13 +171,8 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={handleLeftPanelToggle}
                         >
-                          {leftPanelSize === 0 ? (
-                            <Maximize2 className="h-4 w-4" />
-                          ) : (
-                            <Minimize2 className="h-4 w-4" />
-                          )}
+                          <Minimize2 className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="p-4 h-[calc(100%-65px)]">
@@ -218,7 +191,7 @@ export const KnowledgeBaseLayout = () => {
                   <ResizableHandle withHandle />
                   
                   <ResizablePanel 
-                    defaultSize={rightPanelSize}
+                    defaultSize={50}
                     minSize={0}
                   >
                     <div className="h-[700px]">
@@ -228,13 +201,8 @@ export const KnowledgeBaseLayout = () => {
                           variant="ghost" 
                           size="sm" 
                           className="h-8 w-8 p-0"
-                          onClick={handleRightPanelToggle}
                         >
-                          {rightPanelSize === 0 ? (
-                            <Maximize2 className="h-4 w-4" />
-                          ) : (
-                            <Minimize2 className="h-4 w-4" />
-                          )}
+                          <Minimize2 className="h-4 w-4" />
                         </Button>
                       </div>
                       <div className="p-4">
