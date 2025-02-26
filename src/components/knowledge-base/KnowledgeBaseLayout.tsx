@@ -1,147 +1,66 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { KnowledgeBaseUpload } from "./KnowledgeBaseUpload"
-import { KnowledgeBaseView } from "./KnowledgeBaseView"
-import { KnowledgeBaseManage } from "./KnowledgeBaseManage"
-import { Header } from "../Header"
-import { useState } from "react"
-import { Card } from "../ui/card"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
-import { Maximize2, Minimize2 } from "lucide-react"
-import { Button } from "../ui/button"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { FileText, Database, Settings } from "lucide-react"
 
-interface Document {
-  id: string
-  title: string
-  category: string
-  content?: string
-  lastModified: Date
-}
-
-export const KnowledgeBaseLayout: React.FC = () => {
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
-  const [isLeftPanelMaximized, setIsLeftPanelMaximized] = useState(false)
-  const [isRightPanelMaximized, setIsRightPanelMaximized] = useState(false)
-  const [selectedProduct, setSelectedProduct] = useState("dtb")
-  const [selectedDomain, setSelectedDomain] = useState("payments")
-
-  const products = [
-    { label: "DTB", value: "dtb" },
-    { label: "Product A", value: "product-a" },
-    { label: "Product B", value: "product-b" }
-  ]
-
-  const domains = [
-    { label: "Payments", value: "payments" },
-    { label: "Finance", value: "finance" },
-    { label: "Healthcare", value: "healthcare" }
-  ]
-
+export const KnowledgeBaseLayout = () => {
   return (
-    <div className="min-h-screen bg-gray-50">
-      <Header />
-      <div className="container mx-auto px-4 py-4">
-        <div className="bg-white p-4 rounded-lg shadow-sm mb-6 flex items-center gap-6">
-          <div className="flex items-center gap-4 flex-1">
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">Product:</span>
-              <Select value={selectedProduct} onValueChange={setSelectedProduct}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {products.map((product) => (
-                    <SelectItem key={product.value} value={product.value}>
-                      {product.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-sm font-medium text-gray-700">Domain:</span>
-              <Select value={selectedDomain} onValueChange={setSelectedDomain}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  {domains.map((domain) => (
-                    <SelectItem key={domain.value} value={domain.value}>
-                      {domain.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
+    <div className="min-h-screen bg-gray-50 p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        <h1 className="text-2xl font-semibold">Knowledge Base Management</h1>
+        
+        <div className="flex gap-4">
+          <Select defaultValue="dtb">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select product" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="dtb">DTB</SelectItem>
+              <SelectItem value="product-a">Product A</SelectItem>
+              <SelectItem value="product-b">Product B</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select defaultValue="payments">
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select domain" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="payments">Payments</SelectItem>
+              <SelectItem value="finance">Finance</SelectItem>
+              <SelectItem value="healthcare">Healthcare</SelectItem>
+            </SelectContent>
+          </Select>
         </div>
 
-        <div className="flex gap-6">
-          <div className={`transition-all duration-300 ${isLeftPanelMaximized ? 'w-full' : !isRightPanelMaximized ? 'w-2/3' : 'hidden'}`}>
-            <div className="bg-white rounded-lg shadow-sm">
-              <div className="p-2 flex justify-end border-b">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsLeftPanelMaximized(!isLeftPanelMaximized)}
-                >
-                  {isLeftPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </Button>
-              </div>
-              <Tabs defaultValue="manage" className="space-y-6">
-                <TabsList className="bg-white w-full flex justify-start p-1 gap-1">
-                  <TabsTrigger value="manage" className="flex-1 data-[state=active]:bg-primary data-[state=active]:text-white">
-                    Manage KB
-                  </TabsTrigger>
-                </TabsList>
-                <TabsContent value="manage">
-                  <KnowledgeBaseManage 
-                    onSelectDocument={setSelectedDocument}
-                    selectedProduct={selectedProduct}
-                    selectedDomain={selectedDomain}
-                  />
-                </TabsContent>
-              </Tabs>
-            </div>
-          </div>
-
-          <div className={`transition-all duration-300 ${isRightPanelMaximized ? 'w-full' : !isLeftPanelMaximized ? 'w-1/3' : 'hidden'}`}>
-            <div className="bg-white rounded-lg shadow-sm h-[calc(100vh-12rem)]">
-              <div className="p-2 flex justify-end border-b">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setIsRightPanelMaximized(!isRightPanelMaximized)}
-                >
-                  {isRightPanelMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
-                </Button>
-              </div>
-              {(isRightPanelMaximized || !isLeftPanelMaximized) && (
-                <div className="p-6">
-                  {selectedDocument ? (
-                    <div className="space-y-4">
-                      <h2 className="text-2xl font-semibold text-gray-900">{selectedDocument.title}</h2>
-                      <div className="flex gap-2 text-sm text-gray-500">
-                        <span>Category: {selectedDocument.category}</span>
-                        <span>•</span>
-                        <span>Last modified: {selectedDocument.lastModified.toLocaleDateString()}</span>
-                      </div>
-                      <div className="mt-4 prose">
-                        {selectedDocument.content || (
-                          <p className="text-gray-500 italic">No content available for preview</p>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="h-full flex items-center justify-center text-gray-500">
-                      Select a document to preview its contents
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
+        <Tabs defaultValue="documents" className="w-full">
+          <TabsList>
+            <TabsTrigger value="documents" className="flex items-center gap-2">
+              <FileText className="h-4 w-4" />
+              Documents
+            </TabsTrigger>
+            <TabsTrigger value="data-management" className="flex items-center gap-2">
+              <Database className="h-4 w-4" />
+              Data Management
+            </TabsTrigger>
+            <TabsTrigger value="relationships" className="flex items-center gap-2">
+              <Settings className="h-4 w-4" />
+              Relationships
+            </TabsTrigger>
+          </TabsList>
+          
+          <TabsContent value="documents">
+            <div className="p-4 bg-white rounded-lg">Documents content</div>
+          </TabsContent>
+          
+          <TabsContent value="data-management">
+            <div className="p-4 bg-white rounded-lg">Data Management content</div>
+          </TabsContent>
+          
+          <TabsContent value="relationships">
+            <div className="p-4 bg-white rounded-lg">Relationships content</div>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   )
