@@ -1,142 +1,21 @@
 
 import { useState } from "react"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Document } from "@/types/knowledge-base"
 import { DocumentSelector } from "./DocumentSelector"
-import { EntriesGrid } from "./EntriesGrid"
+import { CategoryTabs } from "./CategoryTabs"
 import { EntryDialog } from "./EntryDialog"
-import { KBEntry } from "../types"
+import { useKBData } from "../hooks/useKBData"
 
 export const KBDataManagement = () => {
-  const categories = [
-    "Flows/Transactions",
-    "Validation Rules",
-    "User Interfaces",
-    "Operational Flows",
-    "Reports and Notifications",
-    "Data and Integrations"
-  ]
-
-  const [selectedTab, setSelectedTab] = useState(categories[0])
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
-  
-  const [documents, setDocuments] = useState<Document[]>([
-    {
-      id: "1",
-      title: "DTB Kenya Payment Processing Guide",
-      category: "Documentation",
-      lastModified: new Date("2024-03-15"),
-      type: "Payment Transactions",
-      status: "processed",
-      uploadedBy: "John Smith",
-      content: "This document outlines the payment processing guidelines for DTB Kenya...",
-    },
-    {
-      id: "2",
-      title: "Mobile Banking User Manual",
-      category: "Documentation",
-      lastModified: new Date("2024-03-14"),
-      type: "User Interface",
-      status: "processed",
-      uploadedBy: "Sarah Wilson",
-      content: "Comprehensive guide for mobile banking interfaces...",
-    },
-    {
-      id: "3",
-      title: "Account Opening Procedures",
-      category: "Documentation",
-      lastModified: new Date("2024-03-13"),
-      type: "Operational Flows",
-      status: "processed",
-      uploadedBy: "Michael Brown",
-      content: "Step-by-step guide for account opening process...",
-    },
-    {
-      id: "4",
-      title: "Integration Specifications Document",
-      category: "Documentation",
-      lastModified: new Date("2024-03-12"),
-      type: "Technical",
-      status: "processed",
-      uploadedBy: "David Chen",
-      content: "Technical specifications for system integrations...",
-    }
-  ])
-
-  const [entries, setEntries] = useState<KBEntry[]>([
-    {
-      id: "1-1",
-      title: "Payment Processing Flow",
-      description: "End-to-end payment processing flow for DTB Kenya",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "Flows/Transactions",
-      documentId: "1"
-    },
-    {
-      id: "1-2",
-      title: "Payment Amount Validation",
-      description: "Validation rules for payment amounts in DTB Kenya",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "Validation Rules",
-      documentId: "1"
-    },
-    {
-      id: "2-1",
-      title: "Mobile Login Screen",
-      description: "User interface specifications for mobile login",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "User Interfaces",
-      documentId: "2"
-    },
-    {
-      id: "2-2",
-      title: "Mobile Dashboard",
-      description: "Dashboard layout and components for mobile app",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "User Interfaces",
-      documentId: "2"
-    },
-    {
-      id: "3-1",
-      title: "Account Opening Workflow",
-      description: "Step-by-step account opening process flow",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Operational Flows",
-      documentId: "3"
-    },
-    {
-      id: "3-2",
-      title: "KYC Validation Rules",
-      description: "Customer verification and validation rules",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Validation Rules",
-      documentId: "3"
-    },
-    {
-      id: "4-1",
-      title: "API Integration Flow",
-      description: "System integration workflow and architecture",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "Data and Integrations",
-      documentId: "4"
-    },
-    {
-      id: "4-2",
-      title: "Data Mapping Rules",
-      description: "Field mapping and transformation rules",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "Data and Integrations",
-      documentId: "4"
-    }
-  ])
+  const {
+    selectedTab,
+    setSelectedTab,
+    selectedDocument,
+    setSelectedDocument,
+    documents,
+    entries,
+    setEntries
+  } = useKBData()
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [editMode, setEditMode] = useState<"add" | "edit" | null>(null)
@@ -157,11 +36,11 @@ export const KBDataManagement = () => {
     setIsDialogOpen(true)
   }
 
-  const handleEdit = (entry: KBEntry) => {
+  const handleEdit = (entry: Document) => {
     setEditMode("edit")
     setFormData({
       title: entry.title,
-      description: entry.description,
+      description: entry.content || "",
       status: entry.status
     })
     setIsDialogOpen(true)
@@ -173,7 +52,7 @@ export const KBDataManagement = () => {
 
   const handleSave = () => {
     if (editMode === "add" && selectedDocument) {
-      const newEntry: KBEntry = {
+      const newEntry = {
         id: Date.now().toString(),
         ...formData,
         lastModified: new Date(),
@@ -201,35 +80,14 @@ export const KBDataManagement = () => {
         onDocumentSelect={setSelectedDocument}
       />
 
-      <Tabs defaultValue={categories[0]} onValueChange={setSelectedTab}>
-        <div className="border rounded-md">
-          <div className="overflow-auto">
-            <TabsList className="w-full inline-flex h-auto p-0 bg-transparent">
-              {categories.map(category => (
-                <TabsTrigger
-                  key={category}
-                  value={category}
-                  className="flex-1 px-4 py-2.5 whitespace-nowrap data-[state=active]:bg-primary data-[state=active]:text-white data-[state=inactive]:text-primary border-r last:border-r-0 rounded-none"
-                >
-                  {category}
-                </TabsTrigger>
-              ))}
-            </TabsList>
-          </div>
-        </div>
-
-        {categories.map(category => (
-          <TabsContent key={category} value={category}>
-            <EntriesGrid
-              category={category}
-              entries={filteredEntries}
-              onAdd={handleAdd}
-              onEdit={handleEdit}
-              onDelete={handleDelete}
-            />
-          </TabsContent>
-        ))}
-      </Tabs>
+      <CategoryTabs
+        selectedTab={selectedTab}
+        onTabChange={setSelectedTab}
+        entries={filteredEntries}
+        onAdd={handleAdd}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+      />
 
       <EntryDialog
         isOpen={isDialogOpen}
