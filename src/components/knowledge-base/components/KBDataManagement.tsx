@@ -32,6 +32,7 @@ interface KBEntry {
   status: string
   lastModified: Date
   category: string
+  documentId: string
 }
 
 export const KBDataManagement = () => {
@@ -58,212 +59,110 @@ export const KBDataManagement = () => {
       uploadedBy: "John Smith",
       content: "This document outlines the payment processing guidelines for DTB Kenya...",
     },
-    // ... keep existing code (other document entries)
+    {
+      id: "2",
+      title: "Mobile Banking User Manual",
+      category: "Documentation",
+      lastModified: new Date("2024-03-14"),
+      type: "User Interface",
+      status: "processed",
+      uploadedBy: "Sarah Wilson",
+      content: "Comprehensive guide for mobile banking interfaces...",
+    },
+    {
+      id: "3",
+      title: "Account Opening Procedures",
+      category: "Documentation",
+      lastModified: new Date("2024-03-13"),
+      type: "Operational Flows",
+      status: "processed",
+      uploadedBy: "Michael Brown",
+      content: "Step-by-step guide for account opening process...",
+    },
+    {
+      id: "4",
+      title: "Integration Specifications Document",
+      category: "Documentation",
+      lastModified: new Date("2024-03-12"),
+      type: "Technical",
+      status: "processed",
+      uploadedBy: "David Chen",
+      content: "Technical specifications for system integrations...",
+    }
   ])
 
   const [entries, setEntries] = useState<KBEntry[]>([
-    // Flows/Transactions
     {
-      id: "1",
+      id: "1-1",
       title: "Payment Processing Flow",
       description: "End-to-end payment processing flow for DTB Kenya",
       status: "Active",
       lastModified: new Date("2024-03-15"),
-      category: "Flows/Transactions"
+      category: "Flows/Transactions",
+      documentId: "1"
     },
     {
-      id: "2",
-      title: "Account Transfer Flow",
-      description: "Internal account transfer process flow",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "Flows/Transactions"
-    },
-    {
-      id: "3",
-      title: "Bill Payment Flow",
-      description: "Utility bill payment processing flow",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Flows/Transactions"
-    },
-    {
-      id: "4",
-      title: "Mobile Money Transfer",
-      description: "Mobile money transfer processing flow",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "Flows/Transactions"
-    },
-
-    // Validation Rules
-    {
-      id: "5",
-      title: "Amount Validation",
-      description: "Validation rules for payment amount",
+      id: "1-2",
+      title: "Payment Amount Validation",
+      description: "Validation rules for payment amounts in DTB Kenya",
       status: "Active",
       lastModified: new Date("2024-03-15"),
-      category: "Validation Rules"
+      category: "Validation Rules",
+      documentId: "1"
     },
     {
-      id: "6",
-      title: "Account Number Validation",
-      description: "Account number format and checksum validation",
+      id: "2-1",
+      title: "Mobile Login Screen",
+      description: "User interface specifications for mobile login",
       status: "Active",
       lastModified: new Date("2024-03-14"),
-      category: "Validation Rules"
+      category: "User Interfaces",
+      documentId: "2"
     },
     {
-      id: "7",
-      title: "Transaction Limit Rules",
-      description: "Daily and per-transaction limit validation",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Validation Rules"
-    },
-    {
-      id: "8",
-      title: "Currency Code Validation",
-      description: "Valid currency code check for international transfers",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "Validation Rules"
-    },
-
-    // User Interfaces
-    {
-      id: "9",
-      title: "Payment Form UI",
-      description: "Payment form interface design and components",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "User Interfaces"
-    },
-    {
-      id: "10",
-      title: "Transaction History UI",
-      description: "Transaction history and filters interface",
+      id: "2-2",
+      title: "Mobile Dashboard",
+      description: "Dashboard layout and components for mobile app",
       status: "Active",
       lastModified: new Date("2024-03-14"),
-      category: "User Interfaces"
+      category: "User Interfaces",
+      documentId: "2"
     },
     {
-      id: "11",
-      title: "Account Dashboard",
-      description: "Main account dashboard interface",
+      id: "3-1",
+      title: "Account Opening Workflow",
+      description: "Step-by-step account opening process flow",
       status: "Active",
       lastModified: new Date("2024-03-13"),
-      category: "User Interfaces"
+      category: "Operational Flows",
+      documentId: "3"
     },
     {
-      id: "12",
-      title: "Settings Panel UI",
-      description: "User settings and preferences interface",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "User Interfaces"
-    },
-
-    // Operational Flows
-    {
-      id: "13",
-      title: "Account Opening Process",
-      description: "End-to-end account opening workflow",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "Operational Flows"
-    },
-    {
-      id: "14",
-      title: "Dispute Resolution",
-      description: "Transaction dispute handling process",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "Operational Flows"
-    },
-    {
-      id: "15",
-      title: "KYC Verification",
-      description: "Know Your Customer verification process",
+      id: "3-2",
+      title: "KYC Validation Rules",
+      description: "Customer verification and validation rules",
       status: "Active",
       lastModified: new Date("2024-03-13"),
-      category: "Operational Flows"
+      category: "Validation Rules",
+      documentId: "3"
     },
     {
-      id: "16",
-      title: "Account Closure",
-      description: "Account termination process flow",
+      id: "4-1",
+      title: "API Integration Flow",
+      description: "System integration workflow and architecture",
       status: "Active",
       lastModified: new Date("2024-03-12"),
-      category: "Operational Flows"
-    },
-
-    // Reports and Notifications
-    {
-      id: "17",
-      title: "Transaction Report",
-      description: "Daily transaction summary report",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "Reports and Notifications"
+      category: "Data and Integrations",
+      documentId: "4"
     },
     {
-      id: "18",
-      title: "Account Statement",
-      description: "Monthly account statement generation",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "Reports and Notifications"
-    },
-    {
-      id: "19",
-      title: "SMS Notifications",
-      description: "Transaction SMS alert templates",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Reports and Notifications"
-    },
-    {
-      id: "20",
-      title: "Email Reports",
-      description: "Daily and weekly email report templates",
+      id: "4-2",
+      title: "Data Mapping Rules",
+      description: "Field mapping and transformation rules",
       status: "Active",
       lastModified: new Date("2024-03-12"),
-      category: "Reports and Notifications"
-    },
-
-    // Data and Integrations
-    {
-      id: "21",
-      title: "Core Banking Integration",
-      description: "Core banking system integration specs",
-      status: "Active",
-      lastModified: new Date("2024-03-15"),
-      category: "Data and Integrations"
-    },
-    {
-      id: "22",
-      title: "Payment Gateway API",
-      description: "Payment gateway integration documentation",
-      status: "Active",
-      lastModified: new Date("2024-03-14"),
-      category: "Data and Integrations"
-    },
-    {
-      id: "23",
-      title: "Mobile Money API",
-      description: "Mobile money provider integration specs",
-      status: "Active",
-      lastModified: new Date("2024-03-13"),
-      category: "Data and Integrations"
-    },
-    {
-      id: "24",
-      title: "Customer Data Schema",
-      description: "Customer database schema documentation",
-      status: "Active",
-      lastModified: new Date("2024-03-12"),
-      category: "Data and Integrations"
+      category: "Data and Integrations",
+      documentId: "4"
     }
   ])
 
@@ -276,6 +175,7 @@ export const KBDataManagement = () => {
   })
 
   const handleAdd = (category: string) => {
+    if (!selectedDocument) return
     setEditMode("add")
     setFormData({
       title: "",
@@ -300,12 +200,13 @@ export const KBDataManagement = () => {
   }
 
   const handleSave = () => {
-    if (editMode === "add") {
+    if (editMode === "add" && selectedDocument) {
       const newEntry: KBEntry = {
         id: Date.now().toString(),
         ...formData,
         lastModified: new Date(),
-        category: selectedTab
+        category: selectedTab,
+        documentId: selectedDocument.id
       }
       setEntries([...entries, newEntry])
     }
@@ -316,7 +217,9 @@ export const KBDataManagement = () => {
     setSelectedDocument(documents[0])
   }
 
-  const filteredEntries = entries.filter(entry => entry.category === selectedTab)
+  const filteredEntries = entries.filter(
+    entry => entry.category === selectedTab && entry.documentId === selectedDocument?.id
+  )
 
   return (
     <div className="space-y-6">
