@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
@@ -16,23 +15,68 @@ interface Document {
   status: 'processed' | 'processing' | 'needs_review' | 'deleted'
   type: string
   content?: string
+  uploadedBy: string
 }
 
 export const KnowledgeBaseLayout = () => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
   const [documents, setDocuments] = useState<Document[]>([
     {
       id: "1",
-      title: "DTB Kenya Functionalities",
+      title: "DTB Kenya Payment Processing Guide",
       category: "Documentation",
-      lastModified: new Date("2025-02-25"),
-      type: "Functionalities",
+      lastModified: new Date("2024-03-15"),
+      type: "Payment Transactions",
       status: "processed",
+      uploadedBy: "John Smith",
+      content: "This document outlines the payment processing guidelines for DTB Kenya...",
+    },
+    {
+      id: "2",
+      title: "User Interface Design Specifications",
+      category: "Documentation",
+      lastModified: new Date("2024-03-14"),
+      type: "User Interfaces",
+      status: "processing",
+      uploadedBy: "Sarah Johnson",
+      content: "Detailed specifications for the user interface design of DTB Kenya...",
+    },
+    {
+      id: "3",
+      title: "Data Integration Framework",
+      category: "Technical",
+      lastModified: new Date("2024-03-13"),
+      type: "Data and Integrations",
+      status: "needs_review",
+      uploadedBy: "Michael Brown",
+      content: "Framework documentation for data integration processes...",
+    },
+    {
+      id: "4",
+      title: "Validation Rules Documentation",
+      category: "Technical",
+      lastModified: new Date("2024-03-12"),
+      type: "Validation Rules",
+      status: "processed",
+      uploadedBy: "Emma Davis",
+      content: "Comprehensive documentation of validation rules for DTB Kenya...",
+    },
+    {
+      id: "5",
+      title: "Operational Process Flows",
+      category: "Operations",
+      lastModified: new Date("2024-03-11"),
+      type: "Operational Flows",
+      status: "processed",
+      uploadedBy: "David Wilson",
+      content: "Detailed documentation of operational process flows...",
     }
   ])
 
   const handleSelectDocument = (doc: Document) => {
+    setSelectedDocument(doc)
     console.log("Selected document:", doc)
   }
 
@@ -178,7 +222,24 @@ export const KnowledgeBaseLayout = () => {
                         </Button>
                       </div>
                       <div className="p-4">
-                        Preview content goes here
+                        {selectedDocument ? (
+                          <div className="space-y-4">
+                            <h3 className="text-lg font-semibold">{selectedDocument.title}</h3>
+                            <div className="text-sm text-gray-500">
+                              <p>Type: {selectedDocument.type}</p>
+                              <p>Category: {selectedDocument.category}</p>
+                              <p>Last Modified: {selectedDocument.lastModified.toLocaleDateString()}</p>
+                              <p>Uploaded By: {selectedDocument.uploadedBy}</p>
+                            </div>
+                            <div className="mt-4 p-4 border rounded-lg bg-gray-50">
+                              <p className="text-gray-700">{selectedDocument.content}</p>
+                            </div>
+                          </div>
+                        ) : (
+                          <div className="text-center text-gray-500">
+                            Select a document to preview its contents
+                          </div>
+                        )}
                       </div>
                     </div>
                   </ResizablePanel>

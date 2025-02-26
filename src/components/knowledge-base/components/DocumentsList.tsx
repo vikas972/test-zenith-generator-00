@@ -8,6 +8,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  DialogFooter,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Input } from "@/components/ui/input"
@@ -23,6 +24,7 @@ interface Document {
   status: 'processed' | 'processing' | 'needs_review' | 'deleted'
   type: string
   content?: string
+  uploadedBy: string
 }
 
 interface DocumentsListProps {
@@ -44,6 +46,8 @@ export const DocumentsList = ({
 }: DocumentsListProps) => {
   const [selectedDoc, setSelectedDoc] = useState<Document | null>(null)
   const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [selectedType, setSelectedType] = useState<string>("")
+  const [customType, setCustomType] = useState<string>("")
 
   const documentTypes = [
     "Payment Transactions",
@@ -61,6 +65,19 @@ export const DocumentsList = ({
     onEdit(doc, event)
   }
 
+  const handleTypeChange = (value: string) => {
+    setSelectedType(value)
+    if (value !== "Other") {
+      setCustomType("")
+    }
+  }
+
+  const handleSave = () => {
+    // Handle save logic here
+    console.log("Saving document...")
+    setIsDialogOpen(false)
+  }
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex justify-between items-center mb-4">
@@ -72,7 +89,7 @@ export const DocumentsList = ({
               Add Document
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-[525px]">
             <DialogHeader>
               <DialogTitle>
                 {selectedDoc ? 'Edit Document' : 'Add New Document'}
@@ -83,13 +100,15 @@ export const DocumentsList = ({
                 <Label>Document Name</Label>
                 <Input 
                   value={selectedDoc?.title || ""}
-                  readOnly
-                  disabled
+                  placeholder="Enter document name"
                 />
               </div>
               <div className="space-y-2">
                 <Label>Document Type</Label>
-                <Select defaultValue={selectedDoc?.type}>
+                <Select 
+                  defaultValue={selectedDoc?.type}
+                  onValueChange={handleTypeChange}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select type" />
                   </SelectTrigger>
@@ -101,13 +120,21 @@ export const DocumentsList = ({
                     ))}
                   </SelectContent>
                 </Select>
+                {selectedType === "Other" && (
+                  <div className="mt-2">
+                    <Input 
+                      value={customType}
+                      onChange={(e) => setCustomType(e.target.value)}
+                      placeholder="Enter custom document type"
+                    />
+                  </div>
+                )}
               </div>
               <div className="space-y-2">
-                <Label>Document Format</Label>
+                <Label>Document File</Label>
                 <Input 
-                  value="Auto-detected"
-                  readOnly
-                  disabled
+                  type="file"
+                  accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
                 />
               </div>
               <div className="flex items-center space-x-2">
@@ -118,6 +145,14 @@ export const DocumentsList = ({
                 <Label htmlFor="isUpdate">Is Update to Existing Document</Label>
               </div>
             </div>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
+              <Button onClick={handleSave}>
+                Save
+              </Button>
+            </DialogFooter>
           </DialogContent>
         </Dialog>
       </div>
@@ -126,7 +161,7 @@ export const DocumentsList = ({
           {documents.map((doc) => (
             <div
               key={doc.id}
-              className="p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+              className="p-4 border rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
               onClick={() => onSelectDocument(doc)}
             >
               <div className="flex justify-between items-start">
@@ -134,6 +169,7 @@ export const DocumentsList = ({
                   <h3 className="font-medium">{doc.title}</h3>
                   <div className="text-sm text-gray-500 space-y-1">
                     <p>Upload Date: {doc.lastModified.toLocaleDateString()}</p>
+                    <p>Uploaded By: {doc.uploadedBy}</p>
                     <p>Type: {doc.type}</p>
                     <div className="flex items-center gap-2">
                       <span>Status:</span>
