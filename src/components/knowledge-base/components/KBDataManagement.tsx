@@ -1,4 +1,3 @@
-
 import { useState } from "react"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Button } from "@/components/ui/button"
@@ -23,6 +22,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Document } from "@/types/knowledge-base"
 
 interface KBEntry {
   id: string
@@ -42,6 +43,23 @@ export const KBDataManagement = () => {
     "Reports and Notifications",
     "Data and Integrations"
   ]
+
+  const [selectedTab, setSelectedTab] = useState(categories[0])
+  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
+  
+  const [documents, setDocuments] = useState<Document[]>([
+    {
+      id: "1",
+      title: "DTB Kenya Payment Processing Guide",
+      category: "Documentation",
+      lastModified: new Date("2024-03-15"),
+      type: "Payment Transactions",
+      status: "processed",
+      uploadedBy: "John Smith",
+      content: "This document outlines the payment processing guidelines for DTB Kenya...",
+    },
+    // ... keep existing code (other document entries)
+  ])
 
   const [entries, setEntries] = useState<KBEntry[]>([
     // Flows/Transactions
@@ -250,7 +268,6 @@ export const KBDataManagement = () => {
   ])
 
   const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [selectedEntry, setSelectedEntry] = useState<KBEntry | null>(null)
   const [editMode, setEditMode] = useState<"add" | "edit" | null>(null)
   const [formData, setFormData] = useState({
     title: "",
@@ -270,7 +287,6 @@ export const KBDataManagement = () => {
 
   const handleEdit = (entry: KBEntry) => {
     setEditMode("edit")
-    setSelectedEntry(entry)
     setFormData({
       title: entry.title,
       description: entry.description,
@@ -292,22 +308,51 @@ export const KBDataManagement = () => {
         category: selectedTab
       }
       setEntries([...entries, newEntry])
-    } else if (editMode === "edit" && selectedEntry) {
-      setEntries(entries.map(entry => 
-        entry.id === selectedEntry.id 
-          ? { ...entry, ...formData, lastModified: new Date() }
-          : entry
-      ))
     }
     setIsDialogOpen(false)
   }
 
-  const [selectedTab, setSelectedTab] = useState(categories[0])
+  if (!selectedDocument && documents.length > 0) {
+    setSelectedDocument(documents[0])
+  }
 
   const filteredEntries = entries.filter(entry => entry.category === selectedTab)
 
   return (
     <div className="space-y-6">
+      <div className="bg-white p-4 rounded-lg border space-y-4">
+        <div className="flex flex-col space-y-4 sm:flex-row sm:items-center sm:justify-between sm:space-y-0">
+          <div className="w-full sm:w-64">
+            <Label>Select Document</Label>
+            <Select
+              value={selectedDocument?.id}
+              onValueChange={(value) => {
+                const doc = documents.find(d => d.id === value)
+                setSelectedDocument(doc || null)
+              }}
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Select a document" />
+              </SelectTrigger>
+              <SelectContent>
+                {documents.map((doc) => (
+                  <SelectItem key={doc.id} value={doc.id}>
+                    {doc.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          {selectedDocument && (
+            <div className="text-sm text-gray-500 space-y-1">
+              <p>Upload Date: {selectedDocument.lastModified.toLocaleDateString()}</p>
+              <p>Uploaded By: {selectedDocument.uploadedBy}</p>
+              <p>Document Type: {selectedDocument.type}</p>
+            </div>
+          )}
+        </div>
+      </div>
+
       <Tabs defaultValue={categories[0]} onValueChange={setSelectedTab}>
         <div className="border rounded-md">
           <div className="overflow-auto">
@@ -389,17 +434,15 @@ export const KBDataManagement = () => {
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
+              <Label>Title</Label>
               <Input
-                id="title"
                 value={formData.title}
                 onChange={(e) => setFormData({ ...formData, title: e.target.value })}
               />
             </div>
             <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
+              <Label>Description</Label>
               <Textarea
-                id="description"
                 value={formData.description}
                 onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               />
