@@ -8,9 +8,64 @@ import { ResizablePanelGroup, ResizablePanel, ResizableHandle } from "@/componen
 import { Button } from "@/components/ui/button"
 import { DocumentsList } from "./components/DocumentsList"
 
+interface Document {
+  id: string
+  title: string
+  category: string
+  lastModified: Date
+  status: 'processed' | 'processing' | 'needs_review' | 'deleted'
+  type: string
+  content?: string
+}
+
 export const KnowledgeBaseLayout = () => {
   const [leftPanelCollapsed, setLeftPanelCollapsed] = useState(false)
   const [rightPanelCollapsed, setRightPanelCollapsed] = useState(false)
+  const [documents, setDocuments] = useState<Document[]>([
+    {
+      id: "1",
+      title: "DTB Kenya Functionalities",
+      category: "Documentation",
+      lastModified: new Date("2025-02-25"),
+      type: "Functionalities",
+      status: "processed",
+    }
+  ])
+
+  const handleSelectDocument = (doc: Document) => {
+    console.log("Selected document:", doc)
+  }
+
+  const handleEdit = (doc: Document, event: React.MouseEvent) => {
+    event.stopPropagation()
+    console.log("Editing document:", doc)
+  }
+
+  const handleDelete = (docId: string, event: React.MouseEvent) => {
+    event.stopPropagation()
+    setDocuments(prev => prev.filter(doc => doc.id !== docId))
+  }
+
+  const getStatusColor = (status: string) => {
+    switch (status) {
+      case 'processed':
+        return 'bg-green-500'
+      case 'processing':
+        return 'bg-yellow-500'
+      case 'needs_review':
+        return 'bg-orange-500'
+      case 'deleted':
+        return 'bg-red-500'
+      default:
+        return 'bg-gray-500'
+    }
+  }
+
+  const getStatusText = (status: string) => {
+    return status.split('_').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ')
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
@@ -92,7 +147,14 @@ export const KnowledgeBaseLayout = () => {
                         </Button>
                       </div>
                       <div className="p-4 h-[calc(100%-65px)]">
-                        <DocumentsList />
+                        <DocumentsList
+                          documents={documents}
+                          onSelectDocument={handleSelectDocument}
+                          onEdit={handleEdit}
+                          onDelete={handleDelete}
+                          getStatusColor={getStatusColor}
+                          getStatusText={getStatusText}
+                        />
                       </div>
                     </div>
                   </ResizablePanel>
