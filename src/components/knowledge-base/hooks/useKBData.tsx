@@ -4,21 +4,20 @@ import { Document } from "@/types/knowledge-base"
 import { KBEntry } from "../types"
 import { mockDocuments } from "../data/mockDocuments"
 import { mockEntries } from "../data/mockEntries"
+import { useDocumentsState } from "./useDocumentsState"
+import { useEntriesState } from "./useEntriesState"
 
 export const useKBData = () => {
   const [selectedTab, setSelectedTab] = useState("Flows/Transactions")
-  const [selectedDocument, setSelectedDocument] = useState<Document | null>(null)
-  const [documents, setDocuments] = useState<Document[]>(mockDocuments)
-  const [entries, setEntries] = useState<KBEntry[]>(mockEntries)
+  
+  // Use separate hooks for document and entry state management
+  const documentsState = useDocumentsState()
+  const entriesState = useEntriesState()
 
   return {
     selectedTab,
     setSelectedTab,
-    selectedDocument,
-    setSelectedDocument,
-    documents,
-    setDocuments,
-    entries,
-    setEntries
+    ...documentsState,
+    ...entriesState
   }
 }
