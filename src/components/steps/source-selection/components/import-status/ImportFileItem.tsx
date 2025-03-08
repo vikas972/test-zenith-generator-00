@@ -1,7 +1,7 @@
 
 import { RequirementFile } from "../../types";
 import { Progress } from "@/components/ui/progress";
-import { Check, Upload, AlertCircle, RefreshCw } from "lucide-react";
+import { Check, Upload, AlertCircle, RefreshCw, FileText } from "lucide-react";
 
 interface ImportFileItemProps {
   file: RequirementFile;
@@ -18,7 +18,7 @@ export const ImportFileItem = ({ file }: ImportFileItemProps) => {
       case "failed":
         return <AlertCircle className="h-4 w-4 text-red-500" />;
       default:
-        return <Upload className="h-4 w-4 text-gray-500" />;
+        return <FileText className="h-4 w-4 text-gray-500" />;
     }
   };
 
@@ -37,20 +37,25 @@ export const ImportFileItem = ({ file }: ImportFileItemProps) => {
   };
 
   return (
-    <div className="flex items-center bg-white p-2 rounded border">
+    <div className="flex items-center bg-white p-3 rounded border">
       <div className="mr-3">{getStatusIcon()}</div>
       
       <div className="flex-1 min-w-0">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between mb-1">
           <div className="font-medium text-sm truncate">{file.name}</div>
-          <div className="text-xs text-gray-500 ml-2">
+          <div className="text-xs text-gray-500 ml-2 whitespace-nowrap">
             {file.status === "imported" 
               ? "Completed" 
               : file.status === "importing" 
                 ? `Importing (${getProgress()}%)` 
-                : file.category
+                : file.status
             }
           </div>
+        </div>
+        
+        <div className="text-xs text-gray-500 flex flex-wrap gap-2 mb-1">
+          <span className="capitalize">{file.category} Document</span>
+          <span>Break by: {file.breakRequirementsBy.replace(/([A-Z])/g, ' $1').trim()}</span>
         </div>
         
         {file.status === "importing" && (
