@@ -71,27 +71,31 @@ export const AddFileDialog = ({
         <DialogHeader className="py-2">
           <DialogTitle>Add File to Bundle</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="pr-4 max-h-[calc(90vh-140px)] flex-grow">
-          <div className="space-y-3 py-2">
-            <FileUploadArea 
-              file={file} 
-              setFile={handleFileChange} 
-            />
-            
-            <FileMetadataForm 
-              fileName={fileName}
-              setFileName={setFileName}
-              fileCategory={fileCategory}
-              setFileCategory={setFileCategory}
-              fileBreakBy={fileBreakBy}
-              setFileBreakBy={setFileBreakBy}
-              fileContext={fileContext}
-              setFileContext={setFileContext}
-              bundleHasMainFile={bundleHasMainFile}
-            />
-          </div>
-        </ScrollArea>
-        <DialogFooter className="pt-2 flex-shrink-0 w-full px-0">
+        
+        <div className="flex-grow overflow-hidden">
+          <ScrollArea className="pr-4 h-[calc(90vh-160px)]">
+            <div className="space-y-3 py-2">
+              <FileUploadArea 
+                file={file} 
+                setFile={handleFileChange} 
+              />
+              
+              <FileMetadataForm 
+                fileName={fileName}
+                setFileName={setFileName}
+                fileCategory={fileCategory}
+                setFileCategory={setFileCategory}
+                fileBreakBy={fileBreakBy}
+                setFileBreakBy={setFileBreakBy}
+                fileContext={fileContext}
+                setFileContext={setFileContext}
+                bundleHasMainFile={bundleHasMainFile}
+              />
+            </div>
+          </ScrollArea>
+        </div>
+        
+        <DialogFooter className="pt-4 flex-shrink-0 w-full border-t mt-2">
           <div className="flex justify-end gap-2 w-full">
             <Button variant="outline" onClick={() => onOpenChange(false)} size="sm">
               Cancel
