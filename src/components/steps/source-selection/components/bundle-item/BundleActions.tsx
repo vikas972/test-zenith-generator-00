@@ -3,6 +3,7 @@ import { Plus, RefreshCw, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { RequirementBundle } from "../../types";
 import { BundleStatusBadge } from "./BundleStatusBadge";
+import { BundleSourceBadge } from "./BundleSourceBadge";
 
 interface BundleActionsProps {
   bundle: RequirementBundle;
@@ -26,6 +27,7 @@ export const BundleActions = ({
   return (
     <div className="flex items-center gap-2">
       <BundleStatusBadge status={bundle.status} />
+      <BundleSourceBadge sourceId={bundle.source} />
       
       <div className="flex gap-2">
         {bundle.files.length < bundle.totalFiles && (
@@ -63,7 +65,7 @@ export const BundleActions = ({
         checked={isSelected}
         onChange={onSelectBundle}
         onClick={(e) => e.stopPropagation()}
-        disabled={!isAllFilesAdded}
+        disabled={!isAllFilesAdded || bundle.status !== "imported"}
         className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
       />
     </div>

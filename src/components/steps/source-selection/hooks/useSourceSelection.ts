@@ -203,9 +203,6 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
         )
       );
       toast.success(`Bundle "${bundle.name}" imported successfully`);
-      
-      // Automatically select the newly imported bundle
-      handleSelectBundle(bundleId);
     }, 3000);
   };
 

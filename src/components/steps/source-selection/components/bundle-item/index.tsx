@@ -70,7 +70,7 @@ export const BundleItem = ({
             onDeleteBundle(bundle.id);
           }}
           isSelected={isSelected}
-          onSelectBundle={() => onSelectBundle(bundle.id)}
+          onSelectBundle={() => onSelectBundle(isSelected ? null : bundle.id)}
           isAllFilesAdded={isAllFilesAdded}
         />
       </div>
