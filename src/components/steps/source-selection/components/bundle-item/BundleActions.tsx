@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { RequirementBundle } from "../../types";
 import { BundleStatusBadge } from "./BundleStatusBadge";
 import { BundleSourceBadge } from "./BundleSourceBadge";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface BundleActionsProps {
   bundle: RequirementBundle;
@@ -25,8 +24,8 @@ export const BundleActions = ({
   onSelectBundle,
   isAllFilesAdded
 }: BundleActionsProps) => {
-  // The bundle can be selected when all files are added and the bundle is imported
-  const isSelectable = bundle.status === "imported";
+  // The bundle can be selected when bundle is completed or imported
+  const isSelectable = bundle.status === "imported" || bundle.status === "completed";
 
   return (
     <div className="flex items-center gap-2">

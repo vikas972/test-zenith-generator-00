@@ -12,7 +12,7 @@ export const useSelectionState = (onFileSelect: (file: SelectedFile | null) => v
     
     if (bundleId) {
       const bundle = bundles.find(b => b.id === bundleId);
-      if (bundle && bundle.status === "imported") {
+      if (bundle && (bundle.status === "imported" || bundle.status === "completed")) {
         // Convert the bundle to the format expected by the onFileSelect prop
         const mainFile = bundle.files.find(f => f.category === "main");
         if (mainFile) {
@@ -26,7 +26,7 @@ export const useSelectionState = (onFileSelect: (file: SelectedFile | null) => v
       } else {
         onFileSelect(null);
         if (bundle) {
-          toast.error(`Bundle "${bundle.name}" must be imported before it can be selected`);
+          toast.error(`Bundle "${bundle.name}" must be completed or imported before it can be selected`);
         }
       }
     } else {
