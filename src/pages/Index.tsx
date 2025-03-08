@@ -48,6 +48,7 @@ export const Index = () => {
     }
   };
 
+  // The Next button should only be enabled when a bundle is imported and selected
   const canProceedFromSourceSelection = currentStep !== 0 || selectedFile !== null;
 
   return (

@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RequirementBundle, RequirementFile } from "../types";
 import { FileItem } from "./FileItem";
+import { Checkbox } from "@/components/ui/checkbox";
 
 interface BundleItemProps {
   bundle: RequirementBundle;
@@ -73,6 +74,9 @@ export const BundleItem = ({
     onImportBundle(bundle.id);
   };
 
+  // Enable radio button when all files are added to the bundle
+  const isAllFilesAdded = bundle.files.length >= bundle.totalFiles;
+  // Bundle can be imported when all files are completed and not already imported
   const isImportable = bundle.status === "completed" && bundle.files.every(f => f.status === "completed");
   const isImported = bundle.status === "imported";
 
@@ -149,7 +153,7 @@ export const BundleItem = ({
             checked={isSelected}
             onChange={() => onSelectBundle(bundle.id)}
             onClick={(e) => e.stopPropagation()}
-            disabled={bundle.status !== "imported"}
+            disabled={!isAllFilesAdded}
             className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
           />
         </div>
@@ -187,7 +191,7 @@ export const BundleItem = ({
               <Button 
                 variant="default" 
                 onClick={handleImport}
-                disabled={!isImportable || isImporting || isImported}
+                disabled={!isImportable || isImporting || isImported || !isSelected}
                 className="gap-2"
               >
                 <Upload className="h-4 w-4" />
