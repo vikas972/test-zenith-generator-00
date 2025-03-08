@@ -17,18 +17,18 @@ interface FileMetadataFormProps {
   requirementType: string;
   setRequirementType: (type: string) => void;
   bundleHasMainFile: boolean;
-  region?: string;
-  setRegion?: (region: string) => void;
-  country?: string;
-  setCountry?: (country: string) => void;
-  customer?: string;
-  setCustomer?: (customer: string) => void;
-  regions?: { value: string; label: string }[];
-  countries?: { value: string; label: string }[];
-  customers?: { value: string; label: string }[];
-  showRegion?: boolean;
-  showCountry?: boolean;
-  showCustomer?: boolean;
+  region: string;
+  setRegion: (region: string) => void;
+  country: string;
+  setCountry: (country: string) => void;
+  customer: string;
+  setCustomer: (customer: string) => void;
+  regions: { value: string; label: string }[];
+  countries: { value: string; label: string }[];
+  customers: { value: string; label: string }[];
+  showRegion: boolean;
+  showCountry: boolean;
+  showCustomer: boolean;
 }
 
 export const FileMetadataForm = ({
@@ -43,19 +43,28 @@ export const FileMetadataForm = ({
   requirementType,
   setRequirementType,
   bundleHasMainFile,
-  region = "",
-  setRegion = () => {},
-  country = "",
-  setCountry = () => {},
-  customer = "",
-  setCustomer = () => {},
-  regions = [],
-  countries = [],
-  customers = [],
-  showRegion = false,
-  showCountry = false,
-  showCustomer = false
+  region,
+  setRegion,
+  country,
+  setCountry,
+  customer,
+  setCustomer,
+  regions,
+  countries,
+  customers,
+  showRegion,
+  showCountry,
+  showCustomer
 }: FileMetadataFormProps) => {
+  // Handle requirement type change
+  const handleRequirementTypeChange = (value: string) => {
+    setRequirementType(value);
+    // Reset the dependent fields
+    if (value !== "K2") setRegion("");
+    if (value !== "K3") setCountry("");
+    if (value !== "K4") setCustomer("");
+  };
+
   return (
     <div className="space-y-3">
       <div className="grid grid-cols-2 gap-3">
@@ -93,7 +102,7 @@ export const FileMetadataForm = ({
         <Label className="text-sm">Requirement Type</Label>
         <Select 
           value={requirementType}
-          onValueChange={(value) => setRequirementType(value)}
+          onValueChange={handleRequirementTypeChange}
         >
           <SelectTrigger className="h-9">
             <SelectValue />
@@ -199,4 +208,4 @@ export const FileMetadataForm = ({
       </div>
     </div>
   );
-};
+}

@@ -45,6 +45,7 @@ export const AddFileDialog = ({
   const [region, setRegion] = useState("");
   const [country, setCountry] = useState("");
   const [customer, setCustomer] = useState("");
+  const [isFormValid, setIsFormValid] = useState(false);
 
   // Reset form state when the dialog opens or closes
   useEffect(() => {
@@ -58,8 +59,28 @@ export const AddFileDialog = ({
     }
   }, [isOpen, bundleHasMainFile]);
 
+  // Validate form whenever dependencies change
+  useEffect(() => {
+    validateForm();
+  }, [file, fileName, requirementType, region, country, customer]);
+
+  const validateForm = () => {
+    let valid = file !== null && fileName.trim() !== "" && requirementType !== "";
+    
+    // Add validation for type-specific fields
+    if (requirementType === "K2") {
+      valid = valid && region !== "";
+    } else if (requirementType === "K3") {
+      valid = valid && country !== "";
+    } else if (requirementType === "K4") {
+      valid = valid && customer !== "";
+    }
+    
+    setIsFormValid(valid);
+  };
+
   const handleAddFile = () => {
-    if (file && fileName.trim()) {
+    if (file && fileName.trim() && isFormValid) {
       onAddFile(
         file, 
         fileName, 
@@ -85,6 +106,7 @@ export const AddFileDialog = ({
     setRegion("");
     setCountry("");
     setCustomer("");
+    setIsFormValid(false);
   };
 
   // Update filename when file changes
@@ -167,11 +189,7 @@ export const AddFileDialog = ({
             </Button>
             <Button 
               onClick={handleAddFile} 
-              disabled={!file || !fileName || !requirementType || 
-                (requirementType === "K2" && !region) ||
-                (requirementType === "K3" && !country) ||
-                (requirementType === "K4" && !customer)
-              } 
+              disabled={!isFormValid} 
               size="sm"
             >
               Add File
