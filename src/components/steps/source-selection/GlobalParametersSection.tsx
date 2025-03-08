@@ -24,14 +24,41 @@ export const GlobalParametersSection = ({
   const [availableCountries, setAvailableCountries] = useState<{value: string; label: string}[]>([]);
   const [availableCustomers, setAvailableCustomers] = useState<{value: string; label: string}[]>([]);
 
+  // Set default values if not already set
+  useEffect(() => {
+    let updatedParams = { ...parameters };
+    let hasChanges = false;
+
+    if (!parameters.product) {
+      updatedParams.product = "DTB";
+      hasChanges = true;
+    }
+
+    if (!parameters.domain) {
+      updatedParams.domain = "PAYMENTS";
+      hasChanges = true;
+    }
+
+    if (hasChanges) {
+      onParametersChange(updatedParams);
+    }
+  }, []);
+
   // Update available sub-products when product changes
   useEffect(() => {
     if (parameters.product) {
       const productOption = PRODUCT_OPTIONS.find(p => p.value === parameters.product);
       setAvailableSubProducts(productOption?.subProducts || []);
       
+      // Set default sub-product if product is DTB and no sub-product is selected
+      if (parameters.product === "DTB" && !parameters.subProduct) {
+        onParametersChange({
+          ...parameters,
+          subProduct: "CBX"
+        });
+      }
       // Clear sub-product if changing product
-      if (!productOption?.subProducts.some(sp => sp.value === parameters.subProduct)) {
+      else if (!productOption?.subProducts.some(sp => sp.value === parameters.subProduct)) {
         onParametersChange({
           ...parameters,
           subProduct: ""
@@ -81,7 +108,7 @@ export const GlobalParametersSection = ({
   return (
     <Card className="mb-6 shadow-sm border-gray-200">
       <CardHeader className="pb-2">
-        <CardTitle className="text-xl font-semibold">Global Parameters</CardTitle>
+        <CardTitle className="text-xl font-semibold">User Associations</CardTitle>
       </CardHeader>
       <CardContent>
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
