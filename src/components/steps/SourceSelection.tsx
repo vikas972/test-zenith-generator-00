@@ -2,172 +2,197 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { ImportSourcesGrid } from "./source-selection/ImportSourcesGrid";
-import { DocumentContextSection } from "./source-selection/DocumentContextSection";
-import { ImportedFilesTable } from "./source-selection/ImportedFilesTable";
-import { DocumentContext, SourceSelectionProps, UploadedFile } from "./source-selection/types";
+import { GlobalParametersSection } from "./source-selection/GlobalParametersSection";
+import { RequirementBundleSection } from "./source-selection/RequirementBundleSection";
+import { 
+  SourceSelectionProps, 
+  RequirementBundle, 
+  RequirementFile,
+  GlobalParameters 
+} from "./source-selection/types";
 
 export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const [selectedSource, setSelectedSource] = useState<string | null>(null);
-  const [selectedFile, setSelectedFile] = useState<string | null>(null);
-  const [isContextExpanded, setIsContextExpanded] = useState(false);
-  const [pendingFile, setPendingFile] = useState<File | null>(null);
-  const [documentContext, setDocumentContext] = useState<DocumentContext>({
-    documentType: "",
-    documentFormat: "",
-    businessDomain: "",
-    agentContext: "",
-    outputPreferences: {
-      requirementFormat: "REQ-XXX",
-      validationGranularity: "detailed",
-      namingConvention: "camelCase",
-    },
+  const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
+  const [bundles, setBundles] = useState<RequirementBundle[]>([]);
+  const [globalParameters, setGlobalParameters] = useState<GlobalParameters>({
+    product: "",
+    subProduct: "",
+    domain: "",
+    requirementType: "",
+    region: "",
+    country: "",
+    customer: ""
   });
 
-  // Initialize with default files
-  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([
-    {
-      id: "1",
-      name: "requirements.pdf",
-      uploadTime: new Date("2024-01-15T10:00:00"),
-      status: "completed",
-    },
-    {
-      id: "2",
-      name: "specifications.docx",
-      uploadTime: new Date("2024-01-16T14:30:00"),
-      status: "completed",
-    },
-    {
-      id: "3",
-      name: "test-cases.xlsx",
-      uploadTime: new Date("2024-01-17T09:15:00"),
-      status: "failed",
-    }
-  ]);
-
   const handleSourceFileSelect = (file: File) => {
-    setPendingFile(file);
-    setIsContextExpanded(true);
+    // When a file is selected via the import sources grid,
+    // we'll create a new bundle with this file
+    const newBundle: RequirementBundle = {
+      id: `bundle-${Date.now()}`,
+      name: `Bundle from ${file.name}`,
+      createdAt: new Date(),
+      files: [],
+      totalFiles: 1,
+      status: "incomplete"
+    };
+
+    setBundles(prev => [...prev, newBundle]);
     
-    // Set document context with the file name when selected from source
-    setDocumentContext({
-      documentType: "",
-      documentFormat: "",
-      businessDomain: "",
-      agentContext: `Processing ${file.name}`,
-      outputPreferences: {
-        requirementFormat: "REQ-XXX",
-        validationGranularity: "detailed",
-        namingConvention: "camelCase",
-      },
-    });
+    // Simulate adding the file to the bundle
+    setTimeout(() => {
+      handleBundleUpdate(
+        newBundle.id, 
+        [{
+          id: `file-${Date.now()}`,
+          name: file.name.replace(/\.[^/.]+$/, ""),
+          uploadTime: new Date(),
+          category: "main",
+          breakRequirementsBy: "section",
+          context: "",
+          status: "parsing",
+          file
+        }]
+      );
+
+      // Simulate parsing completion
+      setTimeout(() => {
+        setBundles(prev => 
+          prev.map(b => 
+            b.id === newBundle.id 
+              ? { 
+                  ...b, 
+                  status: "completed",
+                  files: b.files.map(f => ({ ...f, status: "completed" }))
+                } 
+              : b
+          )
+        );
+      }, 2000);
+    }, 500);
     
     toast.success(`File "${file.name}" selected for processing`);
   };
 
-  const handleFileSelect = (fileId: string) => {
-    setSelectedFile(fileId);
-    const file = uploadedFiles.find(f => f.id === fileId);
-    if (file && file.status === "completed") {
-      onFileSelect(file);
+  const handleBundleAdd = (bundle: RequirementBundle) => {
+    setBundles(prev => [...prev, bundle]);
+  };
+
+  const handleBundleUpdate = (bundleId: string, files: RequirementFile[]) => {
+    setBundles(prev => 
+      prev.map(bundle => {
+        if (bundle.id === bundleId) {
+          // Update bundle status based on file count and statuses
+          let status: RequirementBundle["status"] = "incomplete";
+          
+          if (files.length >= bundle.totalFiles) {
+            // If all files are complete, the bundle is complete
+            if (files.every(f => f.status === "completed")) {
+              status = "completed";
+            }
+            // If any file failed, the bundle failed
+            else if (files.some(f => f.status === "failed")) {
+              status = "failed";
+            }
+            // If some files are still parsing, the bundle is parsing
+            else if (files.some(f => f.status === "parsing")) {
+              status = "parsing";
+            }
+          }
+          
+          return { ...bundle, files, status };
+        }
+        return bundle;
+      })
+    );
+  };
+
+  const handleBundleDelete = (bundleId: string) => {
+    setBundles(prev => prev.filter(b => b.id !== bundleId));
+    if (selectedBundleId === bundleId) {
+      setSelectedBundleId(null);
+      onFileSelect(null);
+    }
+    toast.success("Bundle deleted successfully");
+  };
+
+  const handleBundleRetry = (bundleId: string) => {
+    setBundles(prev => 
+      prev.map(bundle => {
+        if (bundle.id === bundleId) {
+          return { 
+            ...bundle, 
+            status: "parsing",
+            files: bundle.files.map(f => 
+              f.status === "failed" ? { ...f, status: "parsing" } : f
+            )
+          };
+        }
+        return bundle;
+      })
+    );
+    
+    // Simulate parsing completion
+    setTimeout(() => {
+      setBundles(prev => 
+        prev.map(bundle => {
+          if (bundle.id === bundleId) {
+            return { 
+              ...bundle, 
+              status: "completed",
+              files: bundle.files.map(f => ({ ...f, status: "completed" }))
+            };
+          }
+          return bundle;
+        })
+      );
+    }, 2000);
+    
+    toast.success("Retrying bundle processing...");
+  };
+
+  const handleSelectBundle = (bundleId: string | null) => {
+    setSelectedBundleId(bundleId);
+    
+    if (bundleId) {
+      const bundle = bundles.find(b => b.id === bundleId);
+      if (bundle && bundle.status === "completed") {
+        // Convert the bundle to the format expected by the onFileSelect prop
+        const mainFile = bundle.files.find(f => f.category === "main");
+        if (mainFile) {
+          onFileSelect({
+            id: mainFile.id,
+            name: mainFile.name,
+            uploadTime: mainFile.uploadTime
+          });
+          toast.success(`Selected bundle: ${bundle.name}`);
+        }
+      } else {
+        onFileSelect(null);
+      }
     } else {
       onFileSelect(null);
     }
   };
 
-  const handleContextUpdate = (field: keyof DocumentContext, value: any) => {
-    setDocumentContext(prev => ({
-      ...prev,
-      [field]: value
-    }));
-  };
-
-  const handleRetry = (fileId: string) => {
-    setUploadedFiles(files =>
-      files.map(file =>
-        file.id === fileId ? { ...file, status: "parsing" as const } : file
-      )
-    );
-    toast.success("Retrying file parsing...");
-  };
-
-  const handleDelete = (fileId: string) => {
-    setUploadedFiles(files => files.filter(file => file.id !== fileId));
-    if (selectedFile === fileId) {
-      setSelectedFile(null);
-    }
-    toast.success("File deleted successfully");
-  };
-
-  const handleImport = () => {
-    if (!pendingFile) {
-      toast.error("No file selected to import");
-      return;
-    }
-
-    // Create a new uploaded file entry
-    const newFile: UploadedFile = {
-      id: String(Date.now()),
-      name: pendingFile.name,
-      uploadTime: new Date(),
-      status: "parsing",
-    };
-    
-    setUploadedFiles(prev => [...prev, newFile]);
-    
-    // Simulate file processing completion
-    setTimeout(() => {
-      setUploadedFiles(prev =>
-        prev.map(f =>
-          f.id === newFile.id ? { ...f, status: "completed" } : f
-        )
-      );
-    }, 2000);
-
-    // Clear the pending file after import
-    setPendingFile(null);
-    setIsContextExpanded(false);
-    setDocumentContext({
-      documentType: "",
-      documentFormat: "",
-      businessDomain: "",
-      agentContext: "",
-      outputPreferences: {
-        requirementFormat: "REQ-XXX",
-        validationGranularity: "detailed",
-        namingConvention: "camelCase",
-      },
-    });
-    
-    toast.success("File imported successfully");
-  };
-
-  const handleReset = () => {
-    if (pendingFile) {
-      setDocumentContext({
-        documentType: "",
-        documentFormat: "",
-        businessDomain: "",
-        agentContext: `Processing ${pendingFile.name}`,
-        outputPreferences: {
-          requirementFormat: "REQ-XXX",
-          validationGranularity: "detailed",
-          namingConvention: "camelCase",
-        },
-      });
-      toast.success("Reset to default values");
-    }
+  const handleGlobalParametersChange = (params: GlobalParameters) => {
+    setGlobalParameters(params);
   };
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="max-w-4xl mx-auto">
+    <div className="container mx-auto px-4 py-8">
+      <div className="max-w-5xl mx-auto">
         <h2 className="text-3xl font-bold text-gray-800 mb-3">
           Select Source
         </h2>
         <p className="text-gray-600 mb-8">
-          Choose your preferred source and provide context for requirement parsing.
+          Choose your preferred source and provide requirement bundles.
         </p>
+
+        <GlobalParametersSection 
+          parameters={globalParameters}
+          onParametersChange={handleGlobalParametersChange}
+        />
 
         <ImportSourcesGrid
           selectedSource={selectedSource}
@@ -175,24 +200,14 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
           onFileSelect={handleSourceFileSelect}
         />
 
-        <DocumentContextSection
-          isExpanded={isContextExpanded}
-          onToggleExpand={() => setIsContextExpanded(!isContextExpanded)}
-          selectedFile={selectedFile}
-          uploadedFiles={uploadedFiles}
-          documentContext={documentContext}
-          onContextUpdate={handleContextUpdate}
-          onReset={handleReset}
-          onImport={handleImport}
-          pendingFile={pendingFile}
-        />
-
-        <ImportedFilesTable
-          uploadedFiles={uploadedFiles}
-          selectedFile={selectedFile}
-          onFileSelect={handleFileSelect}
-          onRetry={handleRetry}
-          onDelete={handleDelete}
+        <RequirementBundleSection
+          bundles={bundles}
+          onBundleAdd={handleBundleAdd}
+          onBundleUpdate={handleBundleUpdate}
+          onBundleDelete={handleBundleDelete}
+          onBundleRetry={handleBundleRetry}
+          onSelectBundle={handleSelectBundle}
+          selectedBundleId={selectedBundleId}
         />
       </div>
     </div>
