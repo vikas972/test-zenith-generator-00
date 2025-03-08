@@ -25,6 +25,18 @@ export interface DocumentContext {
 
 export interface SourceSelectionProps {
   onFileSelect: (file: SelectedFile | null) => void;
+  selectedSource: string | null;
+  setSelectedSource: (source: string | null) => void;
+  selectedBundleId: string | null;
+  bundles: RequirementBundle[];
+  globalParameters: GlobalParameters;
+  handleBundleAdd: (bundle: RequirementBundle) => void;
+  handleBundleUpdate: (bundleId: string, files: RequirementFile[]) => void;
+  handleBundleDelete: (bundleId: string) => void;
+  handleBundleRetry: (bundleId: string) => void;
+  handleBundleImport: (bundleId: string) => void;
+  handleSelectBundle: (bundleId: string | null) => void;
+  handleGlobalParametersChange: (params: GlobalParameters) => void;
 }
 
 export interface RequirementFile {
