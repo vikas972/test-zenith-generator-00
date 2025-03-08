@@ -57,8 +57,13 @@ export const AddFileDialog = ({
       setFileBreakBy("userJourney");
       setRequirementType("K4");
       
-      // Check form validity after setting defaults
-      setTimeout(() => validateForm(), 0);
+      // Reset dependent fields
+      setRegion("");
+      setCountry("");
+      setCustomer("");
+      
+      // Check form validity after setting defaults - using setTimeout to ensure state updates complete
+      setTimeout(() => validateForm(), 100);
     }
   }, [isOpen, bundleHasMainFile]);
 
@@ -68,24 +73,25 @@ export const AddFileDialog = ({
   }, [file, fileName, requirementType, region, country, customer]);
 
   const validateForm = () => {
+    // Basic validation - file and name are always required
     let valid = file !== null && fileName.trim() !== "";
     
     // Add validation for type-specific fields
     if (requirementType === "K2") {
-      valid = valid && region !== "";
+      valid = valid && region.trim() !== "";
     } else if (requirementType === "K3") {
-      valid = valid && country !== "";
+      valid = valid && country.trim() !== "";
     } else if (requirementType === "K4") {
-      valid = valid && customer !== "";
+      valid = valid && customer.trim() !== "";
     }
     
     console.log("Form validation:", { 
       file: !!file, 
       fileName: !!fileName.trim(), 
       requirementType,
-      region,
-      country,
-      customer,
+      region: region.trim(),
+      country: country.trim(),
+      customer: customer.trim(),
       valid
     });
     
@@ -146,6 +152,12 @@ export const AddFileDialog = ({
     return [];
   };
 
+  // Handle customer changes directly in AddFileDialog
+  const handleCustomerChange = (selectedCustomer: string) => {
+    setCustomer(selectedCustomer);
+    validateForm();
+  };
+
   return (
     <Dialog 
       open={isOpen} 
@@ -183,7 +195,7 @@ export const AddFileDialog = ({
                 country={country}
                 setCountry={setCountry}
                 customer={customer}
-                setCustomer={setCustomer}
+                setCustomer={handleCustomerChange}
                 regions={REGIONS}
                 countries={getAvailableCountries()}
                 customers={getAvailableCustomers()}

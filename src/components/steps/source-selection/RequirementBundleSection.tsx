@@ -100,7 +100,18 @@ export const RequirementBundleSection = ({
       enhancedContext += `\nCustomer: ${customer}`;
     }
     
-    handleAddFile(file, name, category, breakBy, enhancedContext, requirementType);
+    // Pass all parameters to the handler
+    handleAddFile(
+      file, 
+      name, 
+      category, 
+      breakBy, 
+      enhancedContext, 
+      requirementType,
+      region,
+      country,
+      customer
+    );
   };
 
   return (

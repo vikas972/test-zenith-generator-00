@@ -97,7 +97,10 @@ export const useBundleManager = ({
     category: "main" | "supporting", 
     breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page",
     context: string,
-    requirementType: string
+    requirementType: string,
+    region?: string,
+    country?: string,
+    customer?: string
   ) => {
     if (!activeBundleId) return;
     
@@ -112,7 +115,7 @@ export const useBundleManager = ({
       category,
       breakRequirementsBy: breakBy,
       context,
-      status: "parsing",
+      status: "parsing" as const,
       file
     };
     

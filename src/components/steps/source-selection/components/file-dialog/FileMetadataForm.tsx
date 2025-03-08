@@ -157,7 +157,7 @@ export const FileMetadataForm = ({
         </div>
       )}
 
-      {showCustomer && customers && customers.length > 0 && (
+      {showCustomer && (
         <div className="space-y-1">
           <Label className="text-sm">Customer</Label>
           <Select 
@@ -168,11 +168,21 @@ export const FileMetadataForm = ({
               <SelectValue placeholder="Select a customer" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              {customers.map((customerOption) => (
-                <SelectItem key={customerOption.value} value={customerOption.value}>
-                  {customerOption.label}
-                </SelectItem>
-              ))}
+              {customers && customers.length > 0 ? (
+                customers.map((customerOption) => (
+                  <SelectItem key={customerOption.value} value={customerOption.value}>
+                    {customerOption.label}
+                  </SelectItem>
+                ))
+              ) : (
+                // Show default customers if none are loaded based on country
+                <>
+                  <SelectItem value="HDFC">HDFC</SelectItem>
+                  <SelectItem value="ICICI">ICICI</SelectItem>
+                  <SelectItem value="CITI">Citibank</SelectItem>
+                  <SelectItem value="JPMC">JP Morgan Chase</SelectItem>
+                </>
+              )}
             </SelectContent>
           </Select>
         </div>
