@@ -67,11 +67,11 @@ export const AddFileDialog = ({
         onOpenChange(open);
       }}
     >
-      <DialogContent className="sm:max-w-[500px] max-h-[90vh]">
+      <DialogContent className="sm:max-w-[500px] max-h-[90vh] flex flex-col">
         <DialogHeader className="py-2">
           <DialogTitle>Add File to Bundle</DialogTitle>
         </DialogHeader>
-        <ScrollArea className="pr-4 max-h-[calc(90vh-120px)]">
+        <ScrollArea className="pr-4 max-h-[calc(90vh-140px)] flex-grow">
           <div className="space-y-3 py-2">
             <FileUploadArea 
               file={file} 
@@ -91,13 +91,15 @@ export const AddFileDialog = ({
             />
           </div>
         </ScrollArea>
-        <DialogFooter className="pt-2">
-          <Button variant="outline" onClick={() => onOpenChange(false)} size="sm">
-            Cancel
-          </Button>
-          <Button onClick={handleAddFile} disabled={!file || !fileName} size="sm">
-            Add File
-          </Button>
+        <DialogFooter className="pt-2 flex-shrink-0 w-full px-0">
+          <div className="flex justify-end gap-2 w-full">
+            <Button variant="outline" onClick={() => onOpenChange(false)} size="sm">
+              Cancel
+            </Button>
+            <Button onClick={handleAddFile} disabled={!file || !fileName} size="sm">
+              Add File
+            </Button>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>
