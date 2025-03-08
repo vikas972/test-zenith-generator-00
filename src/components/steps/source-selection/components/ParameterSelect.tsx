@@ -15,6 +15,7 @@ interface ParameterSelectProps {
   onChange: (value: string) => void;
   placeholder?: string;
   disabled?: boolean;
+  compact?: boolean;
 }
 
 export const ParameterSelect = ({
@@ -24,17 +25,18 @@ export const ParameterSelect = ({
   options,
   onChange,
   placeholder = "Select an option",
-  disabled = false
+  disabled = false,
+  compact = false
 }: ParameterSelectProps) => {
   return (
-    <div className="space-y-2">
-      <Label htmlFor={id}>{label}</Label>
+    <div className={compact ? "space-y-1" : "space-y-2"}>
+      <Label htmlFor={id} className={compact ? "text-xs text-gray-600" : ""}>{label}</Label>
       <Select
         value={value}
         onValueChange={onChange}
         disabled={disabled}
       >
-        <SelectTrigger id={id}>
+        <SelectTrigger id={id} className={compact ? "h-8 text-sm" : ""}>
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
