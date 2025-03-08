@@ -1,36 +1,16 @@
 
 import { Globe, Cloud, FileText, Database } from "lucide-react";
 import { SourceCard } from "../../SourceCard";
-import { useRef } from "react";
 
 interface ImportSourcesGridProps {
   selectedSource: string | null;
   onSourceSelect: (sourceId: string) => void;
-  onFileSelect: (file: File) => void;
 }
 
 export const ImportSourcesGrid = ({ 
   selectedSource, 
-  onSourceSelect,
-  onFileSelect 
+  onSourceSelect
 }: ImportSourcesGridProps) => {
-  const fileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleSourceClick = (sourceId: string) => {
-    onSourceSelect(sourceId);
-    
-    if (sourceId === "local" && fileInputRef.current) {
-      fileInputRef.current.click();
-    }
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      onFileSelect(file);
-    }
-  };
-
   const sources = [
     {
       id: "jira",
@@ -59,26 +39,17 @@ export const ImportSourcesGrid = ({
   ];
 
   return (
-    <>
-      <input
-        type="file"
-        ref={fileInputRef}
-        className="hidden"
-        onChange={handleFileChange}
-        accept=".doc,.docx,.pdf,.txt"
-      />
-      <div className="grid md:grid-cols-2 gap-6 mb-12">
-        {sources.map((source) => (
-          <SourceCard
-            key={source.id}
-            title={source.title}
-            description={source.description}
-            icon={source.icon}
-            selected={selectedSource === source.id}
-            onClick={() => handleSourceClick(source.id)}
-          />
-        ))}
-      </div>
-    </>
+    <div className="grid md:grid-cols-2 gap-6 mb-12">
+      {sources.map((source) => (
+        <SourceCard
+          key={source.id}
+          title={source.title}
+          description={source.description}
+          icon={source.icon}
+          selected={selectedSource === source.id}
+          onClick={() => onSourceSelect(source.id)}
+        />
+      ))}
+    </div>
   );
 };

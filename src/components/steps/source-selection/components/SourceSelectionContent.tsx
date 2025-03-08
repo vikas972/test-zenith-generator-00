@@ -47,7 +47,6 @@ export const SourceSelectionContent = ({
       <ImportSourcesGrid
         selectedSource={selectedSource}
         onSourceSelect={setSelectedSource}
-        onFileSelect={handleSourceFileSelect}
       />
 
       <RequirementBundleSection
@@ -58,6 +57,7 @@ export const SourceSelectionContent = ({
         onBundleRetry={handleBundleRetry}
         onSelectBundle={handleSelectBundle}
         selectedBundleId={selectedBundleId}
+        selectedSource={selectedSource}
       />
     </>
   );

@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { Card, CardContent } from "@/components/ui/card";
 import { RequirementBundle, RequirementFile } from "./types";
@@ -14,6 +15,7 @@ interface RequirementBundleSectionProps {
   onBundleRetry: (bundleId: string) => void;
   onSelectBundle: (bundleId: string | null) => void;
   selectedBundleId: string | null;
+  selectedSource: string | null;
 }
 
 export const RequirementBundleSection = ({
@@ -23,7 +25,8 @@ export const RequirementBundleSection = ({
   onBundleDelete,
   onBundleRetry,
   onSelectBundle,
-  selectedBundleId
+  selectedBundleId,
+  selectedSource
 }: RequirementBundleSectionProps) => {
   const {
     isNewBundleDialogOpen,
@@ -40,7 +43,8 @@ export const RequirementBundleSection = ({
     bundles,
     onBundleAdd,
     onBundleUpdate,
-    selectedBundleId
+    selectedBundleId,
+    selectedSource
   });
 
   const handleDeleteFile = (bundleId: string, fileId: string) => {
@@ -55,7 +59,13 @@ export const RequirementBundleSection = ({
   return (
     <div className="space-y-6">
       <Card className="shadow-sm border-gray-200">
-        <BundleHeader onCreateBundle={() => setIsNewBundleDialogOpen(true)} />
+        <BundleHeader onCreateBundle={() => {
+          if (!selectedSource) {
+            toast.error("Please select a source type first");
+            return;
+          }
+          setIsNewBundleDialogOpen(true);
+        }} />
         <CardContent>
           <BundleList 
             bundles={bundles}
@@ -67,7 +77,13 @@ export const RequirementBundleSection = ({
             onAddFile={handleAddFileToBundle}
             onDeleteFile={handleDeleteFile}
             onSelectBundle={onSelectBundle}
-            onCreateBundle={() => setIsNewBundleDialogOpen(true)}
+            onCreateBundle={() => {
+              if (!selectedSource) {
+                toast.error("Please select a source type first");
+                return;
+              }
+              setIsNewBundleDialogOpen(true);
+            }}
           />
         </CardContent>
       </Card>

@@ -8,13 +8,15 @@ interface UseBundleManagerProps {
   onBundleAdd: (bundle: RequirementBundle) => void;
   onBundleUpdate: (bundleId: string, files: RequirementFile[]) => void;
   selectedBundleId: string | null;
+  selectedSource: string | null;
 }
 
 export const useBundleManager = ({
   bundles,
   onBundleAdd,
   onBundleUpdate,
-  selectedBundleId
+  selectedBundleId,
+  selectedSource
 }: UseBundleManagerProps) => {
   const [isNewBundleDialogOpen, setIsNewBundleDialogOpen] = useState(false);
   const [isAddFileDialogOpen, setIsAddFileDialogOpen] = useState(false);
@@ -35,10 +37,16 @@ export const useBundleManager = ({
       return;
     }
 
+    if (!selectedSource) {
+      toast.error("Please select a source type first");
+      return;
+    }
+
     const newBundle: RequirementBundle = {
       id: `bundle-${Date.now()}`,
       name: name,
       createdAt: new Date(),
+      source: selectedSource,
       files: [],
       totalFiles: totalFiles,
       status: "incomplete"

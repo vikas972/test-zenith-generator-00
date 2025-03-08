@@ -43,6 +43,7 @@ export interface RequirementBundle {
   id: string;
   name: string;
   createdAt: Date;
+  source: string;
   files: RequirementFile[];
   totalFiles: number;
   status: "incomplete" | "parsing" | "completed" | "failed";

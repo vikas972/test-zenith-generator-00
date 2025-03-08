@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { FileText, Trash2, RefreshCw, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { RequirementBundle, RequirementFile } from "../types";
 import { FileItem } from "./FileItem";
 
@@ -43,6 +44,21 @@ export const BundleItem = ({
     }
   };
 
+  const getSourceLabel = (sourceId: string) => {
+    switch (sourceId) {
+      case "jira":
+        return "JIRA";
+      case "confluence":
+        return "Confluence";
+      case "local":
+        return "Local Files";
+      case "database":
+        return "Database";
+      default:
+        return sourceId;
+    }
+  };
+
   return (
     <div 
       key={bundle.id}
@@ -60,7 +76,8 @@ export const BundleItem = ({
             <div className="font-medium text-gray-900">{bundle.name}</div>
             <div className="text-sm text-gray-500">
               {bundle.files.length} of {bundle.totalFiles} files • 
-              {bundle.createdAt.toLocaleDateString()}
+              {bundle.createdAt.toLocaleDateString()} • 
+              <Badge variant="outline" className="ml-1">{getSourceLabel(bundle.source)}</Badge>
             </div>
           </div>
         </div>

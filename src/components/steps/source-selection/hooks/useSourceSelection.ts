@@ -23,12 +23,18 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
   });
 
   const handleSourceFileSelect = (file: File) => {
+    if (!selectedSource) {
+      toast.error("Please select a source type first");
+      return;
+    }
+    
     // When a file is selected via the import sources grid,
     // we'll create a new bundle with this file
     const newBundle: RequirementBundle = {
       id: `bundle-${Date.now()}`,
       name: `Bundle from ${file.name}`,
       createdAt: new Date(),
+      source: selectedSource,
       files: [],
       totalFiles: 1,
       status: "incomplete"
