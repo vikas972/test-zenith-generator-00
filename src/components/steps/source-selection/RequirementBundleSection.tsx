@@ -14,6 +14,7 @@ interface RequirementBundleSectionProps {
   onBundleDelete: (bundleId: string) => void;
   onBundleRetry: (bundleId: string) => void;
   onSelectBundle: (bundleId: string | null) => void;
+  onBundleImport: (bundleId: string) => void;
   selectedBundleId: string | null;
   selectedSource: string | null;
 }
@@ -25,6 +26,7 @@ export const RequirementBundleSection = ({
   onBundleDelete,
   onBundleRetry,
   onSelectBundle,
+  onBundleImport,
   selectedBundleId,
   selectedSource
 }: RequirementBundleSectionProps) => {
@@ -77,6 +79,7 @@ export const RequirementBundleSection = ({
             onAddFile={handleAddFileToBundle}
             onDeleteFile={handleDeleteFile}
             onSelectBundle={onSelectBundle}
+            onImportBundle={onBundleImport}
             onCreateBundle={() => {
               if (!selectedSource) {
                 toast.error("Please select a source type first");

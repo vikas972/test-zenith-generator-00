@@ -13,9 +13,9 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
   const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
   const [bundles, setBundles] = useState<RequirementBundle[]>([]);
   const [globalParameters, setGlobalParameters] = useState<GlobalParameters>({
-    product: "",
-    subProduct: "",
-    domain: "",
+    product: "DTB",
+    subProduct: "CBX",
+    domain: "PAYMENTS",
     requirementType: "",
     region: "",
     country: "",
@@ -93,6 +93,14 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
             if (files.every(f => f.status === "completed")) {
               status = "completed";
             }
+            // If any file is importing, the bundle is importing
+            else if (files.some(f => f.status === "importing")) {
+              status = "importing";
+            }
+            // If any file is imported, check if all are imported
+            else if (files.some(f => f.status === "imported")) {
+              status = files.every(f => f.status === "imported") ? "imported" : "incomplete";
+            }
             // If any file failed, the bundle failed
             else if (files.some(f => f.status === "failed")) {
               status = "failed";
@@ -154,12 +162,59 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
     toast.success("Retrying bundle processing...");
   };
 
+  const handleBundleImport = (bundleId: string) => {
+    const bundle = bundles.find(b => b.id === bundleId);
+    if (!bundle) {
+      toast.error("Bundle not found");
+      return;
+    }
+
+    if (bundle.status !== "completed") {
+      toast.error("Bundle must be completed before importing");
+      return;
+    }
+
+    // Set the bundle status to importing
+    setBundles(prev => 
+      prev.map(b => 
+        b.id === bundleId 
+          ? { 
+              ...b, 
+              status: "importing",
+              files: b.files.map(f => ({ ...f, status: "importing" }))
+            } 
+          : b
+      )
+    );
+
+    toast.success(`Importing bundle "${bundle.name}"...`);
+
+    // Simulate the import process with a delay
+    setTimeout(() => {
+      setBundles(prev => 
+        prev.map(b => 
+          b.id === bundleId 
+            ? { 
+                ...b, 
+                status: "imported",
+                files: b.files.map(f => ({ ...f, status: "imported" }))
+              } 
+            : b
+        )
+      );
+      toast.success(`Bundle "${bundle.name}" imported successfully`);
+      
+      // Automatically select the newly imported bundle
+      handleSelectBundle(bundleId);
+    }, 3000);
+  };
+
   const handleSelectBundle = (bundleId: string | null) => {
     setSelectedBundleId(bundleId);
     
     if (bundleId) {
       const bundle = bundles.find(b => b.id === bundleId);
-      if (bundle && bundle.status === "completed") {
+      if (bundle && bundle.status === "imported") {
         // Convert the bundle to the format expected by the onFileSelect prop
         const mainFile = bundle.files.find(f => f.category === "main");
         if (mainFile) {
@@ -172,6 +227,9 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
         }
       } else {
         onFileSelect(null);
+        if (bundle) {
+          toast.error(`Bundle "${bundle.name}" must be imported before it can be selected`);
+        }
       }
     } else {
       onFileSelect(null);
@@ -193,6 +251,7 @@ export const useSourceSelection = (onFileSelect: (file: SelectedFile | null) => 
     handleBundleUpdate,
     handleBundleDelete,
     handleBundleRetry,
+    handleBundleImport,
     handleSelectBundle,
     handleGlobalParametersChange
   };

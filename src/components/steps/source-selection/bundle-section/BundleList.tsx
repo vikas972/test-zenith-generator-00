@@ -13,6 +13,7 @@ interface BundleListProps {
   onAddFile: (bundleId: string) => void;
   onDeleteFile: (bundleId: string, fileId: string) => void;
   onSelectBundle: (bundleId: string | null) => void;
+  onImportBundle: (bundleId: string) => void;
   onCreateBundle: () => void;
 }
 
@@ -26,6 +27,7 @@ export const BundleList = ({
   onAddFile,
   onDeleteFile,
   onSelectBundle,
+  onImportBundle,
   onCreateBundle,
 }: BundleListProps) => {
   if (bundles.length === 0) {
@@ -46,6 +48,7 @@ export const BundleList = ({
           onAddFile={onAddFile}
           onDeleteFile={onDeleteFile}
           onSelectBundle={onSelectBundle}
+          onImportBundle={onImportBundle}
         />
       ))}
     </div>

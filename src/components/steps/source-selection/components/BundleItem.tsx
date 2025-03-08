@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { FileText, Trash2, RefreshCw, Plus } from "lucide-react";
+import { FileText, Trash2, RefreshCw, Plus, Upload } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { RequirementBundle, RequirementFile } from "../types";
@@ -16,6 +16,7 @@ interface BundleItemProps {
   onAddFile: (bundleId: string) => void;
   onDeleteFile: (bundleId: string, fileId: string) => void;
   onSelectBundle: (bundleId: string | null) => void;
+  onImportBundle: (bundleId: string) => void;
 }
 
 export const BundleItem = ({
@@ -27,8 +28,11 @@ export const BundleItem = ({
   onRetryBundle,
   onAddFile,
   onDeleteFile,
-  onSelectBundle
+  onSelectBundle,
+  onImportBundle
 }: BundleItemProps) => {
+  const [isImporting, setIsImporting] = useState(false);
+  
   const getBundleStatusColor = (bundle: RequirementBundle) => {
     switch (bundle.status) {
       case "completed":
@@ -39,6 +43,10 @@ export const BundleItem = ({
         return "bg-yellow-100 text-yellow-800";
       case "incomplete":
         return "bg-gray-100 text-gray-800";
+      case "importing":
+        return "bg-blue-100 text-blue-800";
+      case "imported":
+        return "bg-purple-100 text-purple-800";
       default:
         return "bg-gray-100 text-gray-800";
     }
@@ -58,6 +66,15 @@ export const BundleItem = ({
         return sourceId;
     }
   };
+
+  const handleImport = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsImporting(true);
+    onImportBundle(bundle.id);
+  };
+
+  const isImportable = bundle.status === "completed" && bundle.files.every(f => f.status === "completed");
+  const isImported = bundle.status === "imported";
 
   return (
     <div 
@@ -132,7 +149,7 @@ export const BundleItem = ({
             checked={isSelected}
             onChange={() => onSelectBundle(bundle.id)}
             onClick={(e) => e.stopPropagation()}
-            disabled={bundle.status !== "completed"}
+            disabled={bundle.status !== "imported"}
             className="h-4 w-4 text-primary border-gray-300 focus:ring-primary"
           />
         </div>
@@ -161,6 +178,20 @@ export const BundleItem = ({
               >
                 <Plus className="h-4 w-4 mr-1" />
                 Add File
+              </Button>
+            </div>
+          )}
+          
+          {bundle.files.length > 0 && (
+            <div className="mt-4 border-t pt-4 flex justify-end">
+              <Button 
+                variant="default" 
+                onClick={handleImport}
+                disabled={!isImportable || isImporting || isImported}
+                className="gap-2"
+              >
+                <Upload className="h-4 w-4" />
+                {isImported ? "Imported" : isImporting ? "Importing..." : "Import Bundle"}
               </Button>
             </div>
           )}

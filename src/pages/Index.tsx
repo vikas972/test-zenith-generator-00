@@ -48,6 +48,8 @@ export const Index = () => {
     }
   };
 
+  const canProceedFromSourceSelection = currentStep !== 0 || selectedFile !== null;
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Header />
@@ -66,7 +68,7 @@ export const Index = () => {
             )}
             <Button
               onClick={() => setCurrentStep((prev) => Math.min(STEPS.length - 1, prev + 1))}
-              disabled={currentStep === STEPS.length - 1}
+              disabled={currentStep === STEPS.length - 1 || !canProceedFromSourceSelection}
             >
               Next
             </Button>

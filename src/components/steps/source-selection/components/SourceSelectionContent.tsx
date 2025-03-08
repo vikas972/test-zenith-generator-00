@@ -19,6 +19,7 @@ interface SourceSelectionContentProps {
   handleBundleUpdate: (bundleId: string, files: RequirementFile[]) => void;
   handleBundleDelete: (bundleId: string) => void;
   handleBundleRetry: (bundleId: string) => void;
+  handleBundleImport: (bundleId: string) => void;
   handleSelectBundle: (bundleId: string | null) => void;
   handleGlobalParametersChange: (params: GlobalParameters) => void;
 }
@@ -34,6 +35,7 @@ export const SourceSelectionContent = ({
   handleBundleUpdate,
   handleBundleDelete,
   handleBundleRetry,
+  handleBundleImport,
   handleSelectBundle,
   handleGlobalParametersChange
 }: SourceSelectionContentProps) => {
@@ -55,6 +57,7 @@ export const SourceSelectionContent = ({
         onBundleUpdate={handleBundleUpdate}
         onBundleDelete={handleBundleDelete}
         onBundleRetry={handleBundleRetry}
+        onBundleImport={handleBundleImport}
         onSelectBundle={handleSelectBundle}
         selectedBundleId={selectedBundleId}
         selectedSource={selectedSource}

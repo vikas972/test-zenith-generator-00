@@ -1,4 +1,3 @@
-
 export interface SelectedFile {
   id: string;
   name: string;
@@ -35,7 +34,7 @@ export interface RequirementFile {
   category: "main" | "supporting";
   breakRequirementsBy: "userJourney" | "userStories" | "section" | "paragraph" | "page";
   context: string;
-  status: "parsing" | "completed" | "failed";
+  status: "parsing" | "completed" | "failed" | "importing" | "imported";
   file?: File;
 }
 
@@ -46,7 +45,7 @@ export interface RequirementBundle {
   source: string;
   files: RequirementFile[];
   totalFiles: number;
-  status: "incomplete" | "parsing" | "completed" | "failed";
+  status: "incomplete" | "parsing" | "completed" | "failed" | "importing" | "imported";
 }
 
 export interface GlobalParameters {
