@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { toast } from "sonner";
 import { RequirementBundle, RequirementFile } from "../types";
@@ -20,15 +19,11 @@ export const useBundleManager = ({
 }: UseBundleManagerProps) => {
   const [isNewBundleDialogOpen, setIsNewBundleDialogOpen] = useState(false);
   const [isAddFileDialogOpen, setIsAddFileDialogOpen] = useState(false);
-  const [expandedBundles, setExpandedBundles] = useState<string[]>([]);
+  const [expandedBundleId, setExpandedBundleId] = useState<string | null>(null);
   const [selectedBundleForFile, setSelectedBundleForFile] = useState<string | null>(null);
 
   const toggleExpandBundle = (bundleId: string) => {
-    setExpandedBundles(prev => 
-      prev.includes(bundleId) 
-        ? prev.filter(id => id !== bundleId)
-        : [...prev, bundleId]
-    );
+    setExpandedBundleId(prev => prev === bundleId ? null : bundleId);
   };
 
   const handleCreateNewBundle = (name: string, totalFiles: number) => {
@@ -55,11 +50,14 @@ export const useBundleManager = ({
     onBundleAdd(newBundle);
     setIsNewBundleDialogOpen(false);
     toast.success("New requirement bundle created");
+    
+    setExpandedBundleId(newBundle.id);
   };
 
   const handleAddFileToBundle = (bundleId: string) => {
     setSelectedBundleForFile(bundleId);
     setIsAddFileDialogOpen(true);
+    setExpandedBundleId(bundleId);
   };
 
   const handleAddFile = (
@@ -82,7 +80,6 @@ export const useBundleManager = ({
       return;
     }
 
-    // Check if this bundle already has a main file if trying to add a main file
     if (category === "main" && bundle.files.some(f => f.category === "main")) {
       toast.error("This bundle already has a main document");
       return;
@@ -104,15 +101,11 @@ export const useBundleManager = ({
     onBundleUpdate(selectedBundleForFile, updatedFiles);
     
     setIsAddFileDialogOpen(false);
-    setSelectedBundleForFile(null); // Reset the selected bundle after adding the file
+    setSelectedBundleForFile(null);
     toast.success(`File added to bundle "${bundle.name}"`);
     
-    // Automatically expand the bundle when adding a file
-    if (!expandedBundles.includes(selectedBundleForFile)) {
-      setExpandedBundles(prev => [...prev, selectedBundleForFile]);
-    }
+    setExpandedBundleId(selectedBundleForFile);
 
-    // Start parsing simulation
     setTimeout(() => {
       onBundleUpdate(
         selectedBundleForFile, 
@@ -134,7 +127,8 @@ export const useBundleManager = ({
     setIsNewBundleDialogOpen,
     isAddFileDialogOpen,
     setIsAddFileDialogOpen,
-    expandedBundles,
+    expandedBundleId,
+    setExpandedBundleId,
     selectedBundleForFile,
     bundleHasMainFile,
     toggleExpandBundle,

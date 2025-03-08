@@ -35,7 +35,8 @@ export const RequirementBundleSection = ({
     setIsNewBundleDialogOpen,
     isAddFileDialogOpen,
     setIsAddFileDialogOpen,
-    expandedBundles,
+    expandedBundleId,
+    setExpandedBundleId,
     bundleHasMainFile,
     toggleExpandBundle,
     handleCreateNewBundle,
@@ -66,6 +67,14 @@ export const RequirementBundleSection = ({
     setIsNewBundleDialogOpen(true);
   };
 
+  // Handle the import action to collapse the bundle after importing
+  const handleImportBundle = (bundleId: string) => {
+    // Collapse the bundle that's being imported
+    setExpandedBundleId(null);
+    // Call the original import handler
+    onBundleImport(bundleId);
+  };
+
   return (
     <div className="space-y-6">
       <Card className="shadow-sm border-gray-200">
@@ -73,7 +82,7 @@ export const RequirementBundleSection = ({
         <CardContent>
           <BundleList 
             bundles={bundles}
-            expandedBundles={expandedBundles}
+            expandedBundleId={expandedBundleId}
             selectedBundleId={selectedBundleId}
             onToggleExpand={toggleExpandBundle}
             onDeleteBundle={onBundleDelete}
@@ -81,7 +90,7 @@ export const RequirementBundleSection = ({
             onAddFile={handleAddFileToBundle}
             onDeleteFile={handleDeleteFile}
             onSelectBundle={onSelectBundle}
-            onImportBundle={onBundleImport}
+            onImportBundle={handleImportBundle}
             onCreateBundle={handleCreateBundleClick}
           />
         </CardContent>

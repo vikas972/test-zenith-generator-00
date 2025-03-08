@@ -5,7 +5,7 @@ import { EmptyBundleState } from "../components/EmptyBundleState";
 
 interface BundleListProps {
   bundles: RequirementBundle[];
-  expandedBundles: string[];
+  expandedBundleId: string | null;
   selectedBundleId: string | null;
   onToggleExpand: (bundleId: string) => void;
   onDeleteBundle: (bundleId: string) => void;
@@ -19,7 +19,7 @@ interface BundleListProps {
 
 export const BundleList = ({
   bundles,
-  expandedBundles,
+  expandedBundleId,
   selectedBundleId,
   onToggleExpand,
   onDeleteBundle,
@@ -40,7 +40,7 @@ export const BundleList = ({
         <BundleItem
           key={bundle.id}
           bundle={bundle}
-          isExpanded={expandedBundles.includes(bundle.id)}
+          isExpanded={expandedBundleId === bundle.id}
           isSelected={selectedBundleId === bundle.id}
           onToggleExpand={onToggleExpand}
           onDeleteBundle={onDeleteBundle}
