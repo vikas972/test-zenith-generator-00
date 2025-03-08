@@ -9,8 +9,8 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   const sourceSelectionState = useSourceSelection(onFileSelect);
   
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="max-w-5xl mx-auto">
+    <div className="w-full mx-auto px-4 py-8">
+      <div className="w-full mx-auto">
         <Toaster position="top-right" />
         <SourceSelectionHeader />
         <SourceSelectionContent {...sourceSelectionState} />
