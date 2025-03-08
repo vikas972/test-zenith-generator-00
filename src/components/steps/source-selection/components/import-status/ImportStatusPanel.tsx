@@ -22,6 +22,8 @@ export const ImportStatusPanel = ({
 }: ImportStatusPanelProps) => {
   const [isExpanded, setIsExpanded] = useState(true);
   const [visibleBundles, setVisibleBundles] = useState<RequirementBundle[]>([]);
+  // Initialize with empty array for the accordion value (all collapsed)
+  const [expandedBundles, setExpandedBundles] = useState<string[]>([]);
 
   // Update visible bundles when imported bundles change
   useEffect(() => {
@@ -83,7 +85,12 @@ export const ImportStatusPanel = ({
         {isExpanded && (
           <CardContent>
             <div className="space-y-4">
-              <Accordion type="multiple" className="space-y-4">
+              <Accordion 
+                type="multiple" 
+                className="space-y-4"
+                value={expandedBundles}
+                onValueChange={setExpandedBundles}
+              >
                 {visibleBundles.map(bundle => {
                   // Determine if bundle can be selected (all files imported)
                   const isComplete = bundle.status === "imported";

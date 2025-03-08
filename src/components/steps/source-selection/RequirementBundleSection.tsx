@@ -75,6 +75,34 @@ export const RequirementBundleSection = ({
     onBundleImport(bundleId);
   };
 
+  // Enhanced version of handleAddFile to handle additional parameters
+  const handleAddFileWithParams = (
+    file: File, 
+    name: string, 
+    category: "main" | "supporting", 
+    breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page",
+    context: string,
+    requirementType: string,
+    region?: string,
+    country?: string,
+    customer?: string
+  ) => {
+    // Construct context with additional parameters if provided
+    let enhancedContext = context || "";
+    
+    if (region) {
+      enhancedContext += `\nRegion: ${region}`;
+    }
+    if (country) {
+      enhancedContext += `\nCountry: ${country}`;
+    }
+    if (customer) {
+      enhancedContext += `\nCustomer: ${customer}`;
+    }
+    
+    handleAddFile(file, name, category, breakBy, enhancedContext, requirementType);
+  };
+
   return (
     <div className="space-y-6">
       <Card className="shadow-sm border-gray-200">
@@ -102,7 +130,7 @@ export const RequirementBundleSection = ({
         isAddFileDialogOpen={isAddFileDialogOpen}
         setIsAddFileDialogOpen={setIsAddFileDialogOpen}
         onCreateBundle={handleCreateNewBundle}
-        onAddFile={handleAddFile}
+        onAddFile={handleAddFileWithParams}
         bundleHasMainFile={bundleHasMainFile}
       />
     </div>

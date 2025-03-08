@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { RequirementBundle, RequirementFile } from "../types";
 
@@ -14,52 +14,82 @@ export const useBundleManager = ({
   bundles,
   onBundleAdd,
   onBundleUpdate,
-  selectedBundleId,
   selectedSource
 }: UseBundleManagerProps) => {
   const [isNewBundleDialogOpen, setIsNewBundleDialogOpen] = useState(false);
   const [isAddFileDialogOpen, setIsAddFileDialogOpen] = useState(false);
   const [expandedBundleId, setExpandedBundleId] = useState<string | null>(null);
-  const [selectedBundleForFile, setSelectedBundleForFile] = useState<string | null>(null);
+  const [activeBundleId, setActiveBundleId] = useState<string | null>(null);
+  const [bundleHasMainFile, setBundleHasMainFile] = useState(false);
 
+  // Check if the active bundle has a main file when active bundle changes
+  useEffect(() => {
+    if (activeBundleId) {
+      const activeBundle = bundles.find(b => b.id === activeBundleId);
+      const hasMainFile = activeBundle?.files.some(f => f.category === "main") || false;
+      setBundleHasMainFile(hasMainFile);
+    } else {
+      setBundleHasMainFile(false);
+    }
+  }, [activeBundleId, bundles]);
+
+  // Toggle expand/collapse of a bundle
   const toggleExpandBundle = (bundleId: string) => {
-    setExpandedBundleId(prev => prev === bundleId ? null : bundleId);
+    // If clicking the already expanded bundle, collapse it
+    if (expandedBundleId === bundleId) {
+      setExpandedBundleId(null);
+    } else {
+      // Otherwise, expand this one and collapse any other
+      setExpandedBundleId(bundleId);
+    }
   };
 
+  // Create a new bundle
   const handleCreateNewBundle = (name: string, totalFiles: number) => {
-    if (!name.trim()) {
-      toast.error("Bundle name is required");
-      return;
-    }
-
-    if (!selectedSource) {
-      toast.error("Please select a source type first");
-      return;
-    }
-
     const newBundle: RequirementBundle = {
       id: `bundle-${Date.now()}`,
-      name: name,
+      name,
       createdAt: new Date(),
-      source: selectedSource,
+      source: selectedSource || "unknown",
       files: [],
-      totalFiles: totalFiles,
+      totalFiles,
       status: "incomplete"
     };
-
+    
     onBundleAdd(newBundle);
     setIsNewBundleDialogOpen(false);
-    toast.success("New requirement bundle created");
     
+    // Auto-expand the newly created bundle
     setExpandedBundleId(newBundle.id);
+    
+    toast.success(`Bundle "${name}" created`);
   };
 
+  // Handle adding a file to a bundle
   const handleAddFileToBundle = (bundleId: string) => {
-    setSelectedBundleForFile(bundleId);
+    const bundle = bundles.find(b => b.id === bundleId);
+    if (!bundle) return;
+    
+    // Check if bundle already has all the files
+    if (bundle.files.length >= bundle.totalFiles) {
+      toast.error(`Bundle already has ${bundle.totalFiles} files`);
+      return;
+    }
+    
+    // Set active bundle and open add file dialog
+    setActiveBundleId(bundleId);
+    
+    // Check if the bundle has a main file
+    const hasMainFile = bundle.files.some(f => f.category === "main");
+    setBundleHasMainFile(hasMainFile);
+    
     setIsAddFileDialogOpen(true);
+    
+    // Make sure the bundle is expanded when adding files
     setExpandedBundleId(bundleId);
   };
 
+  // Handle the actual file addition
   const handleAddFile = (
     file: File, 
     name: string, 
@@ -68,59 +98,51 @@ export const useBundleManager = ({
     context: string,
     requirementType: string
   ) => {
-    if (!selectedBundleForFile) {
-      toast.error("Bundle not found");
-      return;
-    }
-
-    const bundle = bundles.find(b => b.id === selectedBundleForFile);
+    if (!activeBundleId) return;
     
-    if (!bundle) {
-      toast.error("Bundle not found");
-      return;
-    }
-
-    if (category === "main" && bundle.files.some(f => f.category === "main")) {
-      toast.error("This bundle already has a main document");
-      return;
-    }
-
-    const newRequirementFile: RequirementFile = {
+    const bundle = bundles.find(b => b.id === activeBundleId);
+    if (!bundle) return;
+    
+    // Create a new file
+    const newFile: RequirementFile = {
       id: `file-${Date.now()}`,
-      name: name,
+      name,
       uploadTime: new Date(),
-      category: category,
+      category,
       breakRequirementsBy: breakBy,
-      context: context,
+      context,
       status: "parsing",
-      file: file
+      file
     };
-
-    const updatedFiles = [...bundle.files, newRequirementFile];
     
-    onBundleUpdate(selectedBundleForFile, updatedFiles);
+    // Add the file to the bundle
+    const updatedFiles = [...bundle.files, newFile];
+    onBundleUpdate(activeBundleId, updatedFiles);
     
+    // Close the dialog
     setIsAddFileDialogOpen(false);
-    setSelectedBundleForFile(null);
-    toast.success(`File added to bundle "${bundle.name}"`);
     
-    setExpandedBundleId(selectedBundleForFile);
-
+    toast.success(`File "${name}" added to bundle "${bundle.name}"`);
+    
+    // Simulate file processing
     setTimeout(() => {
-      onBundleUpdate(
-        selectedBundleForFile, 
-        updatedFiles.map(f => 
-          f.id === newRequirementFile.id 
-            ? { ...f, status: "completed" } 
-            : f
-        )
+      // Update the file status to completed
+      const processedFiles = updatedFiles.map(f => 
+        f.id === newFile.id ? { ...f, status: "completed" } : f
       );
+      
+      onBundleUpdate(activeBundleId, processedFiles);
+      
+      // Update bundle status if all files are added
+      if (processedFiles.length === bundle.totalFiles) {
+        const allCompleted = processedFiles.every(f => f.status === "completed");
+        if (allCompleted) {
+          const updatedBundle = { ...bundle, status: "completed" };
+          onBundleAdd(updatedBundle);
+        }
+      }
     }, 2000);
   };
-
-  const bundleHasMainFile = selectedBundleForFile 
-    ? bundles.find(b => b.id === selectedBundleForFile)?.files.some(f => f.category === "main") ?? false
-    : false;
 
   return {
     isNewBundleDialogOpen,
@@ -129,7 +151,6 @@ export const useBundleManager = ({
     setIsAddFileDialogOpen,
     expandedBundleId,
     setExpandedBundleId,
-    selectedBundleForFile,
     bundleHasMainFile,
     toggleExpandBundle,
     handleCreateNewBundle,

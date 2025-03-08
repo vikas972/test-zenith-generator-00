@@ -9,12 +9,15 @@ interface DialogManagerProps {
   setIsAddFileDialogOpen: (isOpen: boolean) => void;
   onCreateBundle: (name: string, totalFiles: number) => void;
   onAddFile: (
-    file: File,
-    name: string,
-    category: "main" | "supporting",
+    file: File, 
+    name: string, 
+    category: "main" | "supporting", 
     breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page",
     context: string,
-    requirementType: string
+    requirementType: string,
+    region?: string,
+    country?: string,
+    customer?: string
   ) => void;
   bundleHasMainFile: boolean;
 }
@@ -30,13 +33,13 @@ export const DialogManager = ({
 }: DialogManagerProps) => {
   return (
     <>
-      <NewBundleDialog
+      <NewBundleDialog 
         isOpen={isNewBundleDialogOpen}
         onOpenChange={setIsNewBundleDialogOpen}
         onCreateBundle={onCreateBundle}
       />
-
-      <AddFileDialog
+      
+      <AddFileDialog 
         isOpen={isAddFileDialogOpen}
         onOpenChange={setIsAddFileDialogOpen}
         onAddFile={onAddFile}

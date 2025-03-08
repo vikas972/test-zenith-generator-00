@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { FileUploadArea } from "./file-dialog/FileUploadArea";
 import { FileMetadataForm } from "./file-dialog/FileMetadataForm";
+import { REGIONS, COUNTRIES, CUSTOMERS } from "../types";
 
 interface AddFileDialogProps {
   isOpen: boolean;
@@ -21,7 +22,10 @@ interface AddFileDialogProps {
     category: "main" | "supporting", 
     breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page",
     context: string,
-    requirementType: string
+    requirementType: string,
+    region?: string,
+    country?: string,
+    customer?: string
   ) => void;
   bundleHasMainFile: boolean;
 }
@@ -34,21 +38,39 @@ export const AddFileDialog = ({
 }: AddFileDialogProps) => {
   const [file, setFile] = useState<File | null>(null);
   const [fileName, setFileName] = useState("");
-  const [fileCategory, setFileCategory] = useState<"main" | "supporting">("supporting");
-  const [fileBreakBy, setFileBreakBy] = useState<"userJourney" | "userStories" | "section" | "paragraph" | "page">("section");
+  const [fileCategory, setFileCategory] = useState<"main" | "supporting">("main");
+  const [fileBreakBy, setFileBreakBy] = useState<"userJourney" | "userStories" | "section" | "paragraph" | "page">("userJourney");
   const [fileContext, setFileContext] = useState("");
-  const [requirementType, setRequirementType] = useState("");
+  const [requirementType, setRequirementType] = useState("K4");
+  const [region, setRegion] = useState("");
+  const [country, setCountry] = useState("");
+  const [customer, setCustomer] = useState("");
 
   // Reset form state when the dialog opens or closes
   useEffect(() => {
     if (!isOpen) {
       resetState();
+    } else {
+      // Set default values when dialog opens
+      setFileCategory(bundleHasMainFile ? "supporting" : "main");
+      setFileBreakBy("userJourney");
+      setRequirementType("K4");
     }
-  }, [isOpen]);
+  }, [isOpen, bundleHasMainFile]);
 
   const handleAddFile = () => {
     if (file && fileName.trim()) {
-      onAddFile(file, fileName, fileCategory, fileBreakBy, fileContext, requirementType);
+      onAddFile(
+        file, 
+        fileName, 
+        fileCategory, 
+        fileBreakBy, 
+        fileContext, 
+        requirementType,
+        requirementType === "K2" ? region : undefined,
+        requirementType === "K3" ? country : undefined,
+        requirementType === "K4" ? customer : undefined
+      );
       resetState();
     }
   };
@@ -56,10 +78,13 @@ export const AddFileDialog = ({
   const resetState = () => {
     setFile(null);
     setFileName("");
-    setFileCategory("supporting");
-    setFileBreakBy("section");
+    setFileCategory("main");
+    setFileBreakBy("userJourney");
     setFileContext("");
-    setRequirementType("");
+    setRequirementType("K4");
+    setRegion("");
+    setCountry("");
+    setCustomer("");
   };
 
   // Update filename when file changes
@@ -68,6 +93,22 @@ export const AddFileDialog = ({
     if (newFile) {
       setFileName(newFile.name.replace(/\.[^/.]+$/, ""));
     }
+  };
+
+  // Get available countries based on selected region
+  const getAvailableCountries = () => {
+    if (region && COUNTRIES[region as keyof typeof COUNTRIES]) {
+      return COUNTRIES[region as keyof typeof COUNTRIES];
+    }
+    return [];
+  };
+
+  // Get available customers based on selected country
+  const getAvailableCustomers = () => {
+    if (country && CUSTOMERS[country as keyof typeof CUSTOMERS]) {
+      return CUSTOMERS[country as keyof typeof CUSTOMERS];
+    }
+    return [];
   };
 
   return (
@@ -102,6 +143,18 @@ export const AddFileDialog = ({
                 requirementType={requirementType}
                 setRequirementType={setRequirementType}
                 bundleHasMainFile={bundleHasMainFile}
+                region={region}
+                setRegion={setRegion}
+                country={country}
+                setCountry={setCountry}
+                customer={customer}
+                setCustomer={setCustomer}
+                regions={REGIONS}
+                countries={getAvailableCountries()}
+                customers={getAvailableCustomers()}
+                showRegion={requirementType === "K2"}
+                showCountry={requirementType === "K3"}
+                showCustomer={requirementType === "K4"}
               />
             </div>
           </ScrollArea>
@@ -112,7 +165,15 @@ export const AddFileDialog = ({
             <Button variant="outline" onClick={() => onOpenChange(false)} size="sm">
               Cancel
             </Button>
-            <Button onClick={handleAddFile} disabled={!file || !fileName || !requirementType} size="sm">
+            <Button 
+              onClick={handleAddFile} 
+              disabled={!file || !fileName || !requirementType || 
+                (requirementType === "K2" && !region) ||
+                (requirementType === "K3" && !country) ||
+                (requirementType === "K4" && !customer)
+              } 
+              size="sm"
+            >
               Add File
             </Button>
           </div>
