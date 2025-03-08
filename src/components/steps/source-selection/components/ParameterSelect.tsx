@@ -29,7 +29,7 @@ export const ParameterSelect = ({
   compact = false
 }: ParameterSelectProps) => {
   return (
-    <div className={compact ? "space-y-1" : "space-y-2"}>
+    <div className={`${compact ? "space-y-1" : "space-y-2"} w-full`}>
       <Label htmlFor={id} className={compact ? "text-xs text-gray-600 font-medium block truncate" : ""}>
         {label}
       </Label>
@@ -40,11 +40,11 @@ export const ParameterSelect = ({
       >
         <SelectTrigger 
           id={id} 
-          className={compact ? "h-8 text-sm" : ""}
+          className={`${compact ? "h-8 text-sm" : ""} w-full`}
         >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
-        <SelectContent>
+        <SelectContent className="w-full">
           {options.map(option => (
             <SelectItem key={option.value} value={option.value}>
               {option.label}
