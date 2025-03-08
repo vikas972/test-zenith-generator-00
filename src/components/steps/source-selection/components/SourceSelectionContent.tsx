@@ -41,7 +41,7 @@ export const SourceSelectionContent = ({
   handleGlobalParametersChange
 }: SourceSelectionContentProps) => {
   return (
-    <>
+    <div className="w-full max-w-full">
       <GlobalParametersSection 
         parameters={globalParameters}
         onParametersChange={handleGlobalParametersChange}
@@ -69,6 +69,6 @@ export const SourceSelectionContent = ({
         onSelectBundle={handleSelectBundle}
         selectedBundleId={selectedBundleId}
       />
-    </>
+    </div>
   );
 };

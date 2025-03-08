@@ -106,7 +106,7 @@ export const GlobalParametersSection = ({
   }, [parameters.country]);
 
   return (
-    <Card className="mb-6 shadow-sm border-gray-200">
+    <Card className="mb-6 shadow-sm border-gray-200 w-full">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold">User Associations</CardTitle>
       </CardHeader>
