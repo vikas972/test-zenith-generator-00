@@ -1,6 +1,5 @@
 
 import { useState } from "react";
-import { Plus } from "lucide-react";
 import { RequirementBundle } from "../../types";
 import { BundleHeader } from "./BundleHeader";
 import { BundleActions } from "./BundleActions";
@@ -33,7 +32,7 @@ export const BundleItem = ({
 }: BundleItemProps) => {
   const [isImporting, setIsImporting] = useState(false);
   
-  // Enable radio button when all files are added to the bundle
+  // Enable radio button when all files are added to the bundle and it's imported
   const isAllFilesAdded = bundle.files.length >= bundle.totalFiles;
 
   const handleImport = (e: React.MouseEvent) => {
@@ -70,7 +69,10 @@ export const BundleItem = ({
             onDeleteBundle(bundle.id);
           }}
           isSelected={isSelected}
-          onSelectBundle={() => onSelectBundle(isSelected ? null : bundle.id)}
+          onSelectBundle={() => {
+            // Toggle selection or set new selection
+            onSelectBundle(isSelected ? null : bundle.id);
+          }}
           isAllFilesAdded={isAllFilesAdded}
         />
       </div>
