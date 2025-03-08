@@ -1,4 +1,5 @@
 
+import { Toaster } from "sonner";
 import { SourceSelectionProps } from "./source-selection/types";
 import { useSourceSelection } from "./source-selection/hooks/useSourceSelection";
 import { SourceSelectionHeader } from "./source-selection/components/SourceSelectionHeader";
@@ -10,6 +11,7 @@ export const SourceSelection = ({ onFileSelect }: SourceSelectionProps) => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="max-w-5xl mx-auto">
+        <Toaster position="top-right" />
         <SourceSelectionHeader />
         <SourceSelectionContent {...sourceSelectionState} />
       </div>
