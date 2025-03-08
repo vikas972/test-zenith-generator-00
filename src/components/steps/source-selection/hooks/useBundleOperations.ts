@@ -61,9 +61,9 @@ export const useBundleOperations = () => {
         if (bundle.id === bundleId) {
           return { 
             ...bundle, 
-            status: "parsing",
+            status: "parsing" as RequirementBundle["status"],
             files: bundle.files.map(f => 
-              f.status === "failed" ? { ...f, status: "parsing" } : f
+              f.status === "failed" ? { ...f, status: "parsing" as RequirementFile["status"] } : f
             )
           };
         }
@@ -78,8 +78,8 @@ export const useBundleOperations = () => {
           if (bundle.id === bundleId) {
             return { 
               ...bundle, 
-              status: "completed",
-              files: bundle.files.map(f => ({ ...f, status: "completed" }))
+              status: "completed" as RequirementBundle["status"],
+              files: bundle.files.map(f => ({ ...f, status: "completed" as RequirementFile["status"] }))
             };
           }
           return bundle;
@@ -108,8 +108,7 @@ export const useBundleOperations = () => {
         if (b.id === bundleId) {
           const updatedFiles = b.files.map(f => {
             // Explicitly cast the status to ensure type safety
-            const newStatus: RequirementFile["status"] = "importing";
-            return { ...f, status: newStatus };
+            return { ...f, status: "importing" as RequirementFile["status"] };
           });
           
           return { 
@@ -130,11 +129,10 @@ export const useBundleOperations = () => {
         setBundles(prev => 
           prev.map(b => {
             if (b.id === bundleId) {
-              const updatedFiles = b.files.map((f, fileIndex) => {
+              const updatedFiles = b.files.map((f) => {
                 if (f.id === file.id) {
                   // Explicitly type the status
-                  const newStatus: RequirementFile["status"] = "imported";
-                  return { ...f, status: newStatus };
+                  return { ...f, status: "imported" as RequirementFile["status"] };
                 }
                 return f;
               });

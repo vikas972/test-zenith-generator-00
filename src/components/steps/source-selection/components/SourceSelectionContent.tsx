@@ -64,7 +64,11 @@ export const SourceSelectionContent = ({
         selectedSource={selectedSource}
       />
       
-      <ImportStatusPanel importedBundles={bundles} />
+      <ImportStatusPanel 
+        importedBundles={bundles} 
+        onSelectBundle={handleSelectBundle}
+        selectedBundleId={selectedBundleId}
+      />
     </>
   );
 };
