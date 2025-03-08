@@ -104,15 +104,22 @@ export const useBundleOperations = () => {
 
     // Set the bundle status to importing
     setBundles(prev => 
-      prev.map(b => 
-        b.id === bundleId 
-          ? { 
-              ...b, 
-              status: "importing",
-              files: b.files.map(f => ({ ...f, status: "importing" }))
-            } 
-          : b
-      )
+      prev.map(b => {
+        if (b.id === bundleId) {
+          const updatedFiles = b.files.map(f => {
+            // Explicitly cast the status to ensure type safety
+            const newStatus: RequirementFile["status"] = "importing";
+            return { ...f, status: newStatus };
+          });
+          
+          return { 
+            ...b, 
+            status: "importing" as RequirementBundle["status"],
+            files: updatedFiles
+          };
+        }
+        return b;
+      })
     );
 
     toast.success(`Importing bundle "${bundle.name}"...`);
@@ -125,14 +132,17 @@ export const useBundleOperations = () => {
             if (b.id === bundleId) {
               const updatedFiles = b.files.map((f, fileIndex) => {
                 if (f.id === file.id) {
-                  return { ...f, status: "imported" };
+                  // Explicitly type the status
+                  const newStatus: RequirementFile["status"] = "imported";
+                  return { ...f, status: newStatus };
                 }
                 return f;
               });
               
               // If all files are imported, update the bundle status
               const allImported = updatedFiles.every(f => f.status === "imported");
-              const newStatus = allImported ? "imported" : "importing";
+              // Explicitly type the status
+              const newStatus: RequirementBundle["status"] = allImported ? "imported" : "importing";
               
               return { ...b, files: updatedFiles, status: newStatus };
             }
