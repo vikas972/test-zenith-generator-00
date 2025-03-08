@@ -1,7 +1,8 @@
 
 import { useState, useEffect } from "react";
-import { RequirementBundle } from "../../types";
+import { RequirementBundle, RequirementFile } from "../../types";
 import { ImportBundleItem } from "./ImportBundleItem";
+import { ImportFileItem } from "./ImportFileItem";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ChevronDown, ChevronUp, RefreshCw, CheckCircle, AlertCircle } from "lucide-react";
