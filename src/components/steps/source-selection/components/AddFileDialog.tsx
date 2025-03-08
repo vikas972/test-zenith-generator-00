@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogContent,
@@ -39,9 +39,17 @@ export const AddFileDialog = ({
   const [fileContext, setFileContext] = useState("");
   const [requirementType, setRequirementType] = useState("");
 
+  // Reset form state when the dialog opens or closes
+  useEffect(() => {
+    if (!isOpen) {
+      resetState();
+    }
+  }, [isOpen]);
+
   const handleAddFile = () => {
     if (file && fileName.trim()) {
       onAddFile(file, fileName, fileCategory, fileBreakBy, fileContext, requirementType);
+      resetState();
     }
   };
 
@@ -66,7 +74,6 @@ export const AddFileDialog = ({
     <Dialog 
       open={isOpen} 
       onOpenChange={(open) => {
-        if (!open) resetState();
         onOpenChange(open);
       }}
     >

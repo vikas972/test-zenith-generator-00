@@ -43,7 +43,10 @@ export const BundleContent = ({
           <Button 
             variant="outline" 
             size="sm" 
-            onClick={onAddFile}
+            onClick={(e) => {
+              e.stopPropagation();
+              onAddFile();
+            }}
             className="ml-2"
           >
             <Plus className="h-4 w-4 mr-1" />
@@ -53,12 +56,30 @@ export const BundleContent = ({
       )}
       
       {bundle.files.length > 0 && (
-        <div className="mt-4 border-t pt-4 flex justify-end">
+        <div className="mt-4 border-t pt-4 flex justify-between">
+          {bundle.files.length < bundle.totalFiles && (
+            <Button 
+              variant="outline" 
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onAddFile();
+              }}
+              className="gap-1"
+            >
+              <Plus className="h-4 w-4" />
+              Add File
+            </Button>
+          )}
+          
           <Button 
             variant="default" 
-            onClick={onImport}
+            onClick={(e) => {
+              e.stopPropagation();
+              onImport(e);
+            }}
             disabled={!isImportable || isImporting || isImported || !isSelected}
-            className="gap-2"
+            className="gap-2 ml-auto"
           >
             <Upload className="h-4 w-4" />
             {isImported ? "Imported" : isImporting ? "Importing..." : "Import Bundle"}

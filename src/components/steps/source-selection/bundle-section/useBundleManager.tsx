@@ -104,6 +104,7 @@ export const useBundleManager = ({
     onBundleUpdate(selectedBundleForFile, updatedFiles);
     
     setIsAddFileDialogOpen(false);
+    setSelectedBundleForFile(null); // Reset the selected bundle after adding the file
     toast.success(`File added to bundle "${bundle.name}"`);
     
     // Automatically expand the bundle when adding a file
