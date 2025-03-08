@@ -56,6 +56,9 @@ export const AddFileDialog = ({
       setFileCategory(bundleHasMainFile ? "supporting" : "main");
       setFileBreakBy("userJourney");
       setRequirementType("K4");
+      
+      // Check form validity after setting defaults
+      setTimeout(() => validateForm(), 0);
     }
   }, [isOpen, bundleHasMainFile]);
 
@@ -65,7 +68,7 @@ export const AddFileDialog = ({
   }, [file, fileName, requirementType, region, country, customer]);
 
   const validateForm = () => {
-    let valid = file !== null && fileName.trim() !== "" && requirementType !== "";
+    let valid = file !== null && fileName.trim() !== "";
     
     // Add validation for type-specific fields
     if (requirementType === "K2") {
@@ -75,6 +78,16 @@ export const AddFileDialog = ({
     } else if (requirementType === "K4") {
       valid = valid && customer !== "";
     }
+    
+    console.log("Form validation:", { 
+      file: !!file, 
+      fileName: !!fileName.trim(), 
+      requirementType,
+      region,
+      country,
+      customer,
+      valid
+    });
     
     setIsFormValid(valid);
   };
