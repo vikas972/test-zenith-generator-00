@@ -17,6 +17,10 @@ export const FileItem = ({ file, onDeleteFile }: FileItemProps) => {
         return <X className="h-4 w-4 text-red-500" />;
       case "parsing":
         return <RefreshCw className="h-4 w-4 text-yellow-500 animate-spin" />;
+      case "importing":
+        return <RefreshCw className="h-4 w-4 text-blue-500 animate-spin" />;
+      case "imported":
+        return <Check className="h-4 w-4 text-blue-500" />;
       default:
         return null;
     }
@@ -33,7 +37,7 @@ export const FileItem = ({ file, onDeleteFile }: FileItemProps) => {
           <div className="text-xs text-gray-500 flex gap-3">
             <span className="capitalize">{file.category} Document</span>
             <span>Break by: {file.breakRequirementsBy.replace(/([A-Z])/g, ' $1').trim()}</span>
-            <span>Uploaded: {file.uploadTime.toLocaleTimeString()}</span>
+            <span>Status: {file.status}</span>
           </div>
         </div>
       </div>
@@ -43,6 +47,7 @@ export const FileItem = ({ file, onDeleteFile }: FileItemProps) => {
         size="sm"
         onClick={onDeleteFile}
         className="text-red-600 hover:text-red-700 hover:bg-red-50"
+        disabled={file.status === "importing" || file.status === "imported"}
       >
         <Trash2 className="h-4 w-4" />
       </Button>
