@@ -100,7 +100,8 @@ export const RequirementBundleSection = ({
       enhancedContext += `\nCustomer: ${customer}`;
     }
     
-    // Pass all parameters to the handler
+    // Pass all parameters to the handler, but don't call onBundleAdd again
+    // as it will be called in the handleAddFile implementation
     handleAddFile(
       file, 
       name, 

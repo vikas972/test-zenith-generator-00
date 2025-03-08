@@ -7,6 +7,14 @@ export const useBundleOperations = () => {
   const [bundles, setBundles] = useState<RequirementBundle[]>([]);
 
   const handleBundleAdd = (bundle: RequirementBundle) => {
+    // Check if a bundle with this ID already exists
+    const exists = bundles.some(b => b.id === bundle.id);
+    if (exists) {
+      // If it exists, don't add it again
+      console.log(`Bundle with ID ${bundle.id} already exists, not adding again`);
+      return;
+    }
+    
     setBundles(prev => [...prev, bundle]);
   };
 

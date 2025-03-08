@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { RequirementBundle, RequirementFile } from "../types";
@@ -141,11 +140,8 @@ export const useBundleManager = ({
       if (processedFiles.length === bundle.totalFiles) {
         const allCompleted = processedFiles.every(f => f.status === "completed");
         if (allCompleted) {
-          const updatedBundle: RequirementBundle = { 
-            ...bundle, 
-            status: "completed" as const 
-          };
-          onBundleAdd(updatedBundle);
+          // We're not calling onBundleAdd here to avoid duplicate bundle creation
+          // The status update will happen through the onBundleUpdate call above
         }
       }
     }, 2000);

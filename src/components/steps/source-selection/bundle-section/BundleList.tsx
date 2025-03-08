@@ -1,6 +1,6 @@
 
 import { RequirementBundle } from "../types";
-import { BundleItem } from "../components/BundleItem";
+import { BundleItem } from "../components/bundle-item";
 import { EmptyBundleState } from "../components/EmptyBundleState";
 
 interface BundleListProps {
@@ -34,11 +34,21 @@ export const BundleList = ({
     return <EmptyBundleState onCreateBundle={onCreateBundle} />;
   }
 
+  // Add a unique key for each bundle based on ID
+  // Ensure no duplicate IDs by checking the bundle array
+  const uniqueBundles = bundles.reduce<RequirementBundle[]>((acc, bundle) => {
+    // If we haven't seen this ID before, add it to our accumulator
+    if (!acc.some(b => b.id === bundle.id)) {
+      acc.push(bundle);
+    }
+    return acc;
+  }, []);
+
   return (
     <div className="space-y-4">
-      {bundles.map(bundle => (
+      {uniqueBundles.map(bundle => (
         <BundleItem
-          key={bundle.id}
+          key={`bundle-item-${bundle.id}`}
           bundle={bundle}
           isExpanded={expandedBundleId === bundle.id}
           isSelected={selectedBundleId === bundle.id}
