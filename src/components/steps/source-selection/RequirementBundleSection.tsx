@@ -58,16 +58,18 @@ export const RequirementBundleSection = ({
     toast.success("File removed from bundle");
   };
 
+  const handleCreateBundleClick = () => {
+    if (!selectedSource) {
+      toast.error("Please select a source type first");
+      return;
+    }
+    setIsNewBundleDialogOpen(true);
+  };
+
   return (
     <div className="space-y-6">
       <Card className="shadow-sm border-gray-200">
-        <BundleHeader onCreateBundle={() => {
-          if (!selectedSource) {
-            toast.error("Please select a source type first");
-            return;
-          }
-          setIsNewBundleDialogOpen(true);
-        }} />
+        <BundleHeader onCreateBundle={handleCreateBundleClick} />
         <CardContent>
           <BundleList 
             bundles={bundles}
@@ -80,13 +82,7 @@ export const RequirementBundleSection = ({
             onDeleteFile={handleDeleteFile}
             onSelectBundle={onSelectBundle}
             onImportBundle={onBundleImport}
-            onCreateBundle={() => {
-              if (!selectedSource) {
-                toast.error("Please select a source type first");
-                return;
-              }
-              setIsNewBundleDialogOpen(true);
-            }}
+            onCreateBundle={handleCreateBundleClick}
           />
         </CardContent>
       </Card>
