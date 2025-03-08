@@ -20,7 +20,8 @@ interface AddFileDialogProps {
     name: string, 
     category: "main" | "supporting", 
     breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page",
-    context: string
+    context: string,
+    requirementType: string
   ) => void;
   bundleHasMainFile: boolean;
 }
@@ -36,10 +37,11 @@ export const AddFileDialog = ({
   const [fileCategory, setFileCategory] = useState<"main" | "supporting">("supporting");
   const [fileBreakBy, setFileBreakBy] = useState<"userJourney" | "userStories" | "section" | "paragraph" | "page">("section");
   const [fileContext, setFileContext] = useState("");
+  const [requirementType, setRequirementType] = useState("");
 
   const handleAddFile = () => {
     if (file && fileName.trim()) {
-      onAddFile(file, fileName, fileCategory, fileBreakBy, fileContext);
+      onAddFile(file, fileName, fileCategory, fileBreakBy, fileContext, requirementType);
     }
   };
 
@@ -49,6 +51,7 @@ export const AddFileDialog = ({
     setFileCategory("supporting");
     setFileBreakBy("section");
     setFileContext("");
+    setRequirementType("");
   };
 
   // Update filename when file changes
@@ -89,6 +92,8 @@ export const AddFileDialog = ({
                 setFileBreakBy={setFileBreakBy}
                 fileContext={fileContext}
                 setFileContext={setFileContext}
+                requirementType={requirementType}
+                setRequirementType={setRequirementType}
                 bundleHasMainFile={bundleHasMainFile}
               />
             </div>
@@ -100,7 +105,7 @@ export const AddFileDialog = ({
             <Button variant="outline" onClick={() => onOpenChange(false)} size="sm">
               Cancel
             </Button>
-            <Button onClick={handleAddFile} disabled={!file || !fileName} size="sm">
+            <Button onClick={handleAddFile} disabled={!file || !fileName || !requirementType} size="sm">
               Add File
             </Button>
           </div>

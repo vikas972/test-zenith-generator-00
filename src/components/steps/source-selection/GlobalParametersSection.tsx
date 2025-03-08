@@ -91,35 +91,39 @@ export const GlobalParametersSection = ({
             onParametersChange={onParametersChange}
           />
           
-          {parameters.requirementType === "K2" && (
-            <RegionalParameters
-              parameters={parameters}
-              availableCountries={availableCountries}
-              onParametersChange={onParametersChange}
-            />
-          )}
-          
-          {parameters.requirementType === "K3" && (
-            <RegionalParameters
-              parameters={parameters}
-              availableCountries={availableCountries}
-              onParametersChange={onParametersChange}
-            />
-          )}
-          
-          {parameters.requirementType === "K4" && (
+          {parameters.requirementType && (
             <>
-              <RegionalParameters
-                parameters={parameters}
-                availableCountries={availableCountries}
-                onParametersChange={onParametersChange}
-              />
+              {parameters.requirementType === "K2" && (
+                <RegionalParameters
+                  parameters={parameters}
+                  availableCountries={availableCountries}
+                  onParametersChange={onParametersChange}
+                />
+              )}
               
-              <CustomerParameters
-                parameters={parameters}
-                availableCustomers={availableCustomers}
-                onParametersChange={onParametersChange}
-              />
+              {parameters.requirementType === "K3" && (
+                <RegionalParameters
+                  parameters={parameters}
+                  availableCountries={availableCountries}
+                  onParametersChange={onParametersChange}
+                />
+              )}
+              
+              {parameters.requirementType === "K4" && (
+                <>
+                  <RegionalParameters
+                    parameters={parameters}
+                    availableCountries={availableCountries}
+                    onParametersChange={onParametersChange}
+                  />
+                  
+                  <CustomerParameters
+                    parameters={parameters}
+                    availableCustomers={availableCustomers}
+                    onParametersChange={onParametersChange}
+                  />
+                </>
+              )}
             </>
           )}
         </div>

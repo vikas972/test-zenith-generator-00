@@ -3,6 +3,7 @@ import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { REQUIREMENT_TYPES } from "../../types";
 
 interface FileMetadataFormProps {
   fileName: string;
@@ -13,6 +14,8 @@ interface FileMetadataFormProps {
   setFileBreakBy: (breakBy: "userJourney" | "userStories" | "section" | "paragraph" | "page") => void;
   fileContext: string;
   setFileContext: (context: string) => void;
+  requirementType: string;
+  setRequirementType: (type: string) => void;
   bundleHasMainFile: boolean;
 }
 
@@ -25,6 +28,8 @@ export const FileMetadataForm = ({
   setFileBreakBy,
   fileContext,
   setFileContext,
+  requirementType,
+  setRequirementType,
   bundleHasMainFile
 }: FileMetadataFormProps) => {
   return (
@@ -58,6 +63,23 @@ export const FileMetadataForm = ({
             <p className="text-xs text-amber-600">This bundle already has a main document</p>
           )}
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <Label className="text-sm">Requirement Type</Label>
+        <Select 
+          value={requirementType}
+          onValueChange={(value) => setRequirementType(value)}
+        >
+          <SelectTrigger className="h-9">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            {REQUIREMENT_TYPES.map((type) => (
+              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="space-y-1">
