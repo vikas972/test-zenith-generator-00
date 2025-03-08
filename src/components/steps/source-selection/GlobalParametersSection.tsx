@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
@@ -83,91 +84,79 @@ export const GlobalParametersSection = ({
         <CardTitle className="text-xl font-semibold">Global Parameters</CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="flex flex-wrap items-end gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
           {/* Product Selection */}
-          <div className="w-[160px]">
-            <ParameterSelect
-              id="product"
-              label="Product"
-              value={parameters.product}
-              options={PRODUCT_OPTIONS}
-              onChange={(value) => onParametersChange({ ...parameters, product: value, subProduct: "" })}
-              compact={true}
-            />
-          </div>
+          <ParameterSelect
+            id="product"
+            label="Product"
+            value={parameters.product}
+            options={PRODUCT_OPTIONS}
+            onChange={(value) => onParametersChange({ ...parameters, product: value, subProduct: "" })}
+            compact={true}
+          />
           
           {/* Sub-Product Selection */}
-          <div className="w-[160px]">
-            <ParameterSelect
-              id="subProduct"
-              label="Sub-Product"
-              value={parameters.subProduct}
-              options={availableSubProducts}
-              onChange={(value) => onParametersChange({ ...parameters, subProduct: value })}
-              disabled={!parameters.product || availableSubProducts.length === 0}
-              compact={true}
-            />
-          </div>
+          <ParameterSelect
+            id="subProduct"
+            label="Sub-Product"
+            value={parameters.subProduct}
+            options={availableSubProducts}
+            onChange={(value) => onParametersChange({ ...parameters, subProduct: value })}
+            disabled={!parameters.product || availableSubProducts.length === 0}
+            compact={true}
+          />
           
           {/* Domain Selection */}
-          <div className="w-[160px]">
-            <ParameterSelect
-              id="domain"
-              label="Domain"
-              value={parameters.domain}
-              options={DOMAINS}
-              onChange={(value) => onParametersChange({ ...parameters, domain: value })}
-              compact={true}
-            />
-          </div>
+          <ParameterSelect
+            id="domain"
+            label="Domain"
+            value={parameters.domain}
+            options={DOMAINS}
+            onChange={(value) => onParametersChange({ ...parameters, domain: value })}
+            compact={true}
+          />
           
           {/* Region Selection (for K2, K3, K4) */}
           {parameters.requirementType && parameters.requirementType !== "K1" && (
-            <div className="w-[160px]">
-              <ParameterSelect
-                id="region"
-                label="Region"
-                value={parameters.region || ""}
-                options={REGIONS}
-                onChange={(value) => onParametersChange({ 
-                  ...parameters, 
-                  region: value, 
-                  country: "", 
-                  customer: "" 
-                })}
-                compact={true}
-              />
-            </div>
+            <ParameterSelect
+              id="region"
+              label="Region"
+              value={parameters.region || ""}
+              options={REGIONS}
+              onChange={(value) => onParametersChange({ 
+                ...parameters, 
+                region: value, 
+                country: "", 
+                customer: "" 
+              })}
+              compact={true}
+            />
           )}
           
           {/* Country Selection (for K3, K4) */}
           {parameters.requirementType && (parameters.requirementType === "K3" || parameters.requirementType === "K4") && (
-            <div className="w-[160px]">
-              <ParameterSelect
-                id="country"
-                label="Country"
-                value={parameters.country || ""}
-                options={availableCountries}
-                onChange={(value) => onParametersChange({ ...parameters, country: value, customer: "" })}
-                disabled={!parameters.region || availableCountries.length === 0}
-                compact={true}
-              />
-            </div>
+            <ParameterSelect
+              id="country"
+              label="Country"
+              value={parameters.country || ""}
+              options={availableCountries}
+              onChange={(value) => onParametersChange({ ...parameters, country: value, customer: "" })}
+              disabled={!parameters.region || availableCountries.length === 0}
+              compact={true}
+            />
           )}
           
           {/* Customer Selection (for K4) */}
           {parameters.requirementType && parameters.requirementType === "K4" && (
-            <div className="w-[160px]">
-              <ParameterSelect
-                id="customer"
-                label="Customer"
-                value={parameters.customer || ""}
-                options={availableCustomers}
-                onChange={(value) => onParametersChange({ ...parameters, customer: value })}
-                disabled={!parameters.country || availableCustomers.length === 0}
-                compact={true}
-              />
-            </div>
+            <ParameterSelect
+              id="customer"
+              label="Customer"
+              value={parameters.customer || ""}
+              options={availableCustomers}
+              onChange={(value) => onParametersChange({ ...parameters, customer: value })}
+              disabled={!parameters.country || availableCustomers.length === 0}
+              compact={true}
+            />
           )}
         </div>
       </CardContent>

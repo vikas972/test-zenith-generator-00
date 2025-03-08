@@ -30,13 +30,18 @@ export const ParameterSelect = ({
 }: ParameterSelectProps) => {
   return (
     <div className={compact ? "space-y-1" : "space-y-2"}>
-      <Label htmlFor={id} className={compact ? "text-xs text-gray-600" : ""}>{label}</Label>
+      <Label htmlFor={id} className={compact ? "text-xs text-gray-600 font-medium block truncate" : ""}>
+        {label}
+      </Label>
       <Select
         value={value}
         onValueChange={onChange}
         disabled={disabled}
       >
-        <SelectTrigger id={id} className={compact ? "h-8 text-sm" : ""}>
+        <SelectTrigger 
+          id={id} 
+          className={compact ? "h-8 text-sm" : ""}
+        >
           <SelectValue placeholder={placeholder} />
         </SelectTrigger>
         <SelectContent>
