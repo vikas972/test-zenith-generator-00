@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { RequirementBundle, RequirementFile } from "../types";
@@ -53,7 +54,7 @@ export const useBundleManager = ({
       source: selectedSource || "unknown",
       files: [],
       totalFiles,
-      status: "incomplete"
+      status: "incomplete" as const
     };
     
     onBundleAdd(newBundle);
@@ -128,7 +129,7 @@ export const useBundleManager = ({
     setTimeout(() => {
       // Update the file status to completed
       const processedFiles = updatedFiles.map(f => 
-        f.id === newFile.id ? { ...f, status: "completed" } : f
+        f.id === newFile.id ? { ...f, status: "completed" as const } : f
       );
       
       onBundleUpdate(activeBundleId, processedFiles);
@@ -137,7 +138,10 @@ export const useBundleManager = ({
       if (processedFiles.length === bundle.totalFiles) {
         const allCompleted = processedFiles.every(f => f.status === "completed");
         if (allCompleted) {
-          const updatedBundle = { ...bundle, status: "completed" };
+          const updatedBundle: RequirementBundle = { 
+            ...bundle, 
+            status: "completed" as const 
+          };
           onBundleAdd(updatedBundle);
         }
       }
