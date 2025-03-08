@@ -2,6 +2,7 @@
 import { GlobalParametersSection } from "../GlobalParametersSection";
 import { ImportSourcesGrid } from "../ImportSourcesGrid";
 import { RequirementBundleSection } from "../RequirementBundleSection";
+import { ImportStatusPanel } from "./import-status/ImportStatusPanel";
 import { 
   RequirementBundle, 
   RequirementFile,
@@ -62,6 +63,8 @@ export const SourceSelectionContent = ({
         selectedBundleId={selectedBundleId}
         selectedSource={selectedSource}
       />
+      
+      <ImportStatusPanel importedBundles={bundles} />
     </>
   );
 };

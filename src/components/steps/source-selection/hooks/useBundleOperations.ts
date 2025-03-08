@@ -117,21 +117,35 @@ export const useBundleOperations = () => {
 
     toast.success(`Importing bundle "${bundle.name}"...`);
 
-    // Simulate the import process with a delay
-    setTimeout(() => {
-      setBundles(prev => 
-        prev.map(b => 
-          b.id === bundleId 
-            ? { 
-                ...b, 
-                status: "imported",
-                files: b.files.map(f => ({ ...f, status: "imported" }))
-              } 
-            : b
-        )
-      );
-      toast.success(`Bundle "${bundle.name}" imported successfully`);
-    }, 3000);
+    // Simulate the import process for each file with sequential delays
+    bundle.files.forEach((file, index) => {
+      setTimeout(() => {
+        setBundles(prev => 
+          prev.map(b => {
+            if (b.id === bundleId) {
+              const updatedFiles = b.files.map((f, fileIndex) => {
+                if (f.id === file.id) {
+                  return { ...f, status: "imported" };
+                }
+                return f;
+              });
+              
+              // If all files are imported, update the bundle status
+              const allImported = updatedFiles.every(f => f.status === "imported");
+              const newStatus = allImported ? "imported" : "importing";
+              
+              return { ...b, files: updatedFiles, status: newStatus };
+            }
+            return b;
+          })
+        );
+        
+        // Show toast when the last file is imported
+        if (index === bundle.files.length - 1) {
+          toast.success(`Bundle "${bundle.name}" imported successfully`);
+        }
+      }, 1000 + (index * 1000)); // Stagger imports by 1 second per file
+    });
   };
 
   return {
