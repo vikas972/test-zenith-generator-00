@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { LayoutGrid, Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { cn } from "@/lib/utils";
@@ -94,7 +94,20 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
     console.log("Updated test cases with new status:", updatedTestCases);
   };
 
-  const scenariosForGrid = mockTestCases.map(transformTestCaseToScenario);
+  const scenariosForGrid = mockTestCases.map(testCase => {
+    // Enhanced version that includes all test case data and RTM information
+    const scenario = transformTestCaseToScenario(testCase);
+    return {
+      ...scenario,
+      // Add RTM fields
+      testCaseId: testCase.id,
+      preconditions: testCase.preconditions.join(", "),
+      testData: testCase.testData.length > 0 ? testCase.testData.map(d => `${d.field}: ${d.value}`).join("; ") : "None",
+      testSteps: testCase.testSteps.length,
+      expectedResults: testCase.expectedResults.join(", "),
+      postconditions: testCase.postconditions.join(", ")
+    };
+  });
 
   const handleTestCaseClick = (testCase: TestCase) => {
     setSelectedTestCase(testCase);
@@ -119,7 +132,13 @@ export const TestCases = ({ selectedFile }: TestCasesProps) => {
               <h2 className="text-lg font-semibold">Test Cases</h2>
             </div>
             <div className="flex items-center gap-2">
-              <Button variant="outline" size="sm" onClick={() => setShowGridDialog(true)}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setShowGridDialog(true)}
+                className="flex items-center gap-2"
+              >
+                <LayoutGrid className="h-4 w-4" />
                 Grid View
               </Button>
               <Button variant="outline" size="sm">

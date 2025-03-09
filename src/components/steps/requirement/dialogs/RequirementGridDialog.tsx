@@ -10,19 +10,19 @@ import { Download, LayoutGrid, Maximize2 } from "lucide-react";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useState } from "react";
-import { TestScenario } from "../types";
+import { Requirement } from "../types";
 
-interface ScenarioGridDialogProps {
+interface RequirementGridDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  scenarios: TestScenario[]; // Changed from testCases to scenarios to match the prop being passed
+  requirements: Requirement[];
 }
 
-export const ScenarioGridDialog = ({ 
+export const RequirementGridDialog = ({ 
   open, 
   onOpenChange, 
-  scenarios = [] // Provide default empty array
-}: ScenarioGridDialogProps) => {
+  requirements = [] 
+}: RequirementGridDialogProps) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   const toggleFullScreen = () => {
@@ -30,7 +30,6 @@ export const ScenarioGridDialog = ({
   };
 
   const handleExport = () => {
-    // TODO: Implement export functionality
     console.log("Export to Excel");
   };
 
@@ -42,7 +41,7 @@ export const ScenarioGridDialog = ({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className={dialogClass}>
         <DialogHeader className="flex flex-row items-center justify-between">
-          <DialogTitle>Test Scenarios Overview</DialogTitle>
+          <DialogTitle>Requirements Overview</DialogTitle>
           <div className="flex gap-2">
             <Button variant="outline" onClick={toggleFullScreen}>
               <Maximize2 className="h-4 w-4" />
@@ -59,33 +58,31 @@ export const ScenarioGridDialog = ({
               <TableHeader>
                 <TableRow>
                   <TableHead>ID</TableHead>
-                  <TableHead>Title</TableHead>
-                  <TableHead>Requirement</TableHead>
-                  <TableHead>Priority</TableHead>
-                  <TableHead>Status</TableHead>
+                  <TableHead>Requirement ID</TableHead>
+                  <TableHead>Functional Area</TableHead>
                   <TableHead>Description</TableHead>
-                  <TableHead>Flows</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Confidence</TableHead>
+                  <TableHead>Source</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {scenarios?.map((scenario) => (
-                  <TableRow key={scenario.id}>
-                    <TableCell className="font-medium">{scenario.id}</TableCell>
-                    <TableCell>{scenario.title}</TableCell>
-                    <TableCell>{scenario.requirementId}</TableCell>
-                    <TableCell className="capitalize">{scenario.priority}</TableCell>
-                    <TableCell className="capitalize">{scenario.status || 'n/a'}</TableCell>
-                    <TableCell className="max-w-md truncate">{scenario.description}</TableCell>
-                    <TableCell>
-                      {scenario.flows?.length > 0 ? scenario.flows.length + ' flows' : 'No flows'}
-                    </TableCell>
+                {requirements?.map((req) => (
+                  <TableRow key={req.id}>
+                    <TableCell className="font-medium">{req.id}</TableCell>
+                    <TableCell>{req.requirementId}</TableCell>
+                    <TableCell>{req.functionalArea}</TableCell>
+                    <TableCell className="max-w-md truncate">{req.description}</TableCell>
+                    <TableCell className="capitalize">{req.status}</TableCell>
+                    <TableCell>{(req.confidence * 100).toFixed(0)}%</TableCell>
+                    <TableCell>Page {req.source.page}, Para {req.source.paragraph}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
-            {(!scenarios || scenarios.length === 0) && (
+            {(!requirements || requirements.length === 0) && (
               <div className="text-center py-4 text-gray-500">
-                No scenarios available
+                No requirements available
               </div>
             )}
           </div>

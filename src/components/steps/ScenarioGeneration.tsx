@@ -10,7 +10,7 @@ import { ScenarioActions } from "./scenario/components/ScenarioActions";
 import { useScenarioState } from "./scenario/hooks/useScenarioState";
 import { toast } from "sonner";
 import { ScenarioGridDialog } from "./scenario/dialogs/ScenarioGridDialog";
-import { Maximize2, Minimize2 } from "lucide-react";
+import { LayoutGrid, Maximize2, Minimize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 

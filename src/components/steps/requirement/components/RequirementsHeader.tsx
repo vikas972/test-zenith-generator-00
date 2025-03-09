@@ -1,11 +1,16 @@
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Plus, RefreshCw, CheckSquare, Trash2, Maximize2, Minimize2 } from "lucide-react";
+import { 
+  DropdownMenu, 
+  DropdownMenuTrigger, 
+  DropdownMenuContent, 
+  DropdownMenuItem 
+} from "@/components/ui/dropdown-menu";
+import { LayoutGrid, Maximize2, Minimize2 } from "lucide-react";
 
 interface RequirementsHeaderProps {
-  fileName: string;
+  fileName: string | undefined;
   isMaximized: boolean;
   selectedCount: number;
   totalCount: number;
@@ -15,6 +20,7 @@ interface RequirementsHeaderProps {
   onBulkStatusChange: (status: "completed" | "needs_review" | "in_progress") => void;
   onDelete: () => void;
   onToggleMaximize: () => void;
+  onShowGrid: () => void; // Added new prop
 }
 
 export const RequirementsHeader = ({
@@ -28,83 +34,86 @@ export const RequirementsHeader = ({
   onBulkStatusChange,
   onDelete,
   onToggleMaximize,
+  onShowGrid, // Added new prop
 }: RequirementsHeaderProps) => {
   return (
-    <div className="p-4 border-b bg-white">
-      <div className="flex flex-col gap-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <h2 className="text-lg font-semibold">Requirements Captured</h2>
-            <span className="text-sm text-gray-500">
-              Review and edit captured requirements from {fileName || "requirements.pdf"}
-            </span>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={onToggleMaximize}
-          >
-            {isMaximized ? (
-              <Minimize2 className="h-4 w-4" />
-            ) : (
-              <Maximize2 className="h-4 w-4" />
-            )}
-          </Button>
-        </div>
-        <div className="flex gap-2 items-center">
-          <div className="flex items-center gap-2 px-4">
-            <Checkbox
-              checked={selectedCount === totalCount && totalCount > 0}
-              onCheckedChange={onSelectAll}
-            />
-            <span className="text-sm text-gray-500">Select All</span>
-          </div>
-          <Button 
-            onClick={onAddNew}
-            className="bg-blue-500 hover:bg-blue-600"
-          >
-            <Plus className="h-4 w-4 mr-2" />
-            Add Requirement
-          </Button>
-          <Button 
-            onClick={onRegenerate}
-            disabled={selectedCount === 0}
-            className="bg-blue-500 hover:bg-blue-600"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Regenerate Selected
-          </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button 
-                className="bg-blue-500 hover:bg-blue-600"
-                disabled={selectedCount === 0}
-              >
-                <CheckSquare className="h-4 w-4 mr-2" />
-                Change Status
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onSelect={() => onBulkStatusChange("completed")}>
-                Mark as Completed
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => onBulkStatusChange("needs_review")}>
-                Mark as Needs Review
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => onBulkStatusChange("in_progress")}>
-                Mark as In Progress
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <Button 
-            onClick={onDelete}
-            disabled={selectedCount === 0}
-            variant="destructive"
-          >
-            <Trash2 className="h-4 w-4 mr-2" />
-            Delete Selected
-          </Button>
-        </div>
+    <div className="flex items-center gap-2 p-4 border-b">
+      <div className="flex items-center gap-2 flex-1">
+        <Checkbox
+          checked={selectedCount === totalCount && totalCount > 0}
+          onCheckedChange={onSelectAll}
+        />
+        <span className="font-medium truncate">
+          {fileName ? `Requirements: ${fileName}` : "Requirements"}
+        </span>
+        <span className="text-xs text-muted-foreground">
+          {selectedCount > 0 ? `${selectedCount} of ${totalCount} selected` : `${totalCount} requirements`}
+        </span>
+      </div>
+
+      <div className="flex items-center gap-2">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={onShowGrid}
+          className="flex items-center gap-2"
+        >
+          <LayoutGrid className="h-4 w-4" />
+          Grid View
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onAddNew}
+        >
+          Add New
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onRegenerate}
+        >
+          Regenerate
+        </Button>
+        {selectedCount > 0 && (
+          <>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                >
+                  Status
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={() => onBulkStatusChange("completed")}>
+                  Mark as Completed
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onBulkStatusChange("in_progress")}>
+                  Mark as In Progress
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onBulkStatusChange("needs_review")}>
+                  Mark as Needs Review
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={onDelete}
+            >
+              Delete
+            </Button>
+          </>
+        )}
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onToggleMaximize}
+        >
+          {isMaximized ? <Minimize2 className="h-4 w-4" /> : <Maximize2 className="h-4 w-4" />}
+        </Button>
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+
 import { toast } from "sonner";
 import { RequirementsSection } from "./requirement/components/RequirementsSection";
 import { SourceViewer } from "./requirement/components/SourceViewer";
@@ -5,6 +6,8 @@ import { useRequirements } from "./requirement/hooks/useRequirements";
 import { useRequirementsLayout } from "./requirement/hooks/useRequirementsLayout";
 import { createNewRequirement } from "./requirement/requirementUtils";
 import { type Requirement } from "./requirement/types";
+import { RequirementGridDialog } from "./requirement/dialogs/RequirementGridDialog";
+import { useState } from "react";
 
 interface RequirementsCapturedProps {
   selectedFile: {
@@ -134,6 +137,8 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
     toggleSourceMaximize,
   } = useRequirementsLayout();
 
+  const [showGridDialog, setShowGridDialog] = useState(false);
+
   const sourceContent = requirements
     .map(req => {
       if (req.id === expandedRequirement) {
@@ -181,6 +186,7 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         onSourceChange={handleSourceChange}
         onStatusChange={handleStatusChange}
         isSourceMaximized={isSourceMaximized}
+        onShowGrid={() => setShowGridDialog(true)}
       />
 
       <SourceViewer
@@ -188,6 +194,12 @@ export const RequirementsCaptured = ({ selectedFile }: RequirementsCapturedProps
         isMaximized={isSourceMaximized}
         isHidden={isRequirementsMaximized}
         onToggleMaximize={toggleSourceMaximize}
+      />
+
+      <RequirementGridDialog
+        open={showGridDialog}
+        onOpenChange={setShowGridDialog}
+        requirements={requirements}
       />
     </div>
   );

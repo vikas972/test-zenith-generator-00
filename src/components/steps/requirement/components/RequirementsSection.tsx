@@ -27,6 +27,7 @@ interface RequirementsSectionProps {
   onSourceChange: (requirementId: string, field: 'page' | 'paragraph', value: number) => void;
   onStatusChange: (requirementId: string, status: "completed" | "needs_review" | "in_progress") => void;
   isSourceMaximized: boolean;
+  onShowGrid: () => void; // Added new prop
 }
 
 export const RequirementsSection = ({
@@ -52,6 +53,7 @@ export const RequirementsSection = ({
   onSourceChange,
   onStatusChange,
   isSourceMaximized,
+  onShowGrid, // Added new prop
 }: RequirementsSectionProps) => {
   return (
     <div className={cn(
@@ -70,6 +72,7 @@ export const RequirementsSection = ({
         onBulkStatusChange={onBulkStatusChange}
         onDelete={onBulkDelete}
         onToggleMaximize={onToggleMaximize}
+        onShowGrid={onShowGrid} // Pass the new prop
       />
 
       <div className="flex-1 overflow-auto px-6 py-4">
